@@ -1,11 +1,82 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* Custom styles for Imani Magnets */
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* Load custom fonts - Above the Beyond */
+@font-face {
+    font-family: 'Above the Beyond Script';
+    src: url('/Demo_Fonts/DEMO-atbscript-rg.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Above the Beyond Serif';
+    src: url('/Demo_Fonts/DEMO-atbserif-rg.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Above the Beyond Serif';
+    src: url('/Demo_Fonts/DEMO-atbserif-it.otf') format('opentype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Define custom colors using CSS variables */
+:root {
+  --color-dark-turquoise: #12463c;
+  --color-dark-turquoise-alt: #003a2f;
+  --color-gray-brown: #5c533b;
+  --color-gray-orange: #c2b59b;
+}
+
+/* Custom utility classes for Imani colors */
+.bg-dark-turquoise {
+  background-color: #12463c;
+}
+
+.text-dark-turquoise {
+  color: #12463c;
+}
+
+.bg-gray-orange {
+  background-color: #c2b59b;
+}
+
+.text-gray-orange {
+  color: #c2b59b;
+}
+
+.bg-gray-brown {
+  background-color: #5c533b;
+}
+
+.text-gray-brown {
+  color: #5c533b;
+}
+
+.border-gray-orange {
+  border-color: #c2b59b;
+}
+
+/* Custom font utility classes */
+.font-script {
+  font-family: 'Above the Beyond Script', cursive;
+}
+
+.font-serif {
+  font-family: 'Above the Beyond Serif', serif;
+}
+
+.font-spartan {
+  font-family: 'League Spartan', sans-serif;
+}
+
+.font-sans {
+  font-family: 'Open Sans', sans-serif;
 }

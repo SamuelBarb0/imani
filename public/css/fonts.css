@@ -1,0 +1,25 @@
+/* Above the Beyond Fonts */
+
+@font-face {
+    font-family: 'Above the Beyond Script';
+    src: url('../Demo_Fonts/DEMO-atbscript-rg.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Above the Beyond Serif';
+    src: url('../Demo_Fonts/DEMO-atbserif-rg.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Above the Beyond Serif';
+    src: url('../Demo_Fonts/DEMO-atbserif-it.otf') format('opentype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}

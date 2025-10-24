@@ -13,6 +13,7 @@ class Order extends Model
         'status',
         'images_data',
         'final_template_path',
+        'png_template_path',
         'total_price',
     ];
 

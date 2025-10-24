@@ -65,10 +65,16 @@ class PersonalizadosController extends Controller
             $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $base64Image);
             $imageData = base64_decode($imageData);
 
-            // Save final template with correct extension
+            // Save final template (JPEG for fast transfer)
             $templateFilename = "template_{$orderNumber}.{$extension}";
             $templatePath = "{$orderDir}/{$templateFilename}";
             Storage::disk('public')->put($templatePath, $imageData);
+
+            // Si es JPEG, generar también versión PNG de alta calidad para impresión
+            $pngTemplatePath = null;
+            if ($extension === 'jpg') {
+                $pngTemplatePath = $this->convertJpegToPng($imageData, $orderDir, $orderNumber);
+            }
 
             // Create order record
             $order = Order::create([
@@ -77,7 +83,8 @@ class PersonalizadosController extends Controller
                 'customer_name' => $request->customer_name,
                 'status' => 'pending',
                 'images_data' => [], // No guardamos imágenes individuales, solo el template final
-                'final_template_path' => $templatePath,
+                'final_template_path' => $templatePath, // JPEG (rápido)
+                'png_template_path' => $pngTemplatePath, // PNG (alta calidad para impresión)
                 'total_price' => 29.99, // Base price, can be dynamic
             ]);
 
@@ -85,6 +92,7 @@ class PersonalizadosController extends Controller
                 'success' => true,
                 'order_number' => $orderNumber,
                 'download_url' => route('personalizados.download', $orderNumber),
+                'download_url_png' => $pngTemplatePath ? route('personalizados.download.png', $orderNumber) : null,
                 'message' => 'Template generado exitosamente'
             ]);
 
@@ -97,7 +105,7 @@ class PersonalizadosController extends Controller
     }
 
     /**
-     * Download the generated template
+     * Download the generated template (JPEG - fast download)
      */
     public function download($orderNumber)
     {
@@ -113,5 +121,56 @@ class PersonalizadosController extends Controller
         $extension = pathinfo($order->final_template_path, PATHINFO_EXTENSION);
 
         return response()->download($filePath, "imani_magnets_{$orderNumber}.{$extension}");
+    }
+
+    /**
+     * Download the PNG high-quality version (for printing)
+     */
+    public function downloadPng($orderNumber)
+    {
+        $order = Order::where('order_number', $orderNumber)->firstOrFail();
+
+        if (!$order->png_template_path || !Storage::disk('public')->exists($order->png_template_path)) {
+            abort(404, 'PNG template no encontrado');
+        }
+
+        $filePath = Storage::disk('public')->path($order->png_template_path);
+
+        return response()->download($filePath, "imani_magnets_{$orderNumber}_print.png");
+    }
+
+    /**
+     * Convert JPEG to PNG with maximum quality
+     */
+    private function convertJpegToPng(string $jpegData, string $orderDir, string $orderNumber): string
+    {
+        // Crear imagen desde el JPEG
+        $image = imagecreatefromstring($jpegData);
+
+        if (!$image) {
+            throw new \Exception('No se pudo crear la imagen desde los datos JPEG');
+        }
+
+        // Deshabilitar la compresión PNG (máxima calidad)
+        imagepng($image, null, 0); // 0 = sin compresión
+
+        // Guardar como PNG
+        $pngFilename = "template_{$orderNumber}_print.png";
+        $pngPath = "{$orderDir}/{$pngFilename}";
+        $fullPath = Storage::disk('public')->path($pngPath);
+
+        // Asegurar que el directorio existe
+        $directory = dirname($fullPath);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        // Guardar PNG con calidad máxima (0 = sin compresión, máxima calidad)
+        imagepng($image, $fullPath, 0);
+
+        // Liberar memoria
+        imagedestroy($image);
+
+        return $pngPath;
     }
 }

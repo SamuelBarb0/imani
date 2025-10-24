@@ -31,7 +31,8 @@ class PersonalizadosController extends Controller
     public function processImages(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'final_image' => 'required|string', // Base64 encoded PNG final (2362x3217px)
+            'final_image' => 'required|string',
+            'is_compressed' => 'nullable|boolean',
             'customer_email' => 'nullable|email',
             'customer_name' => 'nullable|string|max:255',
         ]);
@@ -44,10 +45,9 @@ class PersonalizadosController extends Controller
         }
 
         try {
-            // Limpiar cualquier output buffer para evitar contaminar el JSON
-            if (ob_get_level()) {
-                ob_clean();
-            }
+            // Extender el tiempo de ejecución para archivos grandes
+            set_time_limit(300); // 5 minutos
+            ini_set('max_execution_time', 300);
 
             // Generate order number
             $orderNumber = Order::generateOrderNumber();
@@ -56,30 +56,22 @@ class PersonalizadosController extends Controller
             $orderDir = "orders/{$orderNumber}";
             Storage::disk('public')->makeDirectory($orderDir);
 
-            // Save the final template (2480x3508px with 9 images positioned)
+            // Save the final template PNG (2480x3508px with 9 images positioned)
             $base64Image = $request->final_image;
 
-            // Detectar el formato de la imagen (PNG o JPEG)
-            preg_match('/^data:image\/(\w+);base64,/', $base64Image, $matches);
-            $imageFormat = isset($matches[1]) ? strtolower($matches[1]) : 'png';
+            // Si está comprimido con gzip, descomprimir
+            if ($request->is_compressed) {
+                $imageData = $this->decompressGzip($base64Image);
+            } else {
+                // Procesar normalmente
+                $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $base64Image);
+                $imageData = base64_decode($imageData);
+            }
 
-            // Normalizar 'jpeg' a 'jpg' para la extensión del archivo
-            $extension = ($imageFormat === 'jpeg') ? 'jpg' : $imageFormat;
-
-            // Remove data:image/xxx;base64, prefix
-            $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $base64Image);
-            $imageData = base64_decode($imageData);
-
-            // Save final template (JPEG for fast transfer)
-            $templateFilename = "template_{$orderNumber}.{$extension}";
+            // Save final template
+            $templateFilename = "template_{$orderNumber}.png";
             $templatePath = "{$orderDir}/{$templateFilename}";
             Storage::disk('public')->put($templatePath, $imageData);
-
-            // Si es JPEG, generar también versión PNG de alta calidad para impresión
-            $pngTemplatePath = null;
-            if ($extension === 'jpg') {
-                $pngTemplatePath = $this->convertJpegToPng($imageData, $orderDir, $orderNumber);
-            }
 
             // Create order record
             $order = Order::create([
@@ -88,8 +80,7 @@ class PersonalizadosController extends Controller
                 'customer_name' => $request->customer_name,
                 'status' => 'pending',
                 'images_data' => [], // No guardamos imágenes individuales, solo el template final
-                'final_template_path' => $templatePath, // JPEG (rápido)
-                'png_template_path' => $pngTemplatePath, // PNG (alta calidad para impresión)
+                'final_template_path' => $templatePath,
                 'total_price' => 29.99, // Base price, can be dynamic
             ]);
 
@@ -97,7 +88,6 @@ class PersonalizadosController extends Controller
                 'success' => true,
                 'order_number' => $orderNumber,
                 'download_url' => route('personalizados.download', $orderNumber),
-                'download_url_png' => $pngTemplatePath ? route('personalizados.download.png', $orderNumber) : null,
                 'message' => 'Template generado exitosamente'
             ]);
 
@@ -110,7 +100,7 @@ class PersonalizadosController extends Controller
     }
 
     /**
-     * Download the generated template (JPEG - fast download)
+     * Download the generated template
      */
     public function download($orderNumber)
     {
@@ -122,57 +112,31 @@ class PersonalizadosController extends Controller
 
         $filePath = Storage::disk('public')->path($order->final_template_path);
 
-        // Detectar la extensión del archivo
-        $extension = pathinfo($order->final_template_path, PATHINFO_EXTENSION);
-
-        return response()->download($filePath, "imani_magnets_{$orderNumber}.{$extension}");
+        return response()->download($filePath, "imani_magnets_{$orderNumber}.png");
     }
 
     /**
-     * Download the PNG high-quality version (for printing)
+     * Decompress gzip compressed base64 data
      */
-    public function downloadPng($orderNumber)
+    private function decompressGzip(string $compressedBase64): string
     {
-        $order = Order::where('order_number', $orderNumber)->firstOrFail();
+        // Remover prefijo data:application/gzip;base64,
+        $compressedData = preg_replace('/^data:application\/gzip;base64,/', '', $compressedBase64);
 
-        if (!$order->png_template_path || !Storage::disk('public')->exists($order->png_template_path)) {
-            abort(404, 'PNG template no encontrado');
+        // Decodificar base64
+        $compressedBytes = base64_decode($compressedData);
+
+        if ($compressedBytes === false) {
+            throw new \Exception('Error al decodificar base64 comprimido');
         }
 
-        $filePath = Storage::disk('public')->path($order->png_template_path);
+        // Descomprimir con gzip
+        $decompressedData = gzdecode($compressedBytes);
 
-        return response()->download($filePath, "imani_magnets_{$orderNumber}_print.png");
-    }
-
-    /**
-     * Convert JPEG to PNG with maximum quality
-     */
-    private function convertJpegToPng(string $jpegData, string $orderDir, string $orderNumber): string
-    {
-        // Crear imagen desde el JPEG
-        $image = imagecreatefromstring($jpegData);
-
-        if (!$image) {
-            throw new \Exception('No se pudo crear la imagen desde los datos JPEG');
+        if ($decompressedData === false) {
+            throw new \Exception('Error al descomprimir datos gzip');
         }
 
-        // Preparar ruta para guardar PNG
-        $pngFilename = "template_{$orderNumber}_print.png";
-        $pngPath = "{$orderDir}/{$pngFilename}";
-        $fullPath = Storage::disk('public')->path($pngPath);
-
-        // Asegurar que el directorio existe
-        $directory = dirname($fullPath);
-        if (!is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
-
-        // Guardar PNG con calidad máxima (0 = sin compresión, máxima calidad)
-        imagepng($image, $fullPath, 0);
-
-        // Liberar memoria
-        imagedestroy($image);
-
-        return $pngPath;
+        return $decompressedData;
     }
 }

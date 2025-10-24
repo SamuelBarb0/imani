@@ -12,7 +12,6 @@ Route::get('/', function () {
 Route::get('/personalizados', [PersonalizadosController::class, 'index'])->name('personalizados');
 Route::post('/personalizados/process', [PersonalizadosController::class, 'processImages'])->name('personalizados.process');
 Route::get('/personalizados/download/{orderNumber}', [PersonalizadosController::class, 'download'])->name('personalizados.download');
-Route::get('/personalizados/download-png/{orderNumber}', [PersonalizadosController::class, 'downloadPng'])->name('personalizados.download.png');
 
 // Colecciones
 Route::get('/colecciones', function () {

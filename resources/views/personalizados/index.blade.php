@@ -174,28 +174,10 @@
                 </div>
                 <h3 class="font-spartan text-xl font-bold text-dark-turquoise mb-2">¡Template Generado!</h3>
                 <p class="text-sm text-gray-brown mb-4">Tu número de orden es: <strong id="order-number-display"></strong></p>
-
-                <!-- Botones de descarga -->
-                <div class="space-y-3 mb-4">
-                    <a id="download-link-png" href="#" class="inline-block w-full px-8 py-3 bg-dark-turquoise text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-dark-turquoise-alt transition-all duration-300 hidden">
-                        <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
-                        </svg>
-                        DESCARGAR PNG (ALTA CALIDAD)
-                    </a>
-                    <a id="download-link" href="#" class="inline-block w-full px-8 py-3 bg-gray-brown text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-orange transition-all duration-300">
-                        <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
-                        </svg>
-                        DESCARGAR JPEG (RÁPIDO)
-                    </a>
-                </div>
-
-                <p class="text-xs text-gray-500 mb-4">
-                    💡 <strong>Recomendación:</strong> Descarga el PNG para impresión profesional
-                </p>
-
-                <button id="close-success-modal" class="block w-full px-8 py-3 bg-gray-300 text-gray-700 rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-400 transition-all duration-300">
+                <a id="download-link" href="#" class="inline-block px-8 py-3 bg-dark-turquoise text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown transition-all duration-300">
+                    DESCARGAR TEMPLATE
+                </a>
+                <button id="close-success-modal" class="block w-full mt-4 px-8 py-3 bg-gray-300 text-gray-700 rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-400 transition-all duration-300">
                     CERRAR
                 </button>
             </div>
@@ -536,6 +518,38 @@
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
 <script>
+    // === FUNCIÓN DE COMPRESIÓN GZIP ===
+    async function compressBase64(base64String) {
+        try {
+            // Convertir base64 a Uint8Array
+            const binaryString = atob(base64String.split(',')[1]);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+
+            // Comprimir con gzip usando CompressionStream API
+            const stream = new Blob([bytes]).stream();
+            const compressedStream = stream.pipeThrough(new CompressionStream('gzip'));
+            const compressedBlob = await new Response(compressedStream).blob();
+            const compressedBytes = new Uint8Array(await compressedBlob.arrayBuffer());
+
+            // Convertir a base64
+            let binary = '';
+            for (let i = 0; i < compressedBytes.length; i++) {
+                binary += String.fromCharCode(compressedBytes[i]);
+            }
+            const compressedBase64 = btoa(binary);
+
+            // Retornar con prefijo indicando que está comprimido
+            return 'data:application/gzip;base64,' + compressedBase64;
+        } catch (error) {
+            console.error('Error al comprimir:', error);
+            // Si falla la compresión, retornar original
+            return base64String;
+        }
+    }
+
     // Estado global
     const appState = {
         images: new Array(9).fill(null), // Imágenes originales (nunca se modifican)
@@ -1920,15 +1934,21 @@
             fabricCanvas.renderAll();
             console.log('Canvas renderizado');
 
-            // Convertir el canvas a JPEG con compresión optimizada
-            console.log('Convirtiendo canvas a JPEG...');
-            const finalImage = fabricCanvas.toDataURL({
-                format: 'jpeg',
-                quality: 0.92, // 92% calidad - excelente balance calidad/tamaño
+            // Convertir el canvas a PNG de alta calidad
+            console.log('Convirtiendo canvas a PNG...');
+            const finalPNG = fabricCanvas.toDataURL({
+                format: 'png',
+                quality: 1,
                 multiplier: 1 // 1x = tamaño original (2480x3508px)
             });
 
-            console.log('JPEG generado, tamaño:', (finalImage.length / 1024 / 1024).toFixed(2), 'MB');
+            console.log('PNG generado, tamaño:', (finalPNG.length / 1024 / 1024).toFixed(2), 'MB');
+
+            // === COMPRIMIR PNG PARA TRANSMISIÓN RÁPIDA ===
+            console.log('Comprimiendo PNG con gzip...');
+            const compressedPNG = await compressBase64(finalPNG);
+            console.log('PNG comprimido, tamaño:', (compressedPNG.length / 1024 / 1024).toFixed(2), 'MB');
+            console.log('Reducción:', ((1 - compressedPNG.length / finalPNG.length) * 100).toFixed(1) + '%');
 
             // === ENVIAR AL BACKEND PARA GUARDAR ===
             console.log('Enviando al servidor...');
@@ -1940,7 +1960,8 @@
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    final_image: finalImage,
+                    final_image: compressedPNG,
+                    is_compressed: true, // Indicar que está comprimido
                     customer_email: null, // Puedes agregar un campo para email
                     customer_name: null // Puedes agregar un campo para nombre
                 })
@@ -1965,16 +1986,6 @@
                 // Mostrar modal de éxito
                 document.getElementById('order-number-display').textContent = data.order_number;
                 document.getElementById('download-link').href = data.download_url;
-
-                // Mostrar enlace PNG si está disponible
-                const pngLink = document.getElementById('download-link-png');
-                if (data.download_url_png) {
-                    pngLink.href = data.download_url_png;
-                    pngLink.classList.remove('hidden');
-                } else {
-                    pngLink.classList.add('hidden');
-                }
-
                 document.getElementById('success-modal').classList.remove('hidden');
             } else {
                 console.error('Error en respuesta:', data);

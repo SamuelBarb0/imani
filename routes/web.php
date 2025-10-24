@@ -3,62 +3,71 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PersonalizadosController;
 
-// Home
+// Ruta raíz - Sitio en construcción
 Route::get('/', function () {
-    return view('home.index');
-})->name('home');
+    return view('construction');
+})->name('root');
 
-// Personalizados
-Route::get('/personalizados', [PersonalizadosController::class, 'index'])->name('personalizados');
-Route::post('/personalizados/process', [PersonalizadosController::class, 'processImages'])->name('personalizados.process');
-Route::get('/personalizados/download/{orderNumber}', [PersonalizadosController::class, 'download'])->name('personalizados.download');
+// Grupo de rutas bajo /pruebas (modo testing)
+Route::prefix('pruebas')->group(function () {
 
-// Colecciones
-Route::get('/colecciones', function () {
-    return view('colecciones.index');
-})->name('colecciones');
+    // Home
+    Route::get('/', function () {
+        return view('home.index');
+    })->name('home');
 
-// Mayoristas
-Route::get('/mayoristas', function () {
-    return view('mayoristas.index');
-})->name('mayoristas');
+    // Personalizados
+    Route::get('/personalizados', [PersonalizadosController::class, 'index'])->name('personalizados');
+    Route::post('/personalizados/process', [PersonalizadosController::class, 'processImages'])->name('personalizados.process');
+    Route::get('/personalizados/download/{orderNumber}', [PersonalizadosController::class, 'download'])->name('personalizados.download');
 
-// Gift Card
-Route::get('/gift-card', function () {
-    return view('gift-card.index');
-})->name('gift-card');
+    // Colecciones
+    Route::get('/colecciones', function () {
+        return view('colecciones.index');
+    })->name('colecciones');
 
-// Contacto
-Route::get('/contacto', function () {
-    return view('contacto.index');
-})->name('contacto');
+    // Mayoristas
+    Route::get('/mayoristas', function () {
+        return view('mayoristas.index');
+    })->name('mayoristas');
 
-// Carrito
-Route::get('/carrito', function () {
-    return view('carrito.index');
-})->name('carrito');
+    // Gift Card
+    Route::get('/gift-card', function () {
+        return view('gift-card.index');
+    })->name('gift-card');
 
-// Cuenta / Login
-Route::get('/cuenta', function () {
-    return view('cuenta.index');
-})->name('cuenta');
+    // Contacto
+    Route::get('/contacto', function () {
+        return view('contacto.index');
+    })->name('contacto');
 
-// Buscar
-Route::get('/buscar', function () {
-    return view('buscar.index');
-})->name('buscar');
+    // Carrito
+    Route::get('/carrito', function () {
+        return view('carrito.index');
+    })->name('carrito');
 
-// FAQ
-Route::get('/faq', function () {
-    return view('faq.index');
-})->name('faq');
+    // Cuenta / Login
+    Route::get('/cuenta', function () {
+        return view('cuenta.index');
+    })->name('cuenta');
 
-// Política de Devolución
-Route::get('/politica-devolucion', function () {
-    return view('politicas.devolucion');
-})->name('politica.devolucion');
+    // Buscar
+    Route::get('/buscar', function () {
+        return view('buscar.index');
+    })->name('buscar');
 
-// Política de Privacidad
-Route::get('/politica-privacidad', function () {
-    return view('politicas.privacidad');
-})->name('politica.privacidad');
+    // FAQ
+    Route::get('/faq', function () {
+        return view('faq.index');
+    })->name('faq');
+
+    // Política de Devolución
+    Route::get('/politica-devolucion', function () {
+        return view('politicas.devolucion');
+    })->name('politica.devolucion');
+
+    // Política de Privacidad
+    Route::get('/politica-privacidad', function () {
+        return view('politicas.privacidad');
+    })->name('politica.privacidad');
+});

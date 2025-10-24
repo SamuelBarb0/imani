@@ -44,6 +44,11 @@ class PersonalizadosController extends Controller
         }
 
         try {
+            // Limpiar cualquier output buffer para evitar contaminar el JSON
+            if (ob_get_level()) {
+                ob_clean();
+            }
+
             // Generate order number
             $orderNumber = Order::generateOrderNumber();
 
@@ -151,10 +156,7 @@ class PersonalizadosController extends Controller
             throw new \Exception('No se pudo crear la imagen desde los datos JPEG');
         }
 
-        // Deshabilitar la compresión PNG (máxima calidad)
-        imagepng($image, null, 0); // 0 = sin compresión
-
-        // Guardar como PNG
+        // Preparar ruta para guardar PNG
         $pngFilename = "template_{$orderNumber}_print.png";
         $pngPath = "{$orderDir}/{$pngFilename}";
         $fullPath = Storage::disk('public')->path($pngPath);

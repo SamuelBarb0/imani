@@ -51,15 +51,22 @@ class PersonalizadosController extends Controller
             $orderDir = "orders/{$orderNumber}";
             Storage::disk('public')->makeDirectory($orderDir);
 
-            // Save the final template PNG (2362x3217px with 9 images positioned)
+            // Save the final template (2480x3508px with 9 images positioned)
             $base64Image = $request->final_image;
+
+            // Detectar el formato de la imagen (PNG o JPEG)
+            preg_match('/^data:image\/(\w+);base64,/', $base64Image, $matches);
+            $imageFormat = isset($matches[1]) ? strtolower($matches[1]) : 'png';
+
+            // Normalizar 'jpeg' a 'jpg' para la extensión del archivo
+            $extension = ($imageFormat === 'jpeg') ? 'jpg' : $imageFormat;
 
             // Remove data:image/xxx;base64, prefix
             $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $base64Image);
             $imageData = base64_decode($imageData);
 
-            // Save final template
-            $templateFilename = "template_{$orderNumber}.png";
+            // Save final template with correct extension
+            $templateFilename = "template_{$orderNumber}.{$extension}";
             $templatePath = "{$orderDir}/{$templateFilename}";
             Storage::disk('public')->put($templatePath, $imageData);
 
@@ -102,6 +109,9 @@ class PersonalizadosController extends Controller
 
         $filePath = Storage::disk('public')->path($order->final_template_path);
 
-        return response()->download($filePath, "imani_magnets_{$orderNumber}.png");
+        // Detectar la extensión del archivo
+        $extension = pathinfo($order->final_template_path, PATHINFO_EXTENSION);
+
+        return response()->download($filePath, "imani_magnets_{$orderNumber}.{$extension}");
     }
 }

@@ -1902,15 +1902,15 @@
             fabricCanvas.renderAll();
             console.log('Canvas renderizado');
 
-            // Convertir el canvas a PNG de alta calidad
-            console.log('Convirtiendo canvas a PNG...');
-            const finalPNG = fabricCanvas.toDataURL({
-                format: 'png',
-                quality: 1,
-                multiplier: 1 // 1x = tamaño original (2362x3217px)
+            // Convertir el canvas a JPEG con compresión optimizada
+            console.log('Convirtiendo canvas a JPEG...');
+            const finalImage = fabricCanvas.toDataURL({
+                format: 'jpeg',
+                quality: 0.92, // 92% calidad - excelente balance calidad/tamaño
+                multiplier: 1 // 1x = tamaño original (2480x3508px)
             });
 
-            console.log('PNG generado, tamaño:', (finalPNG.length / 1024 / 1024).toFixed(2), 'MB');
+            console.log('JPEG generado, tamaño:', (finalImage.length / 1024 / 1024).toFixed(2), 'MB');
 
             // === ENVIAR AL BACKEND PARA GUARDAR ===
             console.log('Enviando al servidor...');
@@ -1922,7 +1922,7 @@
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    final_image: finalPNG,
+                    final_image: finalImage,
                     customer_email: null, // Puedes agregar un campo para email
                     customer_name: null // Puedes agregar un campo para nombre
                 })

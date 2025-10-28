@@ -1,56 +1,44 @@
 <footer class="bg-dark-turquoise text-white py-10">
-    <div class="container mx-auto px-6">
-        <!-- Footer Navigation -->
-        <div class="text-center text-xs mb-8">
-            <div class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2">
-                <a href="{{ url('/') }}" class="hover:text-gray-orange transition">INICIO</a>
-                <span class="text-white/50">|</span>
-                <a href="{{ url('personalizados') }}" class="hover:text-gray-orange transition">PERSONALIZADOS</a>
-                <span class="text-white/50">|</span>
-                <a href="{{ url('colecciones') }}" class="hover:text-gray-orange transition">COLECCIONES</a>
-                <span class="text-white/50">|</span>
-                <a href="{{ url('mayoristas') }}" class="hover:text-gray-orange transition">MAYORISTAS</a>
-                <span class="text-white/50">|</span>
-                <a href="{{ url('gift-card') }}" class="hover:text-gray-orange transition">GIFT CARD</a>
-                <span class="text-white/50">|</span>
-                <a href="{{ url('contacto') }}" class="hover:text-gray-orange transition">CONTACTO</a>
-                <span class="text-white/50">|</span>
-                <a href="{{ url('faq') }}" class="hover:text-gray-orange transition">FAQ</a>
-                <span class="text-white/50">|</span>
-                <a href="{{ url('politica-devolucion') }}" class="hover:text-gray-orange transition">POLÍTICA DE DEVOLUCIÓN</a>
-                <span class="text-white/50">|</span>
-                <a href="{{ url('politica-privacidad') }}" class="hover:text-gray-orange transition">POLÍTICA DE PRIVACIDAD</a>
-            </div>
-        </div>
+    <div class="container mx-auto px-6 max-w-7xl">
+        <!-- Footer Content Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
 
-        <!-- Footer Bottom -->
-        <div class="flex flex-col md:flex-row justify-between items-center pt-6 border-t border-white/20 gap-6">
-            <!-- Social Icons -->
-            <div class="flex items-center space-x-6">
-                <a href="mailto:info@imanimagnets.com" class="hover:-translate-y-1 transition" aria-label="Email">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                        <path d="m2 7 10 7 10-7"></path>
-                    </svg>
-                </a>
-                <a href="https://instagram.com/imanimagnets" target="_blank" class="hover:-translate-y-1 transition" aria-label="Instagram">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
-                </a>
-                <a href="https://wa.me/593999999999" target="_blank" class="hover:-translate-y-1 transition" aria-label="WhatsApp">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                    </svg>
-                </a>
+            <!-- Left Column: Policy Links -->
+            <div class="text-left">
+                <div class="flex flex-col gap-2.5 text-xs">
+                    <a href="{{ route('home') }}" class="hover:text-gray-orange transition uppercase">INICIO</a>
+                    <a href="{{ route('politica.envios') }}" class="hover:text-gray-orange transition uppercase">POLÍTICA DE ENVÍOS</a>
+                    <a href="{{ route('politica.privacidad') }}" class="hover:text-gray-orange transition uppercase">POLÍTICA DE PRIVACIDAD</a>
+                    <a href="{{ route('politica.cookies') }}" class="hover:text-gray-orange transition uppercase">POLÍTICA DE COOKIES</a>
+                    <a href="{{ route('politica.terminos') }}" class="hover:text-gray-orange transition uppercase">TÉRMINOS DEL SERVICIO</a>
+                </div>
             </div>
 
-            <!-- Logo -->
-            <div>
-                <img src="{{ asset('images/IMG-20251016-WA0034.jpg') }}" alt="Imani Magnets" class="h-20 ">
+            <!-- Center Column: Social Icons and Copyright -->
+            <div class="flex flex-col items-center justify-center gap-4">
+                <!-- Social Icons -->
+                <div class="flex items-center justify-center space-x-8">
+                    <a href="https://instagram.com/imanimagnets" target="_blank" class="hover:text-gray-orange hover:scale-110 transition-all text-3xl" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="mailto:info@imanimagnets.com" class="hover:text-gray-orange hover:scale-110 transition-all text-3xl" aria-label="Email">
+                        <i class="fa-regular fa-envelope"></i>
+                    </a>
+                    <a href="https://wa.me/593999999999" target="_blank" class="hover:text-gray-orange hover:scale-110 transition-all text-3xl" aria-label="WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                </div>
+                <!-- Copyright -->
+                <div class="text-center text-sm opacity-90">
+                    © 2025 Imani Magnets, all rights reserved
+                </div>
             </div>
+
+            <!-- Right Column: Logo -->
+            <div class="flex justify-center md:justify-end items-start">
+                <img src="{{ asset('images/IMG-20251016-WA0034.jpg') }}" alt="Imani Magnets" class="h-36 w-auto">
+            </div>
+
         </div>
     </div>
 </footer>

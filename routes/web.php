@@ -3,71 +3,90 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PersonalizadosController;
 
-// Ruta raíz - Sitio en construcción
+/**
+ * 🌐 RUTA RAÍZ
+ * Sitio en construcción temporal
+ */
 Route::get('/', function () {
     return view('construction');
 })->name('root');
 
-// Grupo de rutas bajo /pruebas (modo testing)
+/**
+ * 🧪 Grupo principal en modo pruebas
+ * (todas las rutas del sitio bajo /pruebas)
+ */
 Route::prefix('pruebas')->group(function () {
 
-    // Home
+    /** 🏠 HOME */
     Route::get('/', function () {
         return view('home.index');
     })->name('home');
 
-    // Personalizados
-    Route::get('/personalizados', [PersonalizadosController::class, 'index'])->name('personalizados');
-    Route::post('/personalizados/process', [PersonalizadosController::class, 'processImages'])->name('personalizados.process');
-    Route::get('/personalizados/download/{orderNumber}', [PersonalizadosController::class, 'download'])->name('personalizados.download');
+    /** 🧲 PERSONALIZADOS */
+    Route::prefix('personalizados')->group(function () {
+        // Página principal (landing)
+        Route::get('/', [PersonalizadosController::class, 'index'])->name('personalizados.index');
 
-    // Colecciones
+        // Creador / generador de plantilla
+        Route::get('/crear', [PersonalizadosController::class, 'crear'])->name('personalizados.crear');
+
+        // Procesamiento de imágenes
+        Route::post('/process', [PersonalizadosController::class, 'processImages'])->name('personalizados.process');
+
+        // Descarga de plantilla final
+        Route::get('/download/{orderNumber}', [PersonalizadosController::class, 'download'])->name('personalizados.download');
+    });
+
+    /** 🖼️ COLECCIONES */
     Route::get('/colecciones', function () {
         return view('colecciones.index');
     })->name('colecciones');
 
-    // Mayoristas
+    /** 🏷️ MAYORISTAS */
     Route::get('/mayoristas', function () {
         return view('mayoristas.index');
     })->name('mayoristas');
 
-    // Gift Card
+    /** 🎁 GIFT CARD */
     Route::get('/gift-card', function () {
         return view('gift-card.index');
     })->name('gift-card');
 
-    // Contacto
+    /** 📞 CONTACTO */
     Route::get('/contacto', function () {
         return view('contacto.index');
     })->name('contacto');
 
-    // Carrito
+    /** 🛒 CARRITO */
     Route::get('/carrito', function () {
         return view('carrito.index');
     })->name('carrito');
 
-    // Cuenta / Login
+    /** 👤 CUENTA / LOGIN */
     Route::get('/cuenta', function () {
         return view('cuenta.index');
     })->name('cuenta');
 
-    // Buscar
-    Route::get('/buscar', function () {
-        return view('buscar.index');
-    })->name('buscar');
+    /**
+     * 📜 POLÍTICAS Y TÉRMINOS
+     */
+    Route::get('/politica-envios', function () {
+        return view('politicas.envios');
+    })->name('politica.envios');
 
-    // FAQ
-    Route::get('/faq', function () {
-        return view('faq.index');
-    })->name('faq');
-
-    // Política de Devolución
     Route::get('/politica-devolucion', function () {
         return view('politicas.devolucion');
     })->name('politica.devolucion');
 
-    // Política de Privacidad
     Route::get('/politica-privacidad', function () {
         return view('politicas.privacidad');
     })->name('politica.privacidad');
+
+    Route::get('/politica-cookies', function () {
+        return view('politicas.cookies');
+    })->name('politica.cookies');
+
+    Route::get('/terminos-servicio', function () {
+        return view('politicas.terminos');
+    })->name('politica.terminos');
 });

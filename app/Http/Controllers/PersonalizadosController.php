@@ -18,15 +18,23 @@ class PersonalizadosController extends Controller
     }
 
     /**
-     * Display the personalized magnets page
+     * Página principal de imanes personalizados (landing)
      */
     public function index()
     {
-        return view('personalizados.index');
+        return view('personalizados.index2'); // Esta es la página que ya construimos
     }
 
     /**
-     * Process and save uploaded images
+     * Página siguiente (interfaz para subir fotos / generar template)
+     */
+    public function crear()
+    {
+        return view('personalizados.index'); // Nueva vista con el generador
+    }
+
+    /**
+     * Procesa y guarda las imágenes subidas
      */
     public function processImages(Request $request)
     {
@@ -45,43 +53,30 @@ class PersonalizadosController extends Controller
         }
 
         try {
-            // Extender el tiempo de ejecución para archivos grandes
-            set_time_limit(300); // 5 minutos
+            set_time_limit(300);
             ini_set('max_execution_time', 300);
 
-            // Generate order number
             $orderNumber = Order::generateOrderNumber();
-
-            // Create directory for this order
             $orderDir = "orders/{$orderNumber}";
             Storage::disk('public')->makeDirectory($orderDir);
 
-            // Save the final template PNG (2480x3508px with 9 images positioned)
             $base64Image = $request->final_image;
+            $imageData = $request->is_compressed
+                ? $this->decompressGzip($base64Image)
+                : base64_decode(preg_replace('/^data:image\/\w+;base64,/', '', $base64Image));
 
-            // Si está comprimido con gzip, descomprimir
-            if ($request->is_compressed) {
-                $imageData = $this->decompressGzip($base64Image);
-            } else {
-                // Procesar normalmente
-                $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $base64Image);
-                $imageData = base64_decode($imageData);
-            }
-
-            // Save final template
             $templateFilename = "template_{$orderNumber}.png";
             $templatePath = "{$orderDir}/{$templateFilename}";
             Storage::disk('public')->put($templatePath, $imageData);
 
-            // Create order record
             $order = Order::create([
                 'order_number' => $orderNumber,
                 'customer_email' => $request->customer_email,
                 'customer_name' => $request->customer_name,
                 'status' => 'pending',
-                'images_data' => [], // No guardamos imágenes individuales, solo el template final
+                'images_data' => [],
                 'final_template_path' => $templatePath,
-                'total_price' => 29.99, // Base price, can be dynamic
+                'total_price' => 29.99,
             ]);
 
             return response()->json([
@@ -100,7 +95,7 @@ class PersonalizadosController extends Controller
     }
 
     /**
-     * Download the generated template
+     * Descarga del template generado
      */
     public function download($orderNumber)
     {
@@ -116,27 +111,19 @@ class PersonalizadosController extends Controller
     }
 
     /**
-     * Decompress gzip compressed base64 data
+     * Descomprimir base64 gzip
      */
     private function decompressGzip(string $compressedBase64): string
     {
-        // Remover prefijo data:application/gzip;base64,
         $compressedData = preg_replace('/^data:application\/gzip;base64,/', '', $compressedBase64);
-
-        // Decodificar base64
         $compressedBytes = base64_decode($compressedData);
-
         if ($compressedBytes === false) {
             throw new \Exception('Error al decodificar base64 comprimido');
         }
-
-        // Descomprimir con gzip
         $decompressedData = gzdecode($compressedBytes);
-
         if ($decompressedData === false) {
             throw new \Exception('Error al descomprimir datos gzip');
         }
-
         return $decompressedData;
     }
 }

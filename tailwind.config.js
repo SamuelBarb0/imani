@@ -16,7 +16,7 @@ export default {
       fontFamily: {
         'spartan': ['League Spartan', 'sans-serif'],
         'sans': ['Open Sans', 'sans-serif'],
-        'script': ['Above the Beyond Script', 'cursive'],
+        'script': ['Corinthia', 'cursive'],
         'serif': ['Above the Beyond Serif', 'serif'],
       },
     },

@@ -99,19 +99,13 @@
         <!-- Background Slideshow - Top Portion -->
         <div class="absolute inset-x-0 top-0 h-3/5 overflow-hidden" id="mobile-slideshow">
             <div class="hero-slide active">
-                <img src="{{ asset('images/IMG-20251016-WA0030.jpg') }}" alt="Collage de fotos Imani 1">
+                <img src="{{ asset($content->get('hero.slide_1')) }}" alt="Collage de fotos Imani 1">
             </div>
             <div class="hero-slide">
-                <img src="{{ asset('images/IMG-20251016-WA0024.jpg') }}" alt="Collage de fotos Imani 2">
+                <img src="{{ asset($content->get('hero.slide_2')) }}" alt="Collage de fotos Imani 2">
             </div>
             <div class="hero-slide">
-                <img src="{{ asset('images/IMG-20251016-WA0038.jpg') }}" alt="Collage de fotos Imani 3">
-            </div>
-            <!-- Slideshow Indicators -->
-            <div class="slideshow-indicators">
-                <div class="indicator-dot active" data-slide="0"></div>
-                <div class="indicator-dot" data-slide="1"></div>
-                <div class="indicator-dot" data-slide="2"></div>
+                <img src="{{ asset($content->get('hero.slide_3')) }}" alt="Collage de fotos Imani 3">
             </div>
         </div>
 
@@ -120,16 +114,14 @@
             <div class="container mx-auto px-6">
                 <div class="text-center bg-white/95 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-xl">
                     <h1 class="font-spartan text-4xl md:text-5xl font-bold text-dark-turquoise leading-tight mb-4 animate-fade-in-up delay-100">
-                        DE MOMENTOS<br>
-                        A <span class="font-script text-gray-brown text-5xl md:text-6xl">Imanes</span>
+                        {{ $content->get('hero.title_line1') }}<br>
+                        A <span class="font-script text-gray-brown text-6xl md:text-7xl">{{ $content->get('hero.title_line2') }}</span>
                     </h1>
                     <p class="text-base md:text-lg text-gray-brown mb-6 max-w-md mx-auto animate-fade-in-up delay-200">
-                        Tus recuerdos más especiales<br>
-                        convertidos en piezas únicas que<br>
-                        puedes ver y sentir cada día.
+                        {{ $content->get('hero.subtitle') }}
                     </p>
-                    <a href="{{ url('personalizados') }}" class="btn-primary inline-block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-xl md:text-2xl tracking-wider uppercase shadow-md animate-fade-in-up delay-300">
-                        DISEÑA TUS IMANES
+                    <a href="{{ $content->get('hero.cta_link') }}" class="btn-primary inline-block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-xl md:text-2xl tracking-wider uppercase shadow-md animate-fade-in-up delay-300">
+                        {{ $content->get('hero.cta_text') }}
                     </a>
                 </div>
             </div>
@@ -141,19 +133,27 @@
         <!-- Background Slideshow - Left Side (58%) -->
         <div class="absolute inset-y-0 left-0 w-[58%] overflow-hidden" id="desktop-slideshow">
             <div class="hero-slide active">
-                <img src="{{ asset('images/IMG-20251016-WA0030.jpg') }}" alt="Collage de fotos Imani 1">
+                <img class="w-full h-full object-cover" src="{{ asset($content->get('hero.slide_1')) }}" alt="Collage de fotos Imani 1">
             </div>
             <div class="hero-slide">
-                <img src="{{ asset('images/IMG-20251016-WA0024.jpg') }}" alt="Collage de fotos Imani 2">
+                <img class="w-full h-full object-cover" src="{{ asset($content->get('hero.slide_2')) }}" alt="Collage de fotos Imani 2">
             </div>
             <div class="hero-slide">
-                <img src="{{ asset('images/IMG-20251016-WA0038.jpg') }}" alt="Collage de fotos Imani 3">
+                <img class="w-full h-full object-cover" src="{{ asset($content->get('hero.slide_3')) }}" alt="Collage de fotos Imani 3">
             </div>
+
             <!-- Slideshow Indicators -->
             <div class="slideshow-indicators">
                 <div class="indicator-dot active" data-slide="0"></div>
                 <div class="indicator-dot" data-slide="1"></div>
                 <div class="indicator-dot" data-slide="2"></div>
+            </div>
+
+            <!-- Fade hacia el texto -->
+            <div
+                class="pointer-events-none absolute inset-y-0 right-0 z-10
+               w-64 xl:w-80
+               bg-gradient-to-r from-transparent via-white/50 to-white">
             </div>
         </div>
 
@@ -162,15 +162,15 @@
             <div class="w-[42%] flex items-center justify-center px-8 xl:px-12">
                 <div class="max-w-xl">
                     <h1 class="font-spartan text-5xl xl:text-6xl font-bold text-dark-turquoise leading-tight mb-6 text-right animate-fade-in-up delay-100">
-                        DE MOMENTOS<br>
-                        A <span class="font-script  text-dark-turquoise text-6xl xl:text-7xl inline-block mt-2">Imanes</span>
+                        {{ $content->get('hero.title_line1') }}<br>
+                        A <span class="font-script text-dark-turquoise text-8xl xl:text-8xl inline-block mt-2">{{ $content->get('hero.title_line2') }}</span>
                     </h1>
                     <p class="text-lg xl:text-xl text-gray-brown mb-8 text-right animate-fade-in-up delay-200">
-                        Tus recuerdos más especiales convertidos en piezas únicas que puedes ver y sentir cada día.
+                        {{ $content->get('hero.subtitle') }}
                     </p>
                     <div class="flex justify-end animate-fade-in-up delay-300">
-                        <a href="{{ url('personalizados') }}" class="btn-primary inline-block px-10 py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-base tracking-wider uppercase shadow-lg">
-                            DISEÑA TUS IMANES
+                        <a href="{{ $content->get('hero.cta_link') }}" class="btn-primary inline-block px-10 py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-base tracking-wider uppercase shadow-lg">
+                            {{ $content->get('hero.cta_text') }}
                         </a>
                     </div>
                 </div>
@@ -180,14 +180,13 @@
 </section>
 
 <!-- Quote Section -->
-<section class="bg-gray-50 py-12 md:py-16 lg:py-20 mt-8 md:mt-10 lg:mt-12">
+<section class="bg-gray-50 py-12 md:py-12 lg:py-20 mt-4 md:mt-12 lg:mt-12">
     <div class="container mx-auto px-6 max-w-6xl text-center">
-        <p class="font-script text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-dark-turquoise mb-6 md:mb-8">
-            "Las fotos son un boleto de regreso a un momento."
+        <p class="font-script text-4xl md:text-7xl lg:text-7xl xl:text-7xl text-dark-turquoise mb-6 md:mb-8">
+            {{ $content->get('quote.quote_text') }}
         </p>
         <p class="text-base md:text-lg lg:text-xl xl:text-2xl text-gray-brown px-4">
-            Cada imán de Imani Magnets es una forma de volver a vivir tus mejores momentos.<br>
-            Transforma tus recuerdos en algo tangible, elegante y eterno
+            {!! $content->get('quote.quote_description') !!}
         </p>
     </div>
 </section>
@@ -196,23 +195,22 @@
 <section class="bg-white py-12 md:py-14 lg:py-16">
     <div class="container mx-auto px-6 max-w-6xl">
         <h2 class="font-spartan text-3xl md:text-4xl lg:text-5xl font-bold text-center text-dark-turquoise mb-10 md:mb-14 lg:mb-16 tracking-wider">
-            NUESTROS FAVORITOS
+            {{ $content->get('favorites.title') }}
         </h2>
 
         <!-- Imanes Personalizados -->
-        <div class="mb-12 md:mb-14 lg:mb-16">
-            <div class="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-16 items-center justify-center">
-                <div class="text-center lg:text-left w-full lg:w-auto">
+        <div class="mb-8 md:mb-12 lg:mb-16">
+            <div class="flex flex-col lg:flex-row gap-4 md:gap-6 items-center justify-center">
+                <div class="text-center lg:text-right w-full lg:w-[400px] flex-shrink-0">
                     <h3 class="font-spartan text-2xl md:text-3xl lg:text-4xl font-bold text-dark-turquoise mb-6 md:mb-8 leading-tight">
-                        <span class="block text-right">IMANES</span>
-                        <span class="block text-right">PERSONALIZADOS</span>
+                        {!! nl2br($content->get('favorites.personalizados_title')) !!}
                     </h3>
                     <a href="{{ url('personalizados') }}" class="btn-primary inline-block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-sm md:text-base tracking-wider uppercase">
-                        DISEÑA TUS IMANES
+                        {{ $content->get('favorites.personalizados_button') }}
                     </a>
                 </div>
                 <div class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 flex-shrink-0">
-                    <img src="{{ asset('images/IMG-20251016-WA0024.jpg') }}" alt="Imanes Personalizados" class="w-full h-full object-cover transform hover:scale-110 transition duration-500">
+                    <img src="{{ asset($content->get('favorites.personalizados_image')) }}" alt="{{ $content->get('favorites.personalizados_title') }}" class="w-full h-full object-cover transform hover:scale-110 transition duration-500">
                 </div>
             </div>
         </div>
@@ -220,17 +218,16 @@
         <!-- Colecciones de Imanes -->
         <div class="mb-12 md:mb-14 lg:mb-16">
             <div class="flex flex-col lg:flex-row-reverse gap-4 md:gap-6 items-center justify-center">
-                <div class="text-center lg:text-right w-full lg:w-auto">
+                <div class="text-center lg:text-left w-full lg:w-[400px] flex-shrink-0">
                     <h3 class="font-spartan text-2xl md:text-3xl lg:text-4xl font-bold text-dark-turquoise mb-6 md:mb-8 leading-tight">
-                        <span class="block text-left">COLECCIONES DE</span>
-                        <span class="block text-left">IMANES</span>
+                        {!! nl2br($content->get('favorites.colecciones_title')) !!}
                     </h3>
                     <a href="{{ url('colecciones') }}" class="btn-primary inline-block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-sm md:text-base tracking-wider uppercase">
-                        COMPRA TU COLECCIÓN
+                        {{ $content->get('favorites.colecciones_button') }}
                     </a>
                 </div>
                 <div class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 flex-shrink-0">
-                    <img src="{{ asset('images/IMG-20251016-WA0038.jpg') }}" alt="Colecciones de Imanes" class="w-full h-full object-cover transform hover:scale-110 transition duration-500">
+                    <img src="{{ asset($content->get('favorites.colecciones_image')) }}" alt="{{ $content->get('favorites.colecciones_title') }}" class="w-full h-full object-cover transform hover:scale-110 transition duration-500">
                 </div>
             </div>
         </div>
@@ -238,17 +235,16 @@
         <!-- Pedidos Especiales -->
         <div class="mb-8 md:mb-12 lg:mb-16">
             <div class="flex flex-col lg:flex-row gap-4 md:gap-6 items-center justify-center">
-                <div class="text-center lg:text-left w-full lg:w-auto">
+                <div class="text-center lg:text-right w-full lg:w-[400px] flex-shrink-0">
                     <h3 class="font-spartan text-2xl md:text-3xl lg:text-4xl font-bold text-dark-turquoise mb-6 md:mb-8 leading-tight">
-                        <span class="block text-left">PEDIDOS ESPECIALES Y</span>
-                        <span class="block text-right">AL POR MAYOR</span>
+                        {!! nl2br($content->get('favorites.mayoristas_title')) !!}
                     </h3>
-                    <a href="{{ url('contacto') }}" class="btn-primary block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-sm md:text-base tracking-wider uppercase text-center">
-                        ESCRÍBENOS
+                    <a href="{{ url('contacto') }}" class="btn-primary inline-block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-sm md:text-base tracking-wider uppercase">
+                        {{ $content->get('favorites.mayoristas_button') }}
                     </a>
                 </div>
                 <div class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 flex-shrink-0">
-                    <img src="{{ asset('images/instagram/ig-4.jpg') }}" alt="Pedidos Especiales" class="w-full h-full object-cover transform hover:scale-110 transition duration-500">
+                    <img src="{{ asset($content->get('favorites.mayoristas_image')) }}" alt="{{ $content->get('favorites.mayoristas_title') }}" class="w-full h-full object-cover transform hover:scale-110 transition duration-500">
                 </div>
             </div>
         </div>
@@ -260,16 +256,16 @@
     <div class="container mx-auto px-6 max-w-6xl">
         <div class="flex flex-col lg:flex-row gap-8 md:gap-10 lg:gap-12 items-center">
             <div class="lg:flex-1 lg:pr-8">
-                <h2 class="font-script text-4xl md:text-5xl lg:text-6xl text-dark-turquoise mb-4 md:mb-6">Hola!</h2>
-                <p class="mb-3 md:mb-4 text-sm md:text-base lg:text-lg text-gray-brown">Que gusto tenerte acá!</p>
-                <p class="mb-3 md:mb-4 text-sm md:text-base lg:text-lg text-gray-brown">Soy alemana, fotógrafa de corazón y amante de los pequeños detalles.</p>
-                <p class="mb-3 md:mb-4 text-sm md:text-base lg:text-lg text-gray-brown">Vivo en Cumbayá, Ecuador, donde nació la idea de Imani Magnets: transformar momentos especiales en algo tangible, duradero y con alma.</p>
-                <p class="mb-3 md:mb-4 text-sm md:text-base lg:text-lg text-gray-brown">Siempre he creído que una foto no solo captura un instante, sino una emoción.</p>
-                <p class="mb-6 md:mb-8 text-sm md:text-base lg:text-lg text-gray-brown">Y un imán... te permite revivir esa emoción cada día. Por eso creo cada pieza con dedicación, cuidando la calidad y la historia que hay detrás de cada imagen.</p>
-                <p class="font-script text-3xl md:text-4xl lg:text-5xl text-dark-turquoise text-right">x Julia</p>
+                <h2 class="font-script text-6xl md:text-8xl lg:text-8xl text-dark-turquoise mb-4 md:mb-6">{{ $content->get('about.greeting') }}</h2>
+                <p class="mb-3 md:mb-4 text-sm md:text-base lg:text-lg text-gray-brown">{{ $content->get('about.intro_1') }}</p>
+                <p class="mb-3 md:mb-4 text-sm md:text-base lg:text-lg text-gray-brown">{{ $content->get('about.intro_2') }}</p>
+                <p class="mb-3 md:mb-4 text-sm md:text-base lg:text-lg text-gray-brown">{{ $content->get('about.intro_3') }}</p>
+                <p class="mb-3 md:mb-4 text-sm md:text-base lg:text-lg text-gray-brown">{{ $content->get('about.intro_4') }}</p>
+                <p class="mb-6 md:mb-8 text-sm md:text-base lg:text-lg text-gray-brown">{{ $content->get('about.intro_5') }}</p>
+                <p class="font-script text-6xl md:text-8xl lg:text-8xl text-dark-turquoise text-right">{{ $content->get('about.signature') }}</p>
             </div>
             <div class="w-64 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-lg flex-shrink-0">
-                <img src="{{ asset('images/IMG-20251016-WA0016.jpg') }}" alt="Jimena - Fundadora de Imani Magnets" class="w-full h-auto">
+                <img src="{{ asset($content->get('about.photo')) }}" alt="Jimena - Fundadora de Imani Magnets" class="w-full h-auto">
             </div>
         </div>
     </div>
@@ -279,16 +275,16 @@
 <section class="bg-white py-12 md:py-14 lg:py-16">
     <div class="container mx-auto px-6 max-w-7xl">
         <h2 class="font-spartan text-2xl md:text-3xl lg:text-4xl font-bold text-center lg:text-left text-dark-turquoise mb-8 md:mb-10 lg:mb-12 tracking-wide">
-            HECHOS CON PASIÓN, CALIDAD Y CORAZÓN EUROPEO
+            {{ $content->get('quality.title') }}
         </h2>
         <div class="flex flex-col lg:flex-row gap-8 md:gap-10 lg:gap-16 items-center">
             <div class="w-full max-w-xl md:max-w-2xl lg:basis-[1000px] xl:basis-[1100px] lg:h-[450px] xl:h-[500px] rounded-lg overflow-hidden shadow-lg flex-shrink-0">
-                <img src="{{ asset('images/instagram/ig-2.jpg') }}" alt="Fabricación de imanes" class="w-full h-full object-cover">
+                <img src="{{ asset($content->get('quality.image')) }}" alt="{{ $content->get('quality.title') }}" class="w-full h-full object-cover">
             </div>
             <div class="lg:flex-1">
-                <p class="mb-4 md:mb-6 text-base md:text-lg lg:text-xl text-gray-brown"> Cada imán está fabricado con materiales de alta calidad importados de Estados Unidos, cuidadosamente producidos en Ecuador bajo estándares alemanes</p>
-                <p class="mb-4 md:mb-6 text-base md:text-lg lg:text-xl text-gray-brown"> Soy fotógrafa y diseñadora, y creo cada pieza con la misma dedicación con la que capturo una imagen.</p>
-                <p class="text-base md:text-lg lg:text-xl text-gray-brown">La calidad, el detalle y la emoción son parte de cada creación.</p>
+                <p class="mb-4 md:mb-6 text-base md:text-lg lg:text-xl text-gray-brown">{{ $content->get('quality.text_1') }}</p>
+                <p class="mb-4 md:mb-6 text-base md:text-lg lg:text-xl text-gray-brown">{{ $content->get('quality.text_2') }}</p>
+                <p class="text-base md:text-lg lg:text-xl text-gray-brown">{{ $content->get('quality.text_3') }}</p>
             </div>
         </div>
     </div>
@@ -298,7 +294,7 @@
 <section class="bg-gray-50 py-12 md:py-14 lg:py-16">
     <div class="container mx-auto px-6 max-w-7xl">
         <h2 class="font-spartan text-2xl md:text-3xl lg:text-4xl font-bold text-left text-dark-turquoise mb-4 md:mb-6 tracking-wide">
-            #IMANIMAGNETS
+            {{ $content->get('instagram.title') }}
             <i class="fa-brands fa-instagram inline-block w-6 h-6 md:w-8 md:h-8 ml-2 text-dark-turquoise text-2xl md:text-3xl lg:text-4xl"></i>
         </h2>
         <p class="text-left text-sm md:text-base lg:text-lg text-gray-brown mb-8 md:mb-10 lg:mb-12">
@@ -324,13 +320,12 @@
 <!-- Call to Action -->
 <section class="bg-white py-12 md:py-14 lg:py-16">
     <div class="container mx-auto px-6 text-center max-w-4xl">
-        <p class="font-script text-3xl md:text-4xl lg:text-5xl text-dark-turquoise mb-4 md:mb-6">Donde los recuerdos cobran forma</p>
+        <p class="font-script text-7xl md:text-7xl lg:text-8xl text-dark-turquoise mb-4 md:mb-6">{{ $content->get('cta_final.title') }}</p>
         <p class="text-sm md:text-base lg:text-lg text-gray-brown mb-6 md:mb-8 px-4">
-            Haz que tus recuerdos cobren vida con Imani Magnets.<br>
-            Personaliza tus imanes, comparte emociones y guarda para siempre los instantes que más importan
+            {!! $content->get('cta_final.description') !!}
         </p>
-        <a href="{{ url('personalizados') }}" class="btn-primary inline-block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-sm md:text-base tracking-wider uppercase">
-            DISEÑA TUS IMANES
+        <a href="{{ $content->get('cta_final.button_link') }}" class="btn-primary inline-block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-sm md:text-base tracking-wider uppercase">
+            {{ $content->get('cta_final.button_text') }}
         </a>
     </div>
 </section>

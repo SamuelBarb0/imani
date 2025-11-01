@@ -22,7 +22,8 @@ class PersonalizadosController extends Controller
      */
     public function index()
     {
-        return view('personalizados.index2'); // Esta es la página que ya construimos
+        $content = \App\Helpers\ContentHelper::getPageContent('personalizados');
+        return view('personalizados.index2', compact('content')); // Esta es la página que ya construimos
     }
 
     /**
@@ -31,6 +32,69 @@ class PersonalizadosController extends Controller
     public function crear()
     {
         return view('personalizados.index'); // Nueva vista con el generador
+    }
+
+    /**
+     * Agrega imanes personalizados al carrito
+     */
+    public function addToCart(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'images' => 'required|array|size:9',
+            'images.*' => 'required|string', // Base64 images
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Preparar los datos de las imágenes para el carrito
+            $imagesData = [];
+            foreach ($request->images as $index => $imageBase64) {
+                $imagesData[] = [
+                    'index' => $index,
+                    'data' => $imageBase64
+                ];
+            }
+
+            // Agregar al carrito usando el CartController
+            $cartController = new \App\Http\Controllers\CartController();
+
+            $cartRequest = new Request([
+                'product_id' => 'custom-magnets-9',
+                'quantity' => 1,
+                'price' => 26.99, // Precio del set de 9 imanes personalizados
+                'custom_data' => [
+                    'images' => $imagesData,
+                    'type' => 'personalizados',
+                    'name' => 'Set de 9 Imanes Personalizados 2x2"'
+                ]
+            ]);
+
+            $response = $cartController->store($cartRequest);
+            $data = json_decode($response->getContent(), true);
+
+            if ($data['success']) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Producto agregado al carrito exitosamente',
+                    'cart_total' => $data['cart_total'],
+                    'redirect_url' => route('carrito.index')
+                ]);
+            } else {
+                throw new \Exception('Error al agregar al carrito');
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al agregar al carrito: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -76,7 +140,7 @@ class PersonalizadosController extends Controller
                 'status' => 'pending',
                 'images_data' => [],
                 'final_template_path' => $templatePath,
-                'total_price' => 29.99,
+                'total_price' => 26.99,
             ]);
 
             return response()->json([

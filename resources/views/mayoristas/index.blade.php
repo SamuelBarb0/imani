@@ -7,31 +7,28 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start mb-12">
             <div>
                 <h1 class="text-3xl md:text-4xl font-spartan font-bold text-dark-turquoise mb-4">
-                    PEDIDOS ESPECIALES Y AL POR MAYOR
+                    {{ $content->get('header.title') }}
                 </h1>
 
                 <p class="text-gray-700 mb-4 leading-relaxed">
-                    ¿Buscas un detalle único, personalizado y de alta calidad en cantidades mayores?<br>
-                    En <strong>Imani Magnets</strong> creamos imanes personalizados para empresas, fotógrafos, eventos y ocasiones especiales.
+                    {!! $content->get('header.intro') !!}
                 </p>
 
                 <div class="bg-[#E9E6DF] p-4 rounded-md mb-4">
-                    <p class="text-dark-turquoise font-bold mb-2">Perfectos para:</p>
+                    <p class="text-dark-turquoise font-bold mb-2">{{ $content->get('header.perfect_for_title') }}</p>
                     <ul class="list-disc list-inside text-gray-700 text-[17px]">
-                        <li>Promocionar tu marca o negocio</li>
-                        <li>Recordatorios de bodas, bautizos o cumpleaños</li>
-                        <li>Merchandising, arte o fotografías</li>
+                        <li>{{ $content->get('header.use_1') }}</li>
+                        <li>{{ $content->get('header.use_2') }}</li>
+                        <li>{{ $content->get('header.use_3') }}</li>
                     </ul>
                 </div>
 
                 <p class="text-gray-700 mb-4">
-                    Puedes enviarnos tu diseño o te ayudamos a crearlo.<br>
-                    Solicita tu cotización y recibe el mejor precio y atención personalizada.
+                    {!! $content->get('header.help_text') !!}
                 </p>
 
                 <p class="text-gray-700">
-                    Contáctanos por formulario, WhatsApp o correo:<br>
-                    <span class="text-dark-turquoise font-semibold">hello@imanimagnets.com</span>
+                    {!! $content->get('header.contact_info') !!}
                 </p>
             </div>
 
@@ -39,14 +36,14 @@
             <div class="flex flex-col items-center gap-6">
                 <div class="rounded-lg overflow-hidden shadow-md w-full max-w-sm">
                     <img
-                        src="{{ asset('images/IMG-20251016-WA0028.jpg') }}"
+                        src="{{ asset($content->get('header.image_1')) }}"
                         alt="Imanes personalizados al por mayor"
                         class="w-full h-[350px] md:h-[300px] object-cover">
                 </div>
 
                 <div class="rounded-lg overflow-hidden shadow-md w-full max-w-sm">
                     <img
-                        src="{{ asset('images/IMG-20251016-WA0032.jpg') }}"
+                        src="{{ asset($content->get('header.image_2')) }}"
                         alt="Ejemplo de imán personalizado"
                         class="w-full h-[350px] md:h-[300px] object-cover">
                 </div>
@@ -54,20 +51,20 @@
         </div>
 
         <!-- Formulario -->
-        <div class="bg-[#F9F8F5] border border-gray-300 rounded-lg shadow-sm p-8">
+        <div class="bg-white border border-gray-300 rounded-lg shadow-sm p-8">
             <form action="#" method="POST" class="space-y-6">
                 @csrf
 
                 <!-- Nombre -->
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
-                        <label for="nombre" class="block text-dark-turquoise font-semibold mb-1">Nombre *</label>
-                        <input type="text" id="nombre" name="nombre" placeholder="Nombre"
+                        <label for="nombre" class="block text-dark-turquoise font-semibold mb-1">{{ $content->get('form.label_nombre') }}</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="{{ $content->get('form.placeholder_nombre') }}"
                             class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-gray-orange focus:outline-none">
                     </div>
                     <div>
-                        <label for="apellido" class="block text-dark-turquoise font-semibold mb-1">Apellido *</label>
-                        <input type="text" id="apellido" name="apellido" placeholder="Apellido"
+                        <label for="apellido" class="block text-dark-turquoise font-semibold mb-1">{{ $content->get('form.label_apellido') }}</label>
+                        <input type="text" id="apellido" name="apellido" placeholder="{{ $content->get('form.placeholder_apellido') }}"
                             class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-gray-orange focus:outline-none">
                     </div>
                 </div>
@@ -75,12 +72,12 @@
                 <!-- Correo y celular -->
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
-                        <label for="correo" class="block text-dark-turquoise font-semibold mb-1">Correo *</label>
-                        <input type="email" id="correo" name="correo" placeholder="ejemplo@mail.com"
+                        <label for="correo" class="block text-dark-turquoise font-semibold mb-1">{{ $content->get('form.label_correo') }}</label>
+                        <input type="email" id="correo" name="correo" placeholder="{{ $content->get('form.placeholder_correo') }}"
                             class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-gray-orange focus:outline-none">
                     </div>
                     <div>
-                        <label for="celular" class="block text-dark-turquoise font-semibold mb-1">Celular *</label>
+                        <label for="celular" class="block text-dark-turquoise font-semibold mb-1">{{ $content->get('form.label_celular') }}</label>
                         <input type="tel" id="celular" name="celular"
                             class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-gray-orange focus:outline-none">
                     </div>
@@ -88,22 +85,22 @@
 
                 <!-- Cantidad -->
                 <div>
-                    <label for="cantidad" class="block text-dark-turquoise font-semibold mb-1">¿Cuántos imanes necesitas? *</label>
-                    <input type="number" id="cantidad" name="cantidad" min="1" placeholder="Ej. 100"
+                    <label for="cantidad" class="block text-dark-turquoise font-semibold mb-1">{{ $content->get('form.label_cantidad') }}</label>
+                    <input type="number" id="cantidad" name="cantidad" min="1" placeholder="{{ $content->get('form.placeholder_cantidad') }}"
                         class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-gray-orange focus:outline-none">
                 </div>
 
                 <!-- Fecha -->
                 <div>
-                    <label for="fecha" class="block text-dark-turquoise font-semibold mb-1">¿Para cuándo los necesitas? *</label>
+                    <label for="fecha" class="block text-dark-turquoise font-semibold mb-1">{{ $content->get('form.label_fecha') }}</label>
                     <input type="date" id="fecha" name="fecha"
                         class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-gray-orange focus:outline-none">
                 </div>
 
                 <!-- Comentarios -->
                 <div>
-                    <label for="comentarios" class="block text-dark-turquoise font-semibold mb-1">Comentarios *</label>
-                    <textarea id="comentarios" name="comentarios" rows="4" placeholder="Escribe aquí tus comentarios o requerimientos..."
+                    <label for="comentarios" class="block text-dark-turquoise font-semibold mb-1">{{ $content->get('form.label_comentarios') }}</label>
+                    <textarea id="comentarios" name="comentarios" rows="4" placeholder="{{ $content->get('form.placeholder_comentarios') }}"
                         class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-gray-orange focus:outline-none"></textarea>
                 </div>
 
@@ -111,7 +108,7 @@
                 <div class="text-center">
                     <button type="submit"
                         class="btn-primary inline-block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-sm md:text-base tracking-wider uppercase">
-                        ENVIAR
+                        {{ $content->get('form.button_submit') }}
                     </button>
                 </div>
             </form>

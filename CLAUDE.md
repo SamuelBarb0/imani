@@ -57,8 +57,8 @@ php artisan view:clear         # Clear compiled view cache
 - **Laravel 12** with Blade templates
 - **Vite** for asset bundling (configured in [vite.config.js](vite.config.js))
 - **Tailwind CSS v4** using `@tailwindcss/vite` plugin
-- **Custom fonts**: Above the Beyond Script/Serif (local OTF files in `public/Demo_Fonts/`)
-- **Google Fonts**: League Spartan (headings) and Open Sans (body text)
+- **Custom fonts**: Above the Beyond Serif (local OTF files in `public/Demo_Fonts/`)
+- **Google Fonts**: Corinthia (script), League Spartan (headings) and Open Sans (body text)
 
 ### View Architecture
 The application uses a component-based Blade structure:
@@ -83,10 +83,10 @@ All routes are currently closure-based in [routes/web.php](routes/web.php) - whe
 **Typography Hierarchy**:
 - `font-spartan`: League Spartan - Use for headings and navigation
 - `font-sans`: Open Sans - Use for body text and paragraphs
-- `font-script`: Above the Beyond Script - Use for decorative/cursive text only
+- `font-script`: Corinthia (Google Fonts) - Use for decorative/cursive text only
 - `font-serif`: Above the Beyond Serif - Use sparingly for elegant headings
 
-Custom font faces are loaded via `@font-face` in [resources/css/app.css](resources/css/app.css) and reference OTF files in `public/Demo_Fonts/`.
+Corinthia is loaded via Google Fonts in the layout. Above the Beyond Serif uses local OTF files in `public/Demo_Fonts/`.
 
 ### Key Features
 1. **Hero Slideshow**: Auto-rotating image carousel with manual controls (home page)

@@ -1,16 +1,10 @@
 @import "tailwindcss";
+@import "cropperjs/dist/cropper.css";
 
 /* Custom styles for Imani Magnets */
 
-/* Load custom fonts - Above the Beyond */
-@font-face {
-    font-family: 'Above the Beyond Script';
-    src: url('/Demo_Fonts/DEMO-atbscript-rg.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
+/* Custom fonts - Corinthia is loaded via Google Fonts in layout */
+/* Above the Beyond Serif kept for specific uses */
 @font-face {
     font-family: 'Above the Beyond Serif';
     src: url('/Demo_Fonts/DEMO-atbserif-rg.otf') format('opentype');
@@ -66,7 +60,7 @@
 
 /* Custom font utility classes */
 .font-script {
-  font-family: 'Above the Beyond Script', cursive;
+  font-family: 'Corinthia', cursive;
 }
 
 .font-serif {

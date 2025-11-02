@@ -12,25 +12,16 @@ use Illuminate\Support\Facades\Storage;
     <div class="container mx-auto px-6 max-w-6xl">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="font-spartan text-3xl font-bold text-white mb-2">
-                    PEDIDO #{{ $order->order_number }}
-                </h1>
-                <p class="text-white/80">{{ $order->created_at->format('d/m/Y H:i') }}</p>
+<h1 class="font-spartan text-3xl font-bold text-gray-900 mb-2">
+  PEDIDO #{{ $order->order_number }}
+</h1>
+
+                <p class="text-gray-900">{{ $order->created_at->format('d/m/Y H:i') }}</p>
             </div>
             <div class="flex gap-2">
                 <a href="{{ route('admin.orders.pdf', $order->id) }}" target="_blank" class="px-4 py-2 bg-white text-dark-turquoise rounded-full font-semibold text-sm hover:bg-gray-100">
                     📄 Descargar PDF
                 </a>
-                @php
-                    $hasCustomImages = $order->items->first(function($item) {
-                        return !empty($item->custom_data) && isset($item->custom_data['images']);
-                    });
-                @endphp
-                @if($hasCustomImages)
-                    <a href="{{ route('admin.orders.template', $order->id) }}" class="px-4 py-2 bg-gray-orange text-white rounded-full font-semibold text-sm hover:bg-gray-brown">
-                        🖼️ Descargar Template
-                    </a>
-                @endif
                 <a href="{{ route('admin.orders.index') }}" class="px-4 py-2 bg-white text-dark-turquoise rounded-full font-semibold text-sm hover:bg-gray-100">
                     ← Volver a Pedidos
                 </a>
@@ -80,13 +71,13 @@ use Illuminate\Support\Facades\Storage;
                         @csrf
                         <select name="courier" required class="w-full text-sm p-2 border rounded">
                             <option value="">Seleccionar Courier</option>
-                            @foreach(\App\Models\Order::getCouriers() as $key => $name)
-                                <option value="{{ $key }}">{{ $name }}</option>
+                            @foreach(\App\Models\Courier::where('is_active', true)->orderBy('name')->get() as $courier)
+                                <option value="{{ $courier->name }}">{{ $courier->name }}</option>
                             @endforeach
                         </select>
                         <input type="text" name="tracking_number" placeholder="# de Tracking" required class="w-full text-sm p-2 border rounded">
                         <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700">
-                            Enviar Tracking
+                            Enviar Tracking y Marcar como Enviado
                         </button>
                     </form>
                 </div>

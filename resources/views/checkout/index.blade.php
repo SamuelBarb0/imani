@@ -124,24 +124,17 @@
                                     <select name="shipping_city" id="shipping_city" required
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
                                         <option value="">Seleccionar ciudad...</option>
-                                        <option value="Quito" {{ old('shipping_city') == 'Quito' ? 'selected' : '' }}>Quito</option>
-                                        <option value="Guayaquil" {{ old('shipping_city') == 'Guayaquil' ? 'selected' : '' }}>Guayaquil</option>
-                                        <option value="Cuenca" {{ old('shipping_city') == 'Cuenca' ? 'selected' : '' }}>Cuenca</option>
-                                        <option value="Santo Domingo" {{ old('shipping_city') == 'Santo Domingo' ? 'selected' : '' }}>Santo Domingo</option>
-                                        <option value="Machala" {{ old('shipping_city') == 'Machala' ? 'selected' : '' }}>Machala</option>
-                                        <option value="Durán" {{ old('shipping_city') == 'Durán' ? 'selected' : '' }}>Durán</option>
-                                        <option value="Manta" {{ old('shipping_city') == 'Manta' ? 'selected' : '' }}>Manta</option>
-                                        <option value="Portoviejo" {{ old('shipping_city') == 'Portoviejo' ? 'selected' : '' }}>Portoviejo</option>
-                                        <option value="Loja" {{ old('shipping_city') == 'Loja' ? 'selected' : '' }}>Loja</option>
-                                        <option value="Ambato" {{ old('shipping_city') == 'Ambato' ? 'selected' : '' }}>Ambato</option>
-                                        <option value="Esmeraldas" {{ old('shipping_city') == 'Esmeraldas' ? 'selected' : '' }}>Esmeraldas</option>
-                                        <option value="Quevedo" {{ old('shipping_city') == 'Quevedo' ? 'selected' : '' }}>Quevedo</option>
-                                        <option value="Riobamba" {{ old('shipping_city') == 'Riobamba' ? 'selected' : '' }}>Riobamba</option>
-                                        <option value="Milagro" {{ old('shipping_city') == 'Milagro' ? 'selected' : '' }}>Milagro</option>
-                                        <option value="Ibarra" {{ old('shipping_city') == 'Ibarra' ? 'selected' : '' }}>Ibarra</option>
-                                        <option value="La Libertad" {{ old('shipping_city') == 'La Libertad' ? 'selected' : '' }}>La Libertad</option>
-                                        <option value="Babahoyo" {{ old('shipping_city') == 'Babahoyo' ? 'selected' : '' }}>Babahoyo</option>
-                                        <option value="Otra" {{ old('shipping_city') == 'Otra' ? 'selected' : '' }}>Otra ciudad</option>
+                                        @foreach($provinces as $province)
+                                            <optgroup label="{{ $province->name }}">
+                                                @foreach($province->cities as $city)
+                                                    <option value="{{ $city->id }}"
+                                                        data-province="{{ $province->name }}"
+                                                        {{ old('shipping_city') == $city->id ? 'selected' : '' }}>
+                                                        {{ $city->name }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
                                     </select>
                                     @error('shipping_city')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -150,9 +143,9 @@
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-brown mb-2">Provincia</label>
-                                    <input type="text" name="shipping_state" id="shipping_state" value="{{ old('shipping_state') }}"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
-                                        placeholder="Ej: Pichincha">
+                                    <input type="text" name="shipping_state" id="shipping_state" value="{{ old('shipping_state') }}" readonly
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                                        placeholder="Selecciona una ciudad primero">
                                     @error('shipping_state')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
@@ -321,15 +314,15 @@
                         <div class="space-y-3 mb-6">
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-brown">Subtotal:</span>
-                                <span class="font-semibold">${{ number_format($subtotal, 2) }}</span>
+                                <span class="font-semibold" id="summary-subtotal">${{ number_format($subtotal, 2) }}</span>
                             </div>
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-brown">Envío:</span>
-                                <span class="font-semibold">${{ number_format($shippingCost, 2) }}</span>
+                                <span class="font-semibold" id="summary-shipping">${{ number_format($shippingCost, 2) }}</span>
                             </div>
                             <div class="border-t border-gray-200 pt-3 flex justify-between">
                                 <span class="font-spartan font-bold text-dark-turquoise">Total:</span>
-                                <span class="font-spartan text-xl font-bold text-dark-turquoise">${{ number_format($total, 2) }}</span>
+                                <span class="font-spartan text-xl font-bold text-dark-turquoise" id="summary-total">${{ number_format($total, 2) }}</span>
                             </div>
                         </div>
 
@@ -363,6 +356,37 @@
         const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
         const sameAsBillingCheckbox = document.getElementById('same-as-billing');
         const shippingFields = document.getElementById('shipping-fields');
+        const citySelect = document.getElementById('shipping_city');
+        const provinceInput = document.getElementById('shipping_state');
+
+        // Update shipping cost when city changes
+        citySelect.addEventListener('change', async function() {
+            const cityId = this.value;
+
+            if (!cityId) {
+                return;
+            }
+
+            // Update province name from option data
+            const selectedOption = this.options[this.selectedIndex];
+            const provinceName = selectedOption.getAttribute('data-province');
+            if (provinceName && provinceInput) {
+                provinceInput.value = provinceName;
+            }
+
+            try {
+                const response = await fetch(`/pruebas/checkout/shipping-cost/${cityId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update the summary totals
+                    document.getElementById('summary-shipping').textContent = '$' + data.cost.toFixed(2);
+                    document.getElementById('summary-total').textContent = '$' + data.total.toFixed(2);
+                }
+            } catch (error) {
+                console.error('Error fetching shipping cost:', error);
+            }
+        });
 
         // Toggle transfer details visibility
         paymentRadios.forEach(radio => {
@@ -472,6 +496,11 @@
         hiddenInput.name = 'client_transaction_id';
         hiddenInput.value = clientTransactionId;
         form.appendChild(hiddenInput);
+
+        // Trigger change event on page load if city is pre-selected (for old() values)
+        if (citySelect.value) {
+            citySelect.dispatchEvent(new Event('change'));
+        }
     });
 </script>
 @endpush

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\City;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\PayPhoneService;
@@ -27,9 +28,23 @@ class CheckoutController extends Controller
 
         $cart->load('items');
 
+        // Load active provinces with their cities grouped
+        $provinces = \App\Models\Province::where('is_active', true)
+            ->with(['cities' => function($query) {
+                $query->where('is_active', true)
+                    ->with(['courierPrices.courier'])
+                    ->orderBy('name');
+            }])
+            ->whereHas('cities', function($query) {
+                $query->where('is_active', true);
+            })
+            ->orderBy('name')
+            ->get();
+
         return view('checkout.index', [
             'cart' => $cart,
             'items' => $cart->items,
+            'provinces' => $provinces,
             'subtotal' => $cart->getTotal(),
             'shippingCost' => $this->calculateShipping($cart),
             'total' => $cart->getTotal() + $this->calculateShipping($cart),
@@ -46,7 +61,7 @@ class CheckoutController extends Controller
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:20',
             'shipping_address' => 'required|string',
-            'shipping_city' => 'required|string|max:100',
+            'shipping_city' => 'required|exists:cities,id',
             'shipping_state' => 'nullable|string|max:100',
             'shipping_zip' => 'required|string|max:20',
             'shipping_country' => 'required|string|max:100',
@@ -60,11 +75,14 @@ class CheckoutController extends Controller
             return back()->with('error', 'Tu carrito está vacío');
         }
 
+        // Get city details
+        $city = City::with('province')->findOrFail($validated['shipping_city']);
+
         DB::beginTransaction();
 
         try {
             $subtotal = $cart->getTotal();
-            $shippingCost = $this->calculateShipping($cart);
+            $shippingCost = $this->calculateShipping($cart, $city);
             $total = $subtotal + $shippingCost;
 
             // Create order
@@ -76,8 +94,8 @@ class CheckoutController extends Controller
                 'customer_email' => $validated['customer_email'],
                 'customer_phone' => $validated['customer_phone'] ?? null,
                 'shipping_address' => $validated['shipping_address'],
-                'shipping_city' => $validated['shipping_city'],
-                'shipping_state' => $validated['shipping_state'] ?? null,
+                'shipping_city' => $city->name,
+                'shipping_state' => $city->province->name,
                 'shipping_zip' => $validated['shipping_zip'],
                 'shipping_country' => $validated['shipping_country'],
                 'subtotal' => $subtotal,
@@ -188,16 +206,26 @@ class CheckoutController extends Controller
                 ->with('error', 'Datos de checkout no encontrados. Por favor completa el formulario nuevamente.');
         }
 
+        // Get city to calculate correct shipping cost
+        $city = null;
+        if (isset($checkoutData['city'])) {
+            $city = City::with(['courierPrices.courier', 'province'])->find($checkoutData['city']);
+        }
+
         $subtotal = $cart->getTotal();
-        $shippingCost = $this->calculateShipping($cart);
+        $shippingCost = $this->calculateShipping($cart, $city);
         $total = $subtotal + $shippingCost;
+
+        // Generate a fresh unique client transaction ID for each payment attempt
+        // This prevents duplicate transaction errors when user reloads the page
+        $clientTransactionId = 'IM-' . time() . '-' . uniqid() . '-' . substr(md5(session()->getId()), 0, 8);
 
         return view('checkout.payment', [
             'subtotal' => $subtotal,
             'shippingCost' => $shippingCost,
             'total' => $total,
             'customerData' => $checkoutData,
-            'clientTransactionId' => $checkoutData['client_transaction_id'],
+            'clientTransactionId' => $clientTransactionId,
         ]);
     }
 
@@ -386,12 +414,57 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Calculate shipping cost
+     * Get shipping cost for a specific city (AJAX endpoint)
      */
-    private function calculateShipping(Cart $cart): float
+    public function getShippingCost($cityId)
     {
-        // TODO: Implement real shipping calculation
-        return 10.00; // Fixed shipping for now
+        $city = City::with(['courierPrices.courier', 'province'])->find($cityId);
+
+        if (!$city) {
+            return response()->json([
+                'success' => false,
+                'cost' => 10.00,
+                'message' => 'Ciudad no encontrada'
+            ]);
+        }
+
+        $cart = $this->getCart();
+        $shippingCost = $this->calculateShipping($cart, $city);
+        $subtotal = $cart ? $cart->getTotal() : 0;
+
+        return response()->json([
+            'success' => true,
+            'cost' => $shippingCost,
+            'subtotal' => $subtotal,
+            'total' => $subtotal + $shippingCost,
+            'city_name' => $city->name,
+            'province_name' => $city->province->name
+        ]);
+    }
+
+    /**
+     * Calculate shipping cost based on city
+     */
+    private function calculateShipping(Cart $cart, ?City $city = null): float
+    {
+        if (!$city) {
+            return 10.00; // Default shipping if no city provided
+        }
+
+        // Get the first available courier price for this city
+        $courierPrice = $city->courierPrices()
+            ->whereHas('courier', function($query) {
+                $query->where('is_active', true);
+            })
+            ->orderBy('price', 'asc')
+            ->first();
+
+        if ($courierPrice) {
+            return (float) $courierPrice->price;
+        }
+
+        // Fallback if no courier price found for this city
+        return 10.00;
     }
 
     /**

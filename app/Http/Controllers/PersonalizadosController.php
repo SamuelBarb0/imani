@@ -23,7 +23,8 @@ class PersonalizadosController extends Controller
     public function index()
     {
         $content = \App\Helpers\ContentHelper::getPageContent('personalizados');
-        return view('personalizados.index2', compact('content')); // Esta es la página que ya construimos
+        $seoPage = 'personalizados';
+        return view('personalizados.index2', compact('content', 'seoPage')); // Esta es la página que ya construimos
     }
 
     /**

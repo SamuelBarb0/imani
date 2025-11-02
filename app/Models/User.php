@@ -63,4 +63,13 @@ class User extends Authenticatable
     {
         return $this->role === $role;
     }
+
+    /**
+     * Accessor for is_admin attribute
+     * Makes $user->is_admin work in Blade templates
+     */
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->role === 'admin';
+    }
 }

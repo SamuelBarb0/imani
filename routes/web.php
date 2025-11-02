@@ -24,7 +24,8 @@ Route::prefix('pruebas')->group(function () {
     /** 🏠 HOME */
     Route::get('/', function () {
         $content = App\Helpers\ContentHelper::getPageContent('home');
-        return view('home.index', compact('content'));
+        $seoPage = 'home';
+        return view('home.index', compact('content', 'seoPage'));
     })->name('home');
 
     /** 🧲 PERSONALIZADOS */
@@ -49,30 +50,39 @@ Route::prefix('pruebas')->group(function () {
     Route::get('/colecciones', function () {
         $content = App\Helpers\ContentHelper::getPageContent('colecciones');
         $collections = App\Models\Collection::active()->get();
-        return view('colecciones.index', compact('content', 'collections'));
+        $seoPage = 'colecciones';
+        return view('colecciones.index', compact('content', 'collections', 'seoPage'));
     })->name('colecciones');
 
     Route::get('/colecciones/{collection}', function (App\Models\Collection $collection) {
         $content = App\Helpers\ContentHelper::getPageContent('colecciones');
-        return view('colecciones.show', compact('collection', 'content'));
+        $seoPage = 'colecciones';
+        return view('colecciones.show', compact('collection', 'content', 'seoPage'));
     })->name('colecciones.show');
 
     /** 🏷️ MAYORISTAS */
     Route::get('/mayoristas', function () {
         $content = App\Helpers\ContentHelper::getPageContent('mayoristas');
-        return view('mayoristas.index', compact('content'));
+        $seoPage = 'mayoristas';
+        return view('mayoristas.index', compact('content', 'seoPage'));
     })->name('mayoristas');
 
     /** 🎁 GIFT CARD */
     Route::get('/gift-card', function () {
-        return view('gift-card.index');
+        $seoPage = 'gift-card';
+        return view('gift-card.index', compact('seoPage'));
     })->name('gift-card');
 
     /** 📞 CONTACTO */
     Route::get('/contacto', function () {
         $content = App\Helpers\ContentHelper::getPageContent('contacto');
-        return view('contacto.index', compact('content'));
+        $seoPage = 'contacto';
+        return view('contacto.index', compact('content', 'seoPage'));
     })->name('contacto');
+
+    /** 📦 TRACKING DE PEDIDOS */
+    Route::get('/rastrear-pedido', [App\Http\Controllers\OrderTrackingController::class, 'index'])->name('tracking.index');
+    Route::post('/rastrear-pedido', [App\Http\Controllers\OrderTrackingController::class, 'track'])->name('tracking.track');
 
     /** 🛒 CARRITO */
     Route::prefix('carrito')->group(function () {
@@ -94,6 +104,7 @@ Route::prefix('pruebas')->group(function () {
         Route::get('/estado/{orderNumber}', [CheckoutController::class, 'checkPaymentStatus'])->name('checkout.status');
         Route::get('/payphone/return', [CheckoutController::class, 'payphoneReturn'])->name('checkout.payphone.return');
         Route::get('/payphone/confirm', [PayPhoneBoxController::class, 'confirm'])->name('checkout.payphone.confirm');
+        Route::get('/shipping-cost/{cityId}', [CheckoutController::class, 'getShippingCost'])->name('checkout.shipping-cost');
     });
 
     /** 👤 AUTENTICACIÓN */
@@ -148,6 +159,22 @@ Route::prefix('pruebas')->group(function () {
 
         // Collections Management
         Route::resource('collections', App\Http\Controllers\Admin\CollectionController::class);
+
+        // Couriers Management
+        Route::resource('couriers', App\Http\Controllers\Admin\CourierController::class);
+
+        // Provinces Management
+        Route::resource('provinces', App\Http\Controllers\Admin\ProvinceController::class);
+
+        // Cities Management
+        Route::resource('cities', App\Http\Controllers\Admin\CityController::class);
+
+        // Shipping Prices Matrix
+        Route::get('/shipping-prices', [App\Http\Controllers\Admin\ShippingPriceController::class, 'index'])->name('shipping-prices.index');
+        Route::put('/shipping-prices', [App\Http\Controllers\Admin\ShippingPriceController::class, 'update'])->name('shipping-prices.update');
+
+        // SEO Management
+        Route::resource('seo', App\Http\Controllers\Admin\SeoController::class);
     });
 
     /**

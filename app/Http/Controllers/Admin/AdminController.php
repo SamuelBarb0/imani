@@ -230,7 +230,7 @@ class AdminController extends Controller
         }
 
         return redirect()->route('admin.orders.show', $id)
-            ->with('success', 'Número de tracking agregado y email enviado al cliente.');
+            ->with('success', 'Número de tracking agregado, estado cambiado a Enviado y email enviado al cliente.');
     }
 
     /**

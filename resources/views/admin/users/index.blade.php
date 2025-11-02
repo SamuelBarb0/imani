@@ -8,10 +8,10 @@
     <div class="container mx-auto px-6 max-w-7xl">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="font-spartan text-3xl font-bold text-white mb-2">
+                <h1 class="font-spartan text-3xl font-bold text-dark-turquoise mb-2">
                     GESTIÓN DE USUARIOS
                 </h1>
-                <p class="text-white/80">Total: {{ $users->total() }} usuarios</p>
+                <p class="text-gray-900">Total: {{ $users->total() }} usuarios</p>
             </div>
             <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-white text-dark-turquoise rounded-full font-semibold text-sm hover:bg-gray-100">
                 ← Volver al Dashboard

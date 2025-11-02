@@ -7,6 +7,8 @@ use App\Services\TemplateGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class PersonalizadosController extends Controller
 {
@@ -35,22 +37,53 @@ class PersonalizadosController extends Controller
         return view('personalizados.index'); // Nueva vista con el generador
     }
 
+
     /**
      * Agrega imanes personalizados al carrito
      */
     public function addToCart(Request $request)
     {
+        $t0 = microtime(true);
+        $rid = (string) Str::uuid(); // correlación para seguir el request en logs
+
+        Log::info('addToCart: inicio', [
+            'rid' => $rid,
+            'ip' => $request->ip(),
+            'user_id' => optional($request->user())->id,
+            'payload_keys' => array_keys($request->all()),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'images' => 'required|array|size:9',
             'images.*' => 'required|string', // Base64 images
         ]);
 
         if ($validator->fails()) {
+            Log::warning('addToCart: validación fallida', [
+                'rid' => $rid,
+                'errors' => $validator->errors()->toArray(),
+                'images_count' => is_array($request->images ?? null) ? count($request->images) : null,
+            ]);
+
             return response()->json([
                 'success' => false,
                 'errors' => $validator->errors()
             ], 422);
         }
+
+        // Métricas seguras sobre las imágenes (sin guardar el base64)
+        $imgMeta = [];
+        foreach (($request->images ?? []) as $i => $img) {
+            $imgMeta[] = [
+                'index' => $i,
+                'len'   => is_string($img) ? strlen($img) : null, // tamaño del string base64
+                'head'  => is_string($img) ? substr($img, 0, 20) : null, // prefijo para diagnosticar (no sensible)
+            ];
+        }
+        Log::info('addToCart: imágenes recibidas', [
+            'rid' => $rid,
+            'images_meta' => $imgMeta,
+        ]);
 
         try {
             // Preparar los datos de las imágenes para el carrito
@@ -58,9 +91,17 @@ class PersonalizadosController extends Controller
             foreach ($request->images as $index => $imageBase64) {
                 $imagesData[] = [
                     'index' => $index,
-                    'data' => $imageBase64
+                    'data'  => $imageBase64
                 ];
             }
+
+            Log::info('addToCart: construyendo request para CartController@store', [
+                'rid' => $rid,
+                'product_id' => 'custom-magnets-9',
+                'quantity' => 1,
+                'price' => 26.99,
+                'custom_data_keys' => ['images','type','name'],
+            ]);
 
             // Agregar al carrito usando el CartController
             $cartController = new \App\Http\Controllers\CartController();
@@ -77,20 +118,41 @@ class PersonalizadosController extends Controller
             ]);
 
             $response = $cartController->store($cartRequest);
-            $data = json_decode($response->getContent(), true);
 
-            if ($data['success']) {
+            // Intentamos parsear respuesta
+            $statusCode = method_exists($response, 'getStatusCode') ? $response->getStatusCode() : null;
+            $raw = method_exists($response, 'getContent') ? $response->getContent() : null;
+            $data = json_decode($raw ?: '{}', true);
+
+            Log::info('addToCart: respuesta de CartController@store', [
+                'rid' => $rid,
+                'status' => $statusCode,
+                'success_flag' => $data['success'] ?? null,
+                'cart_total' => $data['cart_total'] ?? null,
+                'duration_ms' => round((microtime(true) - $t0) * 1000, 1),
+            ]);
+
+            if (($data['success'] ?? false) === true) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Producto agregado al carrito exitosamente',
-                    'cart_total' => $data['cart_total'],
+                    'cart_total' => $data['cart_total'] ?? null,
                     'redirect_url' => route('carrito.index')
                 ]);
             } else {
                 throw new \Exception('Error al agregar al carrito');
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            Log::error('addToCart: excepción', [
+                'rid' => $rid,
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'duration_ms' => round((microtime(true) - $t0) * 1000, 1),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al agregar al carrito: ' . $e->getMessage()

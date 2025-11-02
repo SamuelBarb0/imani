@@ -36,10 +36,20 @@
         </div>
 
         <div class="mb-6">
-            <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Imagen *</label>
+            <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Imagen Principal *</label>
             <input type="file" name="image" id="image" accept="image/*" required
                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
             <p class="text-sm text-gray-500 mt-1">Formatos permitidos: JPG, PNG, GIF, WEBP. Máximo 2MB.</p>
+        </div>
+
+        <div class="mb-6">
+            <label for="gallery" class="block text-sm font-medium text-gray-700 mb-2">Galería de Imágenes (opcional)</label>
+            <input type="file" name="gallery[]" id="gallery" accept="image/*" multiple
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
+            <p class="text-sm text-gray-500 mt-1">Selecciona hasta 6 imágenes adicionales. JPG, PNG, GIF, WEBP. Máximo 2MB cada una.</p>
+
+            <!-- Gallery Preview -->
+            <div id="gallery-preview" class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 hidden"></div>
         </div>
 
         <div class="mb-6">
@@ -83,4 +93,71 @@
         </div>
     </form>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const galleryInput = document.getElementById('gallery');
+    const galleryPreview = document.getElementById('gallery-preview');
+    let selectedFiles = [];
+
+    galleryInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+
+        // Limit to 6 images
+        if (files.length > 6) {
+            alert('Puedes seleccionar hasta 6 imágenes para la galería.');
+            return;
+        }
+
+        selectedFiles = files;
+        updateGalleryPreview();
+    });
+
+    function updateGalleryPreview() {
+        galleryPreview.innerHTML = '';
+
+        if (selectedFiles.length === 0) {
+            galleryPreview.classList.add('hidden');
+            return;
+        }
+
+        galleryPreview.classList.remove('hidden');
+
+        selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'relative group';
+                div.innerHTML = `
+                    <img src="${e.target.result}" class="w-full h-32 object-cover rounded border border-gray-300" alt="Preview ${index + 1}">
+                    <button type="button" onclick="removeGalleryImage(${index})"
+                            class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                `;
+                galleryPreview.appendChild(div);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Make removeGalleryImage globally accessible
+    window.removeGalleryImage = function(index) {
+        selectedFiles.splice(index, 1);
+
+        // Update the file input
+        const dt = new DataTransfer();
+        selectedFiles.forEach(file => dt.items.add(file));
+        galleryInput.files = dt.files;
+
+        updateGalleryPreview();
+    };
+});
+</script>
+@endpush
 @endsection

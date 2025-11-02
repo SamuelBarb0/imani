@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class CollectionController extends Controller
 {
@@ -35,19 +34,43 @@ class CollectionController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'price' => 'required|numeric|min:0',
             'items' => 'nullable|string',
             'is_active' => 'boolean',
             'order' => 'required|integer|min:0',
         ]);
 
-        // Handle image upload
+        // Handle main image upload
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
             $image->move(public_path('images'), $imageName);
             $validated['image'] = 'images/' . $imageName;
         }
+
+        // Handle gallery images upload
+        $galleryPaths = [];
+        if ($request->hasFile('gallery')) {
+            $galleryDir = public_path('images/collections/gallery');
+
+            // Create directory if it doesn't exist
+            if (!file_exists($galleryDir)) {
+                mkdir($galleryDir, 0755, true);
+            }
+
+            foreach ($request->file('gallery') as $index => $galleryImage) {
+                // Limit to 6 images
+                if ($index >= 6) {
+                    break;
+                }
+
+                $galleryImageName = time() . '_' . $index . '_' . $galleryImage->getClientOriginalName();
+                $galleryImage->move($galleryDir, $galleryImageName);
+                $galleryPaths[] = 'images/collections/gallery/' . $galleryImageName;
+            }
+        }
+        $validated['gallery'] = $galleryPaths;
 
         // Convert items string to array
         if ($request->filled('items')) {
@@ -80,13 +103,15 @@ class CollectionController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'deleted_gallery.*' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'items' => 'nullable|string',
             'is_active' => 'boolean',
             'order' => 'required|integer|min:0',
         ]);
 
-        // Handle image upload if new image provided
+        // Handle main image upload if new image provided
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($collection->image && file_exists(public_path($collection->image))) {
@@ -98,6 +123,51 @@ class CollectionController extends Controller
             $image->move(public_path('images'), $imageName);
             $validated['image'] = 'images/' . $imageName;
         }
+
+        // Handle gallery images
+        $currentGallery = $collection->gallery ?? [];
+
+        // Remove deleted gallery images
+        if ($request->has('deleted_gallery')) {
+            foreach ($request->deleted_gallery as $deletedPath) {
+                // Delete file from disk
+                if (file_exists(public_path($deletedPath))) {
+                    unlink(public_path($deletedPath));
+                }
+
+                // Remove from array
+                $currentGallery = array_filter($currentGallery, function ($path) use ($deletedPath) {
+                    return $path !== $deletedPath;
+                });
+            }
+        }
+
+        // Add new gallery images
+        if ($request->hasFile('gallery')) {
+            $galleryDir = public_path('images/collections/gallery');
+
+            // Create directory if it doesn't exist
+            if (!file_exists($galleryDir)) {
+                mkdir($galleryDir, 0755, true);
+            }
+
+            $totalImages = count($currentGallery);
+
+            foreach ($request->file('gallery') as $index => $galleryImage) {
+                // Limit total gallery to 6 images
+                if ($totalImages >= 6) {
+                    break;
+                }
+
+                $galleryImageName = time() . '_' . $index . '_' . $galleryImage->getClientOriginalName();
+                $galleryImage->move($galleryDir, $galleryImageName);
+                $currentGallery[] = 'images/collections/gallery/' . $galleryImageName;
+                $totalImages++;
+            }
+        }
+
+        // Re-index array to avoid gaps
+        $validated['gallery'] = array_values($currentGallery);
 
         // Convert items string to array
         if ($request->filled('items')) {
@@ -120,9 +190,18 @@ class CollectionController extends Controller
      */
     public function destroy(Collection $collection)
     {
-        // Delete image if exists
+        // Delete main image if exists
         if ($collection->image && file_exists(public_path($collection->image))) {
             unlink(public_path($collection->image));
+        }
+
+        // Delete gallery images if exist
+        if ($collection->gallery && is_array($collection->gallery)) {
+            foreach ($collection->gallery as $imagePath) {
+                if (file_exists(public_path($imagePath))) {
+                    unlink(public_path($imagePath));
+                }
+            }
         }
 
         $collection->delete();

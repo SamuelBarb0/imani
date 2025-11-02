@@ -10,6 +10,7 @@ class Collection extends Model
         'name',
         'description',
         'image',
+        'gallery',
         'price',
         'items',
         'is_active',
@@ -18,6 +19,7 @@ class Collection extends Model
 
     protected $casts = [
         'items' => 'array',
+        'gallery' => 'array',
         'is_active' => 'boolean',
         'price' => 'decimal:2',
     ];

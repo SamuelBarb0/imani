@@ -36,11 +36,16 @@
 
         <div class="grid md:grid-cols-3 gap-8">
             @forelse($collections as $collection)
-                <div class="bg-[#F7F6F2] rounded-md p-6 shadow-sm hover:shadow-md transition text-center flex flex-col">
-                    <div class="w-full h-[230px] overflow-hidden rounded-md mb-4">
-                        <img src="{{ asset($collection->image) }}" alt="{{ $collection->name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-                    </div>
-                    <h3 class="text-xl font-bold text-dark-turquoise mb-3 uppercase">{{ $collection->name }}</h3>
+                <div class="bg-[#F7F6F2] rounded-md p-6 shadow-sm hover:shadow-lg transition text-center flex flex-col group">
+                    <!-- Imagen clicable para ver detalle -->
+                    <a href="{{ route('colecciones.show', $collection) }}" class="block w-full h-[230px] overflow-hidden rounded-md mb-4">
+                        <img src="{{ asset($collection->image) }}" alt="{{ $collection->name }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
+                    </a>
+
+                    <!-- Título clicable -->
+                    <a href="{{ route('colecciones.show', $collection) }}" class="block">
+                        <h3 class="text-xl font-bold text-dark-turquoise mb-3 uppercase group-hover:text-gray-orange transition">{{ $collection->name }}</h3>
+                    </a>
 
                     @if($collection->description)
                         <p class="text-gray-700 text-base mb-3">{{ $collection->description }}</p>
@@ -67,7 +72,7 @@
                             </div>
                         </div>
 
-                        <button type="button" onclick="addToCart({{ $collection->id }}, '{{ $collection->name }}', {{ $collection->price }})" class="btn-primary inline-block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-sm md:text-base tracking-wider uppercase transition">
+                        <button type="button" onclick="addToCart({{ $collection->id }}, {{ json_encode($collection->name) }}, {{ $collection->price }})" class="btn-primary inline-block px-8 md:px-10 py-3 md:py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-sm md:text-base tracking-wider uppercase transition">
                             {{ $content->get('collections.button_text') }}
                         </button>
                     </div>

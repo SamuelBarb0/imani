@@ -13,8 +13,8 @@ class TemplateGeneratorService
     private const CANVAS_WIDTH = 2480;
     private const CANVAS_HEIGHT = 3508;
     private const IMAGE_SIZE = 644; // Each magnet outer border is 644x644px (margen grande)
-    private const INNER_IMAGE_SIZE = 600; // User image size is 600x600px
-    private const INNER_MARGIN = 22; // Margin from outer border to inner content (22px on each side to center 600px image in 644px frame)
+    private const INNER_IMAGE_SIZE = 544; // User image display size is 544x544px (644 - 50px margin on each side)
+    private const INNER_MARGIN = 50; // Margin from outer border to inner content (50px on each side for text)
 
     /**
      * Positions for the 9 magnets (matching frontend POSITIONS array)
@@ -67,10 +67,13 @@ class TemplateGeneratorService
         // Fill with white background
         imagefill($canvas, 0, 0, $white);
 
+        // Add order number at top-left corner of entire canvas
+        $this->addGlobalOrderNumber($canvas, $orderNumber, $black);
+
         // Process each magnet
         foreach ($imagePaths as $index => $imagePath) {
             [$x, $y] = self::POSITIONS[$index];
-            $this->renderMagnet($canvas, $imagePath, $orderNumber, $x, $y, $white, $black, $brand, $brown, $grayBorder);
+            $this->renderMagnet($canvas, $imagePath, $x, $y, $white, $black, $brand, $brown, $grayBorder);
         }
 
         // Add horizontal divider lines between rows (dashed lines)
@@ -85,27 +88,37 @@ class TemplateGeneratorService
             mkdir($directory, 0755, true);
         }
 
-        imagepng($canvas, $fullPath, 9);
+        // PNG con compresión media para mejor calidad (0=sin compresión, 9=máxima compresión)
+        imagepng($canvas, $fullPath, 6);
         imagedestroy($canvas);
 
         return $outputPath;
     }
 
     /**
+     * Add global order number at top-left of entire canvas
+     */
+    private function addGlobalOrderNumber($canvas, string $orderNumber, $color): void
+    {
+        // Posición arriba a la izquierda del PNG completo
+        $x = 20;
+        $y = 20;
+
+        // Usar fuente GD integrada (font 5 para que sea visible)
+        imagestring($canvas, 5, $x, $y, $orderNumber, $color);
+    }
+
+    /**
      * Render a single magnet (matching frontend fabricCanvas logic)
      */
-    private function renderMagnet($canvas, string $imagePath, string $orderNumber, int $x, int $y, $white, $black, $brand, $brown, $grayBorder): void
+    private function renderMagnet($canvas, string $imagePath, int $x, int $y, $white, $black, $brand, $brown, $grayBorder): void
     {
         $innerMargin = self::INNER_MARGIN;
-        $imageDisplaySize = self::INNER_IMAGE_SIZE; // 600x600px (imagen del usuario)
+        $imageDisplaySize = self::INNER_IMAGE_SIZE; // 544x544px (imagen escalada con margen de 50px)
 
         // 1. "Imani Magnets" text (top, centered)
         // Matching: top: pos.y + innerMargin - 28, fontSize: 20, fill: '#12463c'
         $this->addTopText($canvas, 'Imani Magnets', $x, $y, $innerMargin, $brand, 20);
-
-        // 2. Order number (left side, rotated -90°)
-        // Matching: left: pos.x + innerMargin - 15, angle: -90, fontSize: 12, fill: '#000000'
-        $this->addOrderNumber($canvas, $orderNumber, $x, $y, $innerMargin, $black, 12);
 
         // 3. Outer black border (644x644, strokeWidth: 2)
         // Matching: stroke: '#000000', strokeWidth: 2
@@ -125,54 +138,47 @@ class TemplateGeneratorService
     }
 
     /**
-     * Add "Imani Magnets" text at top (matching frontend topText)
+     * Add "Imani Magnets" text at top (pegado a la imagen)
      */
     private function addTopText($canvas, string $text, int $x, int $y, int $innerMargin, $color, int $fontSize): void
     {
-        $fontPath = public_path('fonts/Arial.ttf');
         $centerX = $x + (self::IMAGE_SIZE / 2);
-        $textY = $y + $innerMargin - 28; // Matching frontend
+        // Texto pegado justo encima de la imagen (5px arriba del borde de la imagen)
+        $textY = $y + $innerMargin - 5;
 
-        if (file_exists($fontPath)) {
-            $bbox = imagettfbbox($fontSize, 0, $fontPath, $text);
-            $textWidth = abs($bbox[4] - $bbox[0]);
-            $textX = (int)($centerX - ($textWidth / 2));
-            imagettftext($canvas, $fontSize, 0, $textX, $textY, $color, $fontPath, $text);
-        } else {
-            // Fallback
-            $textWidth = imagefontwidth(5) * strlen($text);
-            $textX = (int)($centerX - ($textWidth / 2));
-            imagestring($canvas, 5, $textX, $textY - 12, $text, $color);
-        }
+        // Usar fuente GD integrada (font 5 es la más grande)
+        $textWidth = imagefontwidth(5) * strlen($text);
+        $textX = (int)($centerX - ($textWidth / 2));
+        imagestring($canvas, 5, $textX, $textY - 12, $text, $color);
     }
 
     /**
-     * Add order number on left side, rotated -90° (matching frontend leftOrderNumber)
+     * Add order number on left side, rotated -90° (pegado al borde de la imagen)
      */
-    private function addOrderNumber($canvas, string $orderNumber, int $x, int $y, int $innerMargin, $color, int $fontSize): void
+    private function addOrderNumber($canvas, string $orderNumber, int $x, int $y, int $innerMargin, $color): void
     {
-        $fontPath = public_path('fonts/Arial.ttf');
-        $leftX = $x + $innerMargin - 15; // Matching frontend
+        // Pegado al borde izquierdo de la imagen
+        $leftX = $x + $innerMargin - 8;
         $centerY = $y + (self::IMAGE_SIZE / 2);
 
-        // Create temporary image for rotated text
-        $textLength = strlen($orderNumber) * 8;
-        $textImg = imagecreatetruecolor(25, $textLength + 20);
+        // Usar fuente GD integrada (font 3)
+        $font = 3;
+        $textWidth = imagefontwidth($font) * strlen($orderNumber);
+        $textHeight = imagefontheight($font);
+
+        $textImg = imagecreatetruecolor($textWidth + 10, $textHeight + 10);
 
         $transparent = imagecolorallocatealpha($textImg, 0, 0, 0, 127);
         imagefill($textImg, 0, 0, $transparent);
         imagesavealpha($textImg, true);
+        imagealphablending($textImg, true);
 
         $textColor = imagecolorallocate($textImg, 0, 0, 0);
+        imagestring($textImg, $font, 5, 5, $orderNumber, $textColor);
 
-        if (file_exists($fontPath)) {
-            imagettftext($textImg, $fontSize, 0, 5, 15, $textColor, $fontPath, $orderNumber);
-        } else {
-            imagestring($textImg, 4, 5, 5, $orderNumber, $textColor);
-        }
-
-        // Rotate -90° (same as frontend angle: -90)
-        $rotated = imagerotate($textImg, 90, $transparent); // GD uses positive for counter-clockwise
+        // Rotate -90° (GD uses positive for counter-clockwise, so 90 = -90 in CSS)
+        $rotated = imagerotate($textImg, 90, $transparent);
+        imagesavealpha($rotated, true);
 
         $rotW = imagesx($rotated);
         $rotH = imagesy($rotated);
@@ -194,7 +200,7 @@ class TemplateGeneratorService
     }
 
     /**
-     * Add customer image (already cropped and filtered from frontend at 600x600)
+     * Add customer image (cropped from frontend at 644x644, scaled to 544x544 for display)
      */
     private function addImage($canvas, string $imagePath, int $x, int $y, int $size): void
     {
@@ -215,25 +221,26 @@ class TemplateGeneratorService
             'targetSize' => $size
         ]);
 
-        // The image comes pre-cropped from frontend at 600x600
-        // Scale to exact size if needed (should be very close already)
+        // The image comes pre-cropped from frontend at 644x644
+        // Scale to 544x544 for display (with 50px margin on each side)
         if ($srcWidth !== $size || $srcHeight !== $size) {
-            if (function_exists('imagesetinterpolation')) {
-                imagesetinterpolation($sourceImg, IMG_BICUBIC);
-            }
+            // Use imagecopyresampled for better quality than imagescale
+            $resized = imagecreatetruecolor($size, $size);
 
-            // Image should be square from frontend, just scale to exact target size
-            $resized = imagescale($sourceImg, $size, $size, IMG_BICUBIC);
+            // Preserve transparency if the source has it
+            imagealphablending($resized, false);
+            imagesavealpha($resized, true);
 
-            if ($resized === false) {
-                Log::error("Failed to scale image", ['path' => $imagePath]);
-                throw new \RuntimeException("Failed to scale image: {$imagePath}");
-            }
+            // High-quality resampling
+            imagecopyresampled($resized, $sourceImg, 0, 0, 0, 0, $size, $size, $srcWidth, $srcHeight);
 
+            // Copy to canvas
+            imagealphablending($canvas, true);
             imagecopy($canvas, $resized, $x, $y, 0, 0, $size, $size);
             imagedestroy($resized);
         } else {
             // Image is already the correct size, just copy it
+            imagealphablending($canvas, true);
             imagecopy($canvas, $sourceImg, $x, $y, 0, 0, $size, $size);
         }
 
@@ -241,29 +248,51 @@ class TemplateGeneratorService
     }
 
     /**
-     * Add Instagram logo + handle (matching frontend Instagram drawing)
+     * Add Instagram logo + handle (pegado debajo de la imagen usando SVG)
      */
     private function addInstagramSection($canvas, int $x, int $y, int $innerMargin, int $imageDisplaySize, $color): void
     {
-        $logoSize = 18; // Matching frontend instaLogoSize
-        $logoX = $x + (self::IMAGE_SIZE / 2) - 60; // Matching frontend
-        $logoY = $y + $innerMargin + $imageDisplaySize + 5; // Matching frontend: 5px below inner border
+        $svgPath = public_path('images/instagram.svg');
+        $logoSize = 18;
 
-        // Draw Instagram logo (circle + square + dot)
-        // 1. Circle (radius 9, strokeWidth 1.5 ≈ 2px for GD)
-        $this->drawCircle($canvas, $logoX + ($logoSize / 2), $logoY + ($logoSize / 2), $logoSize / 2, $color, 2);
+        // Posición centrada horizontalmente, pegada debajo de la imagen (3px abajo)
+        $centerX = $x + (self::IMAGE_SIZE / 2);
+        $logoY = $y + $innerMargin + $imageDisplaySize + 3;
 
-        // 2. Rounded square inside (matching instaSquare: left+4, top+4, width: logoSize-8)
-        $squareX = $logoX + 4;
-        $squareY = $logoY + 4;
-        $squareSize = $logoSize - 8; // 10px
-        $this->drawRoundedRect($canvas, $squareX, $squareY, $squareSize, $squareSize, 2, $color, 2);
+        // Convertir SVG a PNG y cargar como imagen
+        if (file_exists($svgPath) && extension_loaded('imagick')) {
+            try {
+                $imagick = new \Imagick();
+                $svgContent = file_get_contents($svgPath);
+                // Cambiar el color del SVG a marrón (#5c533b)
+                $svgContent = str_replace('currentColor', '#5c533b', $svgContent);
+                $imagick->readImageBlob($svgContent);
+                $imagick->setImageFormat('png');
+                $imagick->resizeImage($logoSize, $logoSize, \Imagick::FILTER_LANCZOS, 1);
 
-        // 3. Dot (top-right, matching instaDot: left: logoX + logoSize - 5, top: logoY + 3, radius: 1.5)
-        imagefilledellipse($canvas, $logoX + $logoSize - 5 + 2, $logoY + 3 + 2, 3, 3, $color);
+                $pngData = $imagick->getImageBlob();
+                $logoImg = imagecreatefromstring($pngData);
 
-        // 4. Text "@imanimagnets" (matching instagramText)
-        $this->addInstagramText($canvas, '@imanimagnets', $logoX + $logoSize + 8, $logoY + 3, $color, 16);
+                if ($logoImg) {
+                    imagealphablending($canvas, true);
+                    // Logo a la izquierda del texto
+                    $logoX = $centerX - 60;
+                    imagecopy($canvas, $logoImg, $logoX, $logoY, 0, 0, $logoSize, $logoSize);
+                    imagedestroy($logoImg);
+
+                    // Texto "imanimagnets" al lado del logo (sin @)
+                    $this->addInstagramText($canvas, 'imanimagnets', $logoX + $logoSize + 5, $logoY, $color);
+                }
+
+                $imagick->clear();
+            } catch (\Exception $e) {
+                // Si falla ImageMagick, usar solo texto
+                $this->addInstagramText($canvas, 'imanimagnets', $centerX - 50, $logoY, $color);
+            }
+        } else {
+            // Fallback: solo texto centrado
+            $this->addInstagramText($canvas, 'imanimagnets', $centerX - 50, $logoY, $color);
+        }
     }
 
     /**
@@ -307,17 +336,12 @@ class TemplateGeneratorService
     }
 
     /**
-     * Add Instagram text (matching frontend instagramText)
+     * Add Instagram text (pegado al logo)
      */
-    private function addInstagramText($canvas, string $text, int $x, int $y, $color, int $fontSize): void
+    private function addInstagramText($canvas, string $text, int $x, int $y, $color): void
     {
-        $fontPath = public_path('fonts/Arial.ttf');
-
-        if (file_exists($fontPath)) {
-            imagettftext($canvas, $fontSize, 0, $x, $y + 14, $color, $fontPath, $text);
-        } else {
-            imagestring($canvas, 4, $x, $y, $text, $color);
-        }
+        // Usar fuente GD integrada (font 4)
+        imagestring($canvas, 4, $x, $y + 2, $text, $color);
     }
 
     /**

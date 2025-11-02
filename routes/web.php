@@ -52,6 +52,11 @@ Route::prefix('pruebas')->group(function () {
         return view('colecciones.index', compact('content', 'collections'));
     })->name('colecciones');
 
+    Route::get('/colecciones/{collection}', function (App\Models\Collection $collection) {
+        $content = App\Helpers\ContentHelper::getPageContent('colecciones');
+        return view('colecciones.show', compact('collection', 'content'));
+    })->name('colecciones.show');
+
     /** 🏷️ MAYORISTAS */
     Route::get('/mayoristas', function () {
         $content = App\Helpers\ContentHelper::getPageContent('mayoristas');

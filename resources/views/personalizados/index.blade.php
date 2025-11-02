@@ -5,165 +5,168 @@
 @section('content')
 
 <!-- Hero Section -->
-<section class="bg-white py-4">
-    <div class="container mx-auto px-6 max-w-6xl text-center">
-        <h1 class="font-spartan text-2xl lg:text-3xl font-bold text-dark-turquoise mb-2">
+<section class="bg-white py-2">
+    <div class="container mx-auto px-4 max-w-7xl text-center">
+        <h1 class="font-spartan text-xl lg:text-2xl font-bold text-dark-turquoise mb-1">
             IMANES PERSONALIZADOS
         </h1>
-        <p class="text-sm text-gray-brown">
+        <p class="text-xs text-gray-brown">
             Sube 9 fotos para crear tu set de imanes 2x2"
         </p>
     </div>
 </section>
 
 <!-- Editor Section -->
-<section class="bg-gray-50 py-4">
-    <div class="container mx-auto px-6 max-w-6xl">
+<section class="bg-gray-50 py-3">
+    <div class="container mx-auto px-4 max-w-7xl">
 
-        <!-- Contenedor único que cambia de contenido -->
-        <div class="bg-white rounded-lg shadow-lg p-4">
+        <!-- 2-Column Layout: Upload (left) + Grid (right) -->
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-3">
 
-            <!-- PASO 1: Upload Area (visible al inicio) -->
-            <div id="upload-area">
-                <div class="text-center mb-3">
-                    <h2 class="font-spartan text-xl font-bold text-dark-turquoise mb-2">
-                        PASO 1: SUBE TUS FOTOS
-                    </h2>
-                </div>
-
-                <!-- Drop Zone -->
-                <div id="dropzone" class="border-3 border-dashed border-gray-orange rounded-lg p-6 text-center cursor-pointer hover:border-dark-turquoise transition-all duration-300">
-                    <div class="mb-2">
-                        <svg class="w-12 h-12 mx-auto text-gray-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                        </svg>
+            <!-- PASO 1: Upload Area (Left Column - 2/5 width on desktop) -->
+            <div id="upload-area" class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-lg p-3 h-full flex flex-col">
+                    <div class="text-center mb-2">
+                        <h2 class="font-spartan text-sm font-bold text-dark-turquoise mb-1">
+                            PASO 1: SUBE TUS FOTOS
+                        </h2>
                     </div>
-                    <p class="font-spartan text-base font-semibold text-dark-turquoise mb-2">
-                        Haz clic o arrastra tus fotos aquí
-                    </p>
-                    <p class="text-xs text-gray-brown mb-3">
-                        PNG, JPG o JPEG (máximo 10MB)
-                    </p>
-                    <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg" multiple class="hidden">
-                    <button onclick="document.getElementById('file-input').click()" class="px-4 py-2 bg-gray-orange text-white rounded-full font-spartan font-semibold text-xs tracking-wider uppercase hover:bg-gray-brown transition-all duration-300">
-                        SELECCIONAR FOTOS
-                    </button>
-                </div>
 
-                <!-- Progress Bar -->
-                <div id="progress-container" class="mt-3 hidden">
-                    <div class="flex justify-between text-xs text-gray-brown mb-1">
-                        <span>Cargando imágenes...</span>
-                        <span id="progress-text">0%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                        <div id="progress-bar" class="bg-dark-turquoise h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PASO 2: Image Grid (oculto al inicio, reemplaza al Paso 1) -->
-            <div id="image-grid-container" class="hidden">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
-                    <h2 class="font-spartan text-lg sm:text-xl font-bold text-dark-turquoise">
-                        PASO 2: EDITA TUS FOTOS
-                    </h2>
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
-                        <div class="inline-flex items-center gap-2 text-xs sm:text-sm">
-                            <span class="text-gray-brown">Imágenes listas:</span>
-                            <span id="images-ready" class="font-bold text-dark-turquoise">0/9</span>
+                    <!-- Drop Zone -->
+                    <div id="dropzone" class="border-2 border-dashed border-gray-orange rounded-lg p-4 text-center cursor-pointer hover:border-dark-turquoise transition-all duration-300 flex-grow flex flex-col items-center justify-center">
+                        <div class="mb-2">
+                            <svg class="w-8 h-8 mx-auto text-gray-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
                         </div>
-                        <button onclick="resetUploadArea()" class="text-xs text-gray-brown hover:text-dark-turquoise underline">
-                            ← Volver a subir
+                        <p class="font-spartan text-xs font-semibold text-dark-turquoise mb-1">
+                            Haz clic o arrastra tus fotos aquí
+                        </p>
+                        <p class="text-xs text-gray-brown mb-2">
+                            PNG, JPG o JPEG (máximo 10MB)
+                        </p>
+                        <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg" multiple class="hidden">
+                        <button onclick="document.getElementById('file-input').click()" class="px-3 py-1.5 bg-gray-orange text-white rounded-full font-spartan font-semibold text-xs tracking-wider uppercase hover:bg-gray-brown transition-all duration-300">
+                            SELECCIONAR FOTOS
                         </button>
                     </div>
-                </div>
 
-                <!-- 3x3 Grid - Responsive -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
-                <!-- Grid items will be generated dynamically -->
-                <div class="grid-item aspect-square bg-gray-100 rounded-lg border-4 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="0">
-                    <div class="text-center">
-                        <div class="text-6xl text-gray-300 mb-2">+</div>
-                        <p class="text-sm text-gray-400">Foto 1</p>
+                    <!-- Progress Bar -->
+                    <div id="progress-container" class="mt-2 hidden">
+                        <div class="flex justify-between text-xs text-gray-brown mb-1">
+                            <span>Cargando imágenes...</span>
+                            <span id="progress-text">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                            <div id="progress-bar" class="bg-dark-turquoise h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="grid-item aspect-square bg-gray-100 rounded-lg border-4 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="1">
-                    <div class="text-center">
-                        <div class="text-6xl text-gray-300 mb-2">+</div>
-                        <p class="text-sm text-gray-400">Foto 2</p>
-                    </div>
-                </div>
-                <div class="grid-item aspect-square bg-gray-100 rounded-lg border-4 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="2">
-                    <div class="text-center">
-                        <div class="text-6xl text-gray-300 mb-2">+</div>
-                        <p class="text-sm text-gray-400">Foto 3</p>
-                    </div>
-                </div>
-            <div class="grid-item aspect-square bg-gray-100 rounded-lg border-4 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="3">
-                <div class="text-center">
-                    <div class="text-6xl text-gray-300 mb-2">+</div>
-                    <p class="text-sm text-gray-400">Foto 4</p>
-                </div>
-            </div>
-            <div class="grid-item aspect-square bg-gray-100 rounded-lg border-4 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="4">
-                <div class="text-center">
-                    <div class="text-6xl text-gray-300 mb-2">+</div>
-                    <p class="text-sm text-gray-400">Foto 5</p>
-                </div>
-            </div>
-            <div class="grid-item aspect-square bg-gray-100 rounded-lg border-4 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="5">
-                <div class="text-center">
-                    <div class="text-6xl text-gray-300 mb-2">+</div>
-                    <p class="text-sm text-gray-400">Foto 6</p>
-                </div>
-            </div>
-            <div class="grid-item aspect-square bg-gray-100 rounded-lg border-4 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="6">
-                <div class="text-center">
-                    <div class="text-6xl text-gray-300 mb-2">+</div>
-                    <p class="text-sm text-gray-400">Foto 7</p>
-                </div>
-            </div>
-            <div class="grid-item aspect-square bg-gray-100 rounded-lg border-4 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="7">
-                <div class="text-center">
-                    <div class="text-6xl text-gray-300 mb-2">+</div>
-                    <p class="text-sm text-gray-400">Foto 8</p>
-                </div>
-            </div>
-            <div class="grid-item aspect-square bg-gray-100 rounded-lg border-4 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="8">
-                <div class="text-center">
-                    <div class="text-6xl text-gray-300 mb-2">+</div>
-                    <p class="text-sm text-gray-400">Foto 9</p>
-                </div>
-            </div>
             </div>
 
-                <!-- Action Button (fuera del grid, centrado) -->
-                <div class="text-center mt-6">
-                    <button id="add-to-cart-btn" disabled class="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gray-300 text-gray-500 rounded-full font-spartan font-semibold text-xs sm:text-sm tracking-wider uppercase cursor-not-allowed transition-all duration-300">
-                        AGREGAR AL CARRITO
-                    </button>
-                    <p class="text-xs text-gray-brown mt-2">
-                        Completa y edita las 9 fotos para continuar
-                    </p>
+            <!-- PASO 2: Image Grid (Right Column - 3/5 width on desktop) -->
+            <div id="image-grid-container" class="lg:col-span-3">
+                <div class="bg-white rounded-lg shadow-lg p-3 h-full flex flex-col">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+                        <h2 class="font-spartan text-sm font-bold text-dark-turquoise">
+                            PASO 2: EDITA TUS FOTOS
+                        </h2>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
+                            <div class="inline-flex items-center gap-1.5 text-xs">
+                                <span class="text-gray-brown">Listas:</span>
+                                <span id="images-ready" class="font-bold text-dark-turquoise">0/9</span>
+                            </div>
+                            <button onclick="resetUploadArea()" class="text-xs text-gray-brown hover:text-dark-turquoise underline">
+                                ← Reiniciar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3x3 Grid - Responsive and Compact -->
+                    <div class="grid grid-cols-3 gap-1.5 mb-2 flex-grow">
+                        <!-- Grid items will be generated dynamically -->
+                        <div class="grid-item aspect-square bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="0">
+                            <div class="text-center">
+                                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                                <p class="text-xs text-gray-400">Foto 1</p>
+                            </div>
+                        </div>
+                        <div class="grid-item aspect-square bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="1">
+                            <div class="text-center">
+                                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                                <p class="text-xs text-gray-400">Foto 2</p>
+                            </div>
+                        </div>
+                        <div class="grid-item aspect-square bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="2">
+                            <div class="text-center">
+                                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                                <p class="text-xs text-gray-400">Foto 3</p>
+                            </div>
+                        </div>
+                        <div class="grid-item aspect-square bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="3">
+                            <div class="text-center">
+                                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                                <p class="text-xs text-gray-400">Foto 4</p>
+                            </div>
+                        </div>
+                        <div class="grid-item aspect-square bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="4">
+                            <div class="text-center">
+                                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                                <p class="text-xs text-gray-400">Foto 5</p>
+                            </div>
+                        </div>
+                        <div class="grid-item aspect-square bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="5">
+                            <div class="text-center">
+                                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                                <p class="text-xs text-gray-400">Foto 6</p>
+                            </div>
+                        </div>
+                        <div class="grid-item aspect-square bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="6">
+                            <div class="text-center">
+                                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                                <p class="text-xs text-gray-400">Foto 7</p>
+                            </div>
+                        </div>
+                        <div class="grid-item aspect-square bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="7">
+                            <div class="text-center">
+                                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                                <p class="text-xs text-gray-400">Foto 8</p>
+                            </div>
+                        </div>
+                        <div class="grid-item aspect-square bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-dark-turquoise transition-all duration-300" data-index="8">
+                            <div class="text-center">
+                                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                                <p class="text-xs text-gray-400">Foto 9</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Button (below grid) -->
+                    <div class="text-center mt-2">
+                        <button id="add-to-cart-btn" disabled class="w-full px-4 py-2 bg-gray-300 text-gray-500 rounded-full font-spartan font-semibold text-xs tracking-wider uppercase cursor-not-allowed transition-all duration-300">
+                            AGREGAR AL CARRITO
+                        </button>
+                        <p class="text-xs text-gray-brown mt-1">
+                            Completa y edita las 9 fotos para continuar
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Processing Modal -->
         <div id="processing-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
-            <div class="bg-white rounded-lg p-8 max-w-md w-full text-center">
-                <div class="mb-4">
-                    <svg class="animate-spin h-16 w-16 mx-auto text-dark-turquoise" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full text-center">
+                <div class="mb-3">
+                    <svg class="animate-spin h-12 w-12 mx-auto text-dark-turquoise" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                 </div>
-                <h3 class="font-spartan text-xl font-bold text-dark-turquoise mb-2">Agregando al Carrito...</h3>
+                <h3 class="font-spartan text-lg font-bold text-dark-turquoise mb-1">Agregando al Carrito...</h3>
                 <p class="text-sm text-gray-brown">Por favor espera mientras procesamos tus imágenes</p>
             </div>
         </div>
-    </div>
 
     </div>
 </section>
@@ -439,13 +442,6 @@ input[type="range"]::-moz-range-thumb {
     color: white !important;
 }
 
-/* Responsive grid - hide 9th item on mobile (2 columns) */
-@media (max-width: 639px) {
-    .grid-item:nth-child(9) {
-        display: none;
-    }
-}
-
 /* Prevent body scroll when modal is open */
 body.modal-open {
     overflow: hidden;
@@ -621,9 +617,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function showImageGrid() {
-    document.getElementById('upload-area').classList.add('hidden');
-    document.getElementById('image-grid-container').classList.remove('hidden');
-
+    // Both areas are always visible now - just render the grid
     renderGrid();
 }
 
@@ -649,20 +643,20 @@ function renderGrid() {
 
             const editBtn = document.createElement('button');
             editBtn.innerHTML = `
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                 </svg>
             `;
-            editBtn.className = 'p-2 bg-dark-turquoise text-white rounded-full hover:bg-gray-brown transition-all';
+            editBtn.className = 'p-1.5 bg-dark-turquoise text-white rounded-full hover:bg-gray-brown transition-all';
             editBtn.onclick = () => openEditor(index);
 
             const deleteBtn = document.createElement('button');
             deleteBtn.innerHTML = `
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>
             `;
-            deleteBtn.className = 'p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all';
+            deleteBtn.className = 'p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all';
             deleteBtn.onclick = () => deleteImage(index);
 
             overlay.appendChild(editBtn);
@@ -679,8 +673,8 @@ function renderGrid() {
             const placeholder = document.createElement('div');
             placeholder.className = 'text-center';
             placeholder.innerHTML = `
-                <div class="text-6xl text-gray-300 mb-2">+</div>
-                <p class="text-sm text-gray-400">Foto ${index + 1}</p>
+                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                <p class="text-xs text-gray-400">Foto ${index + 1}</p>
             `;
             item.appendChild(placeholder);
             item.classList.remove('border-solid', 'border-dark-turquoise');
@@ -783,10 +777,9 @@ function resetUploadArea() {
         uploadedImages = Array(9).fill(null);
         editedImages = Array(9).fill(null);
         editStates = Array(9).fill(null);
-        document.getElementById('image-grid-container').classList.add('hidden');
-        document.getElementById('upload-area').classList.remove('hidden');
         document.getElementById('progress-bar').style.width = '0%';
         document.getElementById('progress-text').textContent = '0%';
+        renderGrid();
     }
 }
 
@@ -903,8 +896,8 @@ function saveImage() {
     // Draw the cropped image with filters applied
     ctx.drawImage(canvas, 0, 0);
 
-    // Save to edited images
-    editedImages[currentEditIndex] = finalCanvas.toDataURL('image/jpeg', 0.95);
+    // Save to edited images as PNG (lossless quality for printing)
+    editedImages[currentEditIndex] = finalCanvas.toDataURL('image/png');
 
     // Close editor
     document.getElementById('editor-modal').classList.add('hidden');
@@ -1278,8 +1271,8 @@ async function processImageToSquare(imageDataUrl) {
             // Draw image scaled and centered
             ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
 
-            // Convert to JPEG
-            resolve(canvas.toDataURL('image/jpeg', 0.95));
+            // Convert to PNG (lossless quality)
+            resolve(canvas.toDataURL('image/png'));
         };
         img.src = imageDataUrl;
     });
@@ -1351,8 +1344,7 @@ document.getElementById('close-success-modal')?.addEventListener('click', functi
     uploadedImages = Array(9).fill(null);
     editedImages = Array(9).fill(null);
     editStates = Array(9).fill(null);
-    document.getElementById('image-grid-container').classList.add('hidden');
-    document.getElementById('upload-area').classList.remove('hidden');
+    renderGrid();
 });
 </script>
 

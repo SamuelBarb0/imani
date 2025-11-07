@@ -55,7 +55,7 @@ class ContentController extends Controller
     public function uploadImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|max:5120', // 5MB max
+            'image' => 'required|image|max:25600', // 25MB max
             'page' => 'required|string',
             'section' => 'required|string',
             'key' => 'required|string',

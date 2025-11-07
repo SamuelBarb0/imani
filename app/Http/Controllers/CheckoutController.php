@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderConfirmedEmail;
+use App\Mail\OrderPendingTransferEmail;
 use App\Models\Cart;
 use App\Models\City;
 use App\Models\Order;
@@ -11,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
@@ -147,6 +150,18 @@ class CheckoutController extends Controller
                     return redirect()->route('checkout.pending', $order->order_number)
                         ->with('success', 'Solicitud de pago enviada. Por favor confirma el pago en tu app PayPhone.');
                 } else {
+                    // Send order pending transfer email for bank transfer
+                    try {
+                        Mail::to($order->customer_email)->send(new OrderPendingTransferEmail($order));
+                        Log::info('Order pending transfer email sent', ['order' => $order->order_number, 'email' => $order->customer_email]);
+                    } catch (\Exception $mailError) {
+                        Log::error('Failed to send order pending transfer email', [
+                            'order' => $order->order_number,
+                            'email' => $order->customer_email,
+                            'error' => $mailError->getMessage(),
+                        ]);
+                    }
+
                     return redirect()->route('checkout.success', $order->order_number)
                         ->with('success', 'Pedido creado. Por favor envía tu comprobante de transferencia.');
                 }

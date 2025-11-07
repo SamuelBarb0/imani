@@ -40,7 +40,7 @@
                             </svg>
                         </div>
                         <p class="font-spartan text-xs font-semibold text-dark-turquoise mb-1">
-                            Haz clic o arrastra tus fotos aquí
+                            HAZ CLIC O ARRASTRA TUS FOTOS AQUÍ
                         </p>
                         <p class="text-xs text-gray-brown mb-2">
                             PNG, JPG o JPEG (máximo 10MB)
@@ -69,11 +69,11 @@
                 <div class="bg-white rounded-lg shadow-lg p-3 h-full flex flex-col">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
                         <h2 class="font-spartan text-sm font-bold text-dark-turquoise">
-                            PASO 2: EDITA TUS FOTOS
+                            PASO 2. HACÉ CLIC EN CADA FOTO Y REALIZÁ EL RECORTE DESEADO.
                         </h2>
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
                             <div class="inline-flex items-center gap-1.5 text-xs">
-                                <span class="text-gray-brown">Listas:</span>
+                                <span class="text-gray-brown">Fotos recortadas:</span>
                                 <span id="images-ready" class="font-bold text-dark-turquoise">0/9</span>
                             </div>
                             <button onclick="resetUploadArea()" class="text-xs text-gray-brown hover:text-dark-turquoise underline">
@@ -147,7 +147,7 @@
                             AGREGAR AL CARRITO
                         </button>
                         <p class="text-xs text-gray-brown mt-1">
-                            Completa y edita las 9 fotos para continuar
+                            Asegurate de editar las 9 fotos antes de continuar
                         </p>
                     </div>
                 </div>
@@ -232,10 +232,10 @@
                             <div class="p-4 bg-gray-50 rounded-lg">
                                 <h4 class="font-spartan font-semibold text-sm text-gray-700 mb-2">Instrucciones:</h4>
                                 <ul class="text-xs text-gray-600 space-y-1">
-                                    <li>• Arrastra la imagen para posicionarla</li>
-                                    <li>• Usa la rueda del ratón para zoom</li>
-                                    <li>• <strong>Área con puntos (600x600)</strong>: Tu imagen visible</li>
-                                    <li>• <strong>Borde gris exterior (644x644)</strong>: Área total de corte con márgenes</li>
+                                    <li>• Arrastra el recuadro para seleccionar la parte de la imagen que quieres ver en el frente de tu imán.</li>
+                                    <li>• Usa la rueda del mouse o ajusta las esquinas del cuadrado para cambiar su tamaño.</li>
+                                    <li>• El área dentro del cuadrado punteado rojo será visible en el frente del imán.</li>
+                                    <li>• La zona rayada quedará plegada hacia atrás del imán y no será visible.</li>
                                 </ul>
                             </div>
                         </div>
@@ -291,15 +291,6 @@
                                 <input type="range" id="warmth" min="-100" max="100" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-dark-turquoise">
                             </div>
 
-                            <!-- Blur -->
-                            <div>
-                                <label class="flex justify-between text-sm font-semibold text-gray-700 mb-2">
-                                    <span>Desenfoque</span>
-                                    <span id="blur-value">0px</span>
-                                </label>
-                                <input type="range" id="blur" min="0" max="10" value="0" step="0.5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-dark-turquoise">
-                            </div>
-
                             <!-- Sepia -->
                             <div>
                                 <label class="flex justify-between text-sm font-semibold text-gray-700 mb-2">
@@ -346,11 +337,11 @@
                             </button>
 
                             <button onclick="applyFilter('cool')" class="filter-btn w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg font-spartan font-semibold text-sm tracking-wider uppercase hover:border-dark-turquoise transition-all" data-filter="cool">
-                                FRÍO
+                                CÁLIDO
                             </button>
 
                             <button onclick="applyFilter('warm')" class="filter-btn w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg font-spartan font-semibold text-sm tracking-wider uppercase hover:border-dark-turquoise transition-all" data-filter="warm">
-                                CÁLIDO
+                                FRIO
                             </button>
 
                             <button onclick="applyFilter('vintage')" class="filter-btn w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg font-spartan font-semibold text-sm tracking-wider uppercase hover:border-dark-turquoise transition-all" data-filter="vintage">
@@ -387,24 +378,59 @@
     border-radius: 0 !important;
 }
 
-/* Área de recorte interna (600x600) - borde con puntos */
-.cropper-view-box {
-    outline: 2px dashed #12463c !important;
-    outline-offset: -2px;
-    box-shadow: 0 0 0 22px rgba(153, 153, 153, 0.3) !important; /* 22px = (644-600)/2 simula el margen exterior */
+/* El crop-box es el recuadro exterior de 644x644 (el que NO debe salirse de la imagen) */
+.cropper-crop-box {
+    /* Borde gris exterior del recuadro de 644x644 */
+    border: 2px solid #999999 !important;
 }
 
-/* Área exterior simulada (644x644) - borde gris sólido */
+/* El view-box (donde se muestra la imagen) - SIN modificar */
+.cropper-view-box {
+    outline: none !important;
+}
+
+/* Rayado diagonal SOLO en el margen de 22px (fuera del rectángulo rojo) */
 .cropper-crop-box::before {
     content: '';
     position: absolute;
-    top: -22px;
-    left: -22px;
-    right: -22px;
-    bottom: -22px;
-    border: 2px solid #999999;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 5px,
+        rgba(0, 0, 0, 0.15) 5px,
+        rgba(0, 0, 0, 0.15) 10px
+    );
+    /* Clip-path para recortar solo el marco de 22px (fuera del rectángulo rojo) */
+    clip-path: polygon(
+        /* Marco exterior completo */
+        0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%,
+        /* Recorte interior - área del rectángulo rojo (22px desde cada borde) */
+        22px 22px, 22px calc(100% - 22px),
+        calc(100% - 22px) calc(100% - 22px),
+        calc(100% - 22px) 22px, 22px 22px
+    );
     pointer-events: none;
-    z-index: 1;
+    z-index: 2;
+}
+
+/* Recuadro interior ROJO (600x600) - con margen de 22px desde el borde del crop-box */
+.cropper-crop-box::after {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 22px;
+    right: 22px;
+    bottom: 22px;
+    /* Fondo TRANSPARENTE para ver la imagen */
+    background: transparent;
+    /* Borde punteado rojo */
+    border: 2px dashed #ef4444;
+    pointer-events: none;
+    z-index: 3;
 }
 
 .cropper-line,
@@ -630,6 +656,7 @@ function renderGrid() {
 
         if (editedImages[index] || uploadedImages[index]) {
             const imgSrc = editedImages[index] || uploadedImages[index];
+            const isEdited = editedImages[index] !== null;
 
             const imgContainer = document.createElement('div');
             imgContainer.className = 'relative w-full h-full group';
@@ -637,6 +664,18 @@ function renderGrid() {
             const img = document.createElement('img');
             img.src = imgSrc;
             img.className = 'w-full h-full object-cover rounded-lg';
+
+            // Add green checkmark if image is edited
+            if (isEdited) {
+                const checkmark = document.createElement('div');
+                checkmark.className = 'absolute top-1 right-1 bg-green-500 text-white rounded-full p-1 shadow-lg';
+                checkmark.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                `;
+                imgContainer.appendChild(checkmark);
+            }
 
             const overlay = document.createElement('div');
             overlay.className = 'absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center gap-2';
@@ -668,7 +707,10 @@ function renderGrid() {
             item.classList.remove('border-dashed', 'border-gray-300');
             item.classList.add('border-solid', 'border-dark-turquoise');
 
-            readyCount++;
+            // Only count as ready if image has been edited and saved
+            if (isEdited) {
+                readyCount++;
+            }
         } else {
             const placeholder = document.createElement('div');
             placeholder.className = 'text-center';
@@ -824,17 +866,20 @@ function openEditor(index) {
 
         const cropperOptions = {
             aspectRatio: 1, // Square crop (1:1)
-            viewMode: 1,
-            dragMode: 'move',
+            viewMode: 1, // Crop box (644x644) must stay within the canvas (no puede salirse de la imagen)
+            dragMode: 'none', // Imagen fija (no se mueve)
             autoCropArea: 0.93, // 600/644 = 0.9317 (inner image / outer border)
             restore: false,
             guides: true,
             center: true,
             highlight: true,
             background: true,
-            cropBoxMovable: true,
-            cropBoxResizable: true,
+            cropBoxMovable: true, // Recuadro SÍ se puede mover
+            cropBoxResizable: true, // Recuadro SÍ se puede redimensionar
             toggleDragModeOnDblclick: false,
+            movable: false, // La imagen NO se mueve (está fija)
+            zoomable: false, // No zoom de imagen
+            zoomOnWheel: false, // No zoom con rueda
             minCropBoxWidth: minCropBoxSize,
             minCropBoxHeight: minCropBoxSize,
             ready: function() {
@@ -844,6 +889,12 @@ function openEditor(index) {
                 }
                 // Apply filters once Cropper is ready
                 applyFiltersToImage();
+
+                // Añadir evento de rueda del ratón para redimensionar crop box
+                const cropperContainer = document.querySelector('.cropper-container');
+                if (cropperContainer) {
+                    cropperContainer.addEventListener('wheel', handleCropBoxZoom);
+                }
             }
         };
 
@@ -854,10 +905,61 @@ function openEditor(index) {
     }, 100);
 }
 
+/**
+ * Handle mouse wheel to resize crop box (instead of zooming image)
+ */
+function handleCropBoxZoom(e) {
+    if (!cropper) return;
+
+    e.preventDefault();
+
+    // Get current crop box data
+    const cropBoxData = cropper.getCropBoxData();
+
+    // Calculate zoom factor based on wheel direction
+    const delta = e.deltaY || e.detail || e.wheelDelta;
+    const zoomFactor = delta > 0 ? 0.95 : 1.05; // Scroll down = smaller, scroll up = bigger
+
+    // Calculate new dimensions
+    let newWidth = cropBoxData.width * zoomFactor;
+    let newHeight = cropBoxData.height * zoomFactor;
+
+    // Get container dimensions to limit max size
+    const containerData = cropper.getContainerData();
+    const maxSize = Math.min(containerData.width, containerData.height);
+
+    // Set minimum size (same as minCropBoxSize)
+    const isMobile = window.innerWidth < 768;
+    const minSize = isMobile ? 150 : 200;
+
+    // Apply limits
+    newWidth = Math.max(minSize, Math.min(newWidth, maxSize));
+    newHeight = Math.max(minSize, Math.min(newHeight, maxSize));
+
+    // Calculate new position to keep crop box centered
+    const newLeft = cropBoxData.left + (cropBoxData.width - newWidth) / 2;
+    const newTop = cropBoxData.top + (cropBoxData.height - newHeight) / 2;
+
+    // Apply new crop box dimensions
+    cropper.setCropBoxData({
+        left: newLeft,
+        top: newTop,
+        width: newWidth,
+        height: newHeight
+    });
+}
+
 function closeEditor() {
     if (confirm('¿Cerrar el editor? Los cambios no guardados se perderán.')) {
         document.getElementById('editor-modal').classList.add('hidden');
         document.body.classList.remove('modal-open');
+
+        // Remove wheel event listener
+        const cropperContainer = document.querySelector('.cropper-container');
+        if (cropperContainer) {
+            cropperContainer.removeEventListener('wheel', handleCropBoxZoom);
+        }
+
         if (cropper) {
             cropper.destroy();
             cropper = null;
@@ -1045,23 +1147,48 @@ function resetAdjustments() {
         grayscale: 0
     };
 
-    // Reset sliders
-    document.getElementById('brightness').value = 100;
-    document.getElementById('brightness-value').textContent = '100%';
-    document.getElementById('contrast').value = 100;
-    document.getElementById('contrast-value').textContent = '100%';
-    document.getElementById('saturation').value = 100;
-    document.getElementById('saturation-value').textContent = '100%';
-    document.getElementById('exposure').value = 0;
-    document.getElementById('exposure-value').textContent = '0%';
-    document.getElementById('warmth').value = 0;
-    document.getElementById('warmth-value').textContent = '0';
-    document.getElementById('blur').value = 0;
-    document.getElementById('blur-value').textContent = '0px';
-    document.getElementById('sepia').value = 0;
-    document.getElementById('sepia-value').textContent = '0%';
-    document.getElementById('grayscale').value = 0;
-    document.getElementById('grayscale-value').textContent = '0%';
+    // Reset sliders - with null checks
+    const brightnessSlider = document.getElementById('brightness');
+    const contrastSlider = document.getElementById('contrast');
+    const saturationSlider = document.getElementById('saturation');
+    const exposureSlider = document.getElementById('exposure');
+    const warmthSlider = document.getElementById('warmth');
+    const blurSlider = document.getElementById('blur');
+    const sepiaSlider = document.getElementById('sepia');
+    const grayscaleSlider = document.getElementById('grayscale');
+
+    if (brightnessSlider) {
+        brightnessSlider.value = 100;
+        document.getElementById('brightness-value').textContent = '100%';
+    }
+    if (contrastSlider) {
+        contrastSlider.value = 100;
+        document.getElementById('contrast-value').textContent = '100%';
+    }
+    if (saturationSlider) {
+        saturationSlider.value = 100;
+        document.getElementById('saturation-value').textContent = '100%';
+    }
+    if (exposureSlider) {
+        exposureSlider.value = 0;
+        document.getElementById('exposure-value').textContent = '0%';
+    }
+    if (warmthSlider) {
+        warmthSlider.value = 0;
+        document.getElementById('warmth-value').textContent = '0';
+    }
+    if (blurSlider) {
+        blurSlider.value = 0;
+        document.getElementById('blur-value').textContent = '0px';
+    }
+    if (sepiaSlider) {
+        sepiaSlider.value = 0;
+        document.getElementById('sepia-value').textContent = '0%';
+    }
+    if (grayscaleSlider) {
+        grayscaleSlider.value = 0;
+        document.getElementById('grayscale-value').textContent = '0%';
+    }
 
     applyFiltersToImage();
 }

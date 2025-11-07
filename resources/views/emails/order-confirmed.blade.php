@@ -1,45 +1,276 @@
-<x-mail::message>
-# ¡Tu pago ha sido confirmado!
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Corinthia:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background-color: #0f3d35;
+            padding: 20px;
+            text-align: right;
+        }
+        .header img {
+            max-width: 120px;
+            height: auto;
+        }
+        .content {
+            padding: 30px 20px;
+            background-color: #e8e4dc;
+        }
+        .title {
+            font-family: 'Corinthia', cursive;
+            font-size: 48px;
+            color: #5c533b;
+            text-align: center;
+            margin: 0 0 30px 0;
+            font-weight: normal;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            text-align: center;
+            flex: 1;
+        }
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .step-number.active {
+            background-color: #0f3d35;
+            color: white;
+        }
+        .step-number.inactive {
+            background-color: #b8a98a;
+            color: white;
+        }
+        .step-text {
+            font-size: 12px;
+            color: #5c533b;
+        }
+        .message-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .message-box p {
+            margin: 0 0 15px 0;
+            color: #333;
+            line-height: 1.6;
+        }
+        .important {
+            font-weight: bold;
+            color: #0f3d35;
+        }
+        .order-number {
+            font-weight: bold;
+            color: #0f3d35;
+        }
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .product-table th {
+            background-color: #f8f8f8;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+            font-weight: 600;
+            color: #333;
+        }
+        .product-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .totals {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .totals .row {
+            display: flex;
+            justify-content: flex-end;
+            padding: 8px 0;
+        }
+        .totals .label {
+            margin-right: 20px;
+            font-weight: 600;
+        }
+        .totals .total-row {
+            border-top: 2px solid #0f3d35;
+            padding-top: 12px;
+            margin-top: 8px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .signature {
+            margin-top: 30px;
+            color: #333;
+        }
+        .footer {
+            background-color: #0f3d35;
+            padding: 20px;
+            text-align: center;
+        }
+        .social-icons {
+            margin-bottom: 10px;
+        }
+        .social-icons a {
+            display: inline-block;
+            margin: 0 8px;
+            color: white;
+            text-decoration: none;
+        }
+        .copyright {
+            color: #ccc;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <img src="{{ asset('images/IMG-20251016-WA0034.jpg') }}" alt="Imani Magnets" />
+        </div>
 
-Hola **{{ $order->customer_name }}**,
+        <!-- Content -->
+        <div class="content">
+            <h1 class="title">¡Gracias por tu compra!</h1>
 
-¡Excelentes noticias! Hemos confirmado el pago de tu pedido y estamos procesando tu orden.
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step">
+                    <div class="step-number inactive">1</div>
+                    <div class="step-text">Pedido<br>realizado</div>
+                </div>
+                <div class="step">
+                    <div class="step-number active">2</div>
+                    <div class="step-text">Pago<br>confirmado</div>
+                </div>
+                <div class="step">
+                    <div class="step-number inactive">3</div>
+                    <div class="step-text">Pedido<br>enviado</div>
+                </div>
+            </div>
 
-## Detalles del Pedido
+            <!-- Message -->
+            <div class="message-box">
+                <p>Hola {{ $order->customer_name }},</p>
 
-**Número de Pedido:** {{ $order->order_number }}
-**Fecha:** {{ $order->created_at->format('d/m/Y H:i') }}
-**Total:** ${{ number_format($order->total, 2) }}
+                <p>¡Gracias por tu pedido en Imani Magnets!</p>
 
-### Productos
+                <p>Nos alegra que hayas elegido nuestros imanes para dar vida a tus recuerdos.</p>
 
-@foreach($order->items as $item)
-- **{{ $item->product_name }}** - Cantidad: {{ $item->quantity }} × ${{ number_format($item->price, 2) }} = ${{ number_format($item->subtotal, 2) }}
-@endforeach
+                <p class="order-number">Número del pedido: [{{ $order->order_number }}]</p>
 
----
+                <div style="display: flex; justify-content: space-between; margin: 20px 0;">
+                    <div>
+                        <p style="margin: 0 0 5px 0;"><strong>Dirección de entrega:</strong></p>
+                        <p style="margin: 0;">{{ $order->customer_name }}</p>
+                        <p style="margin: 0;">{{ $order->shipping_address }}</p>
+                        <p style="margin: 0;">{{ $order->shipping_city }}, {{ $order->shipping_state }} {{ $order->shipping_zip }}</p>
+                        <p style="margin: 0;">{{ $order->shipping_country }}</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0 0 5px 0;"><strong>Medio de pago:</strong></p>
+                        <p style="margin: 0;">{{ ucfirst($order->payment_method) }}</p>
+                    </div>
+                </div>
 
-**Subtotal:** ${{ number_format($order->subtotal, 2) }}
-**Envío:** ${{ number_format($order->shipping_cost, 2) }}
-**Total:** ${{ number_format($order->total, 2) }}
+                <!-- Product Table -->
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Producto</th>
+                            <th>Cantidad</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($order->items as $item)
+                        <tr>
+                            <td style="width: 80px;">
+                                @if($item->images && count($item->images) > 0)
+                                    <img src="{{ asset('storage/' . $item->images[0]) }}" alt="{{ $item->product_name }}" class="product-image">
+                                @endif
+                            </td>
+                            <td>{{ $item->product_name }}</td>
+                            <td>{{ $item->quantity }}</td>
+                            <td>${{ number_format($item->subtotal, 2) }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
 
-## ¿Qué sigue?
+                <!-- Totals -->
+                <div class="totals">
+                    <div class="row">
+                        <span class="label">Subtotal:</span>
+                        <span>${{ number_format($order->subtotal, 2) }}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">IVA:</span>
+                        <span>${{ number_format($order->subtotal * 0.15, 2) }}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Envío:</span>
+                        <span>${{ number_format($order->shipping_cost, 2) }}</span>
+                    </div>
+                    <div class="row total-row">
+                        <span class="label">Total:</span>
+                        <span>${{ number_format($order->total, 2) }}</span>
+                    </div>
+                </div>
 
-Estamos preparando tu pedido con mucho cariño. Te enviaremos otro correo cuando tu pedido sea enviado, incluyendo el número de tracking para que puedas seguir tu paquete.
+                <div class="signature">
+                    <p>En cuanto tu pedido esté listo para envío, te lo notificaremos por correo con el número de seguimiento.</p>
+                    <p>Con cariño,<br><strong>Julia</strong></p>
+                </div>
+            </div>
+        </div>
 
-<x-mail::button :url="route('user.order.show', $order->order_number)">
-Ver mi pedido
-</x-mail::button>
-
-Si tienes alguna pregunta, no dudes en contactarnos.
-
-Gracias por tu compra,<br>
-{{ config('app.name') }}
-
----
-
-**Dirección de Envío:**
-{{ $order->shipping_address }}
-{{ $order->shipping_city }}, {{ $order->shipping_state }} {{ $order->shipping_zip }}
-{{ $order->shipping_country }}
-</x-mail::message>
+        <!-- Footer -->
+        <div class="footer">
+            <div class="social-icons">
+                <a href="https://instagram.com/imanimagnets">📷</a>
+                <a href="mailto:info@imanimagnets.com">✉️</a>
+                <a href="https://wa.me/593985959303">💬</a>
+                <a href="https://imanimagnets.com">🌐</a>
+            </div>
+            <p class="copyright">© {{ date('Y') }} Imani Magnets. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

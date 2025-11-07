@@ -152,26 +152,42 @@
             <!-- Fade hacia el texto -->
             <div
                 class="pointer-events-none absolute inset-y-0 right-0 z-10
-               w-64 xl:w-80
-               bg-gradient-to-r from-transparent via-white/50 to-white">
+               w-[42%] xl:w-[calc(42%-4rem)]
+               bg-gradient-to-r from-transparent to-white">
             </div>
         </div>
 
         <!-- Content - Right Side (42% with padding) -->
         <div class="relative h-full flex items-center justify-end">
-            <div class="w-[42%] flex items-center justify-center px-8 xl:px-12">
+            <!-- 👇 Aquí movemos el bloque hacia la izquierda en desktop -->
+            <div class="w-[42%] flex items-center justify-center px-8 xl:px-12 relative z-10 xl:-translate-x-16 2xl:-translate-x-24">
                 <div class="max-w-xl">
-                    <h1 class="font-spartan text-5xl xl:text-6xl font-bold text-dark-turquoise leading-tight mb-6 text-right animate-fade-in-up delay-100">
-                        {{ $content->get('hero.title_line1') }}<br>
-                        A <span class="font-script text-dark-turquoise text-8xl xl:text-8xl inline-block mt-2">{{ $content->get('hero.title_line2') }}</span>
-                    </h1>
-                    <p class="text-lg xl:text-xl text-gray-brown mb-8 text-right animate-fade-in-up delay-200">
-                        {{ $content->get('hero.subtitle') }}
-                    </p>
-                    <div class="flex justify-end animate-fade-in-up delay-300">
-                        <a href="{{ $content->get('hero.cta_link') }}" class="btn-primary inline-block px-10 py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-base tracking-wider uppercase shadow-lg">
-                            {{ $content->get('hero.cta_text') }}
-                        </a>
+                    <!-- Columna de texto pegada a la derecha, pero alineada a la izquierda internamente -->
+                    <div class="ml-auto w-fit text-left">
+                        <h1 class="font-spartan text-5xl xl:text-6xl font-bold text-dark-turquoise leading-tight mb-4 animate-fade-in-up delay-100">
+                            <!-- Primera línea -->
+                            <span class="block">
+                                {{ $content->get('hero.title_line1') }} A
+                            </span>
+                            <!-- Segunda línea: Imanes -->
+                            <span class="block font-script text-dark-turquoise text-8xl xl:text-8xl mt-2">
+                                {{ $content->get('hero.title_line2') }}
+                            </span>
+                        </h1>
+
+                        <!-- Subtítulo apilado (con saltos de línea desde CMS) -->
+                        <p class="text-xl xl:text-2xl text-gray-brown mb-6 animate-fade-in-up delay-200 whitespace-pre-line">
+                            {{ $content->get('hero.subtitle') }}
+                        </p>
+
+
+                        <!-- Botón alineado con el texto -->
+                        <div class="flex justify-end animate-fade-in-up delay-300 -mr-4">
+                            <a href="{{ $content->get('hero.cta_link') }}"
+                                class="btn-primary inline-block px-10 py-4 bg-gray-orange hover:bg-[#a89980] text-white rounded-lg font-spartan font-semibold text-base tracking-wider uppercase shadow-lg">
+                                {{ $content->get('hero.cta_text') }}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -359,7 +375,49 @@
         }
 
         function startSlideshow(slides, indicators) {
-            if (slides.length === 0) return;
+            // Get unique image sources and track which slides have them
+            const uniqueSources = new Set();
+            const validSlides = [];
+
+            slides.forEach((slide, index) => {
+                const img = slide.querySelector('img');
+                if (img && img.src) {
+                    // Extract just the path from the full URL to compare properly
+                    const srcPath = img.getAttribute('src');
+
+                    // Only count if src is not empty, not just a placeholder, and contains an actual image file
+                    // Filter out base URLs without image paths (e.g., 'http://127.0.0.1:8000/')
+                    if (srcPath &&
+                        srcPath.trim() !== '' &&
+                        !srcPath.includes('undefined') &&
+                        srcPath.includes('/images/') // Must contain /images/ path
+                    ) {
+                        uniqueSources.add(srcPath);
+                        validSlides.push(index);
+                    }
+                }
+            });
+
+            console.log('Unique image sources:', uniqueSources.size, Array.from(uniqueSources));
+
+            // Don't start slideshow if there are less than 2 unique images
+            if (uniqueSources.size < 2) {
+                // Hide duplicate slides and extra indicators
+                slides.forEach((slide, index) => {
+                    if (index > 0) {
+                        slide.style.display = 'none';
+                    }
+                });
+                indicators.forEach((indicator, index) => {
+                    if (index > 0) {
+                        indicator.style.display = 'none';
+                    }
+                });
+                console.log('Slideshow disabled: only', uniqueSources.size, 'unique image(s)');
+                return;
+            }
+
+            console.log('Slideshow enabled with', uniqueSources.size, 'unique images');
 
             let currentSlide = 0;
             let intervalId;

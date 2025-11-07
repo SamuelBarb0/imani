@@ -236,7 +236,7 @@
                                                     </svg>
                                                     <div>
                                                         <p class="text-sm font-semibold text-gray-700">Subir nueva imagen</p>
-                                                        <p class="text-xs text-gray-500">Click para seleccionar archivo (JPG, PNG, WEBP - Max 5MB)</p>
+                                                        <p class="text-xs text-gray-500">Click para seleccionar archivo (JPG, PNG, WEBP - Max 25MB)</p>
                                                     </div>
                                                 </div>
                                                 <input
@@ -365,9 +365,9 @@
         const file = input.files[0];
         if (!file) return;
 
-        // Validate file size (5MB max)
-        if (file.size > 5 * 1024 * 1024) {
-            alert('El archivo es demasiado grande. El tamaño máximo es 5MB.');
+        // Validate file size (25MB max)
+        if (file.size > 25 * 1024 * 1024) {
+            alert('El archivo es demasiado grande. El tamaño máximo es 25MB.');
             input.value = '';
             return;
         }

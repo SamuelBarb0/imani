@@ -164,7 +164,7 @@ class AdminController extends Controller
         $order = Order::findOrFail($id);
 
         $request->validate([
-            'payment_proof' => 'required|image|max:5120', // 5MB max
+            'payment_proof' => 'required|image|max:25600', // 25MB max
         ]);
 
         // Store file

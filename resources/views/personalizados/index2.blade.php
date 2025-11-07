@@ -4,7 +4,7 @@
 <section class="bg-white py-4 md:py-4">
     <div class="container mx-auto px-6 max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
         <!-- Imagen principal -->
-        <div class="flex justify-center h-[630px] overflow-hidden rounded-lg shadow-lg">
+        <div class="flex justify-center h-[580px] overflow-hidden rounded-lg shadow-lg">
             <img
                 src="{{ asset('images/IMG-20251016-WA0037.jpg') }}"
                 alt="Imanes personalizados Imani Magnets"
@@ -14,7 +14,7 @@
 
         <!-- Descripción del producto -->
         <div>
-            <h1 class="text-2xl md:text-3xl lg:text-4xl font-spartan font-bold text-dark-turquoise mb-4 leading-snug">
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-spartan font-bold text-dark-turquoise mb-4 leading-none whitespace-pre-line">
                 {!! $content->get('hero.title') !!}
             </h1>
             <p class="text-gray-700 mb-4 leading-relaxed">
@@ -26,8 +26,8 @@
 
             <div class="flex items-center justify-between mt-6">
                 <div>
-                    <p class="text-lg font-bold text-dark-turquoise">{{ $content->get('landing.price') }} USD</p>
-                    <p class="text-sm text-gray-500 italic">{{ $content->get('landing.shipping_note') }}</p>
+                    <p class="text-2xl font-bold text-dark-turquoise">{{ $content->get('landing.price') }} USD</p>
+                    <p class="text-sm text-gray-500 italic">{!! $content->get('landing.shipping_note') !!}</p>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@
                         1
                     </div>
                 </div>
-                <h3 class="mt-2 text-lg md:text-xl font-extrabold text-dark-turquoise uppercase tracking-wide mb-3">
+                <h3 class="mt-2 text-lg md:text-xl font-spartan font-extrabold text-dark-turquoise uppercase tracking-wide mb-3">
                     {{ $content->get('landing.step1_title') }}
                 </h3>
                 <p class="text-gray-700 text-sm leading-relaxed">
@@ -72,7 +72,7 @@
                         2
                     </div>
                 </div>
-                <h3 class="mt-2 text-lg md:text-xl font-extrabold text-dark-turquoise uppercase tracking-wide mb-3">
+                <h3 class="mt-2 text-lg md:text-xl font-spartan font-extrabold text-dark-turquoise uppercase tracking-wide mb-3">
                     {{ $content->get('landing.step2_title') }}
                 </h3>
                 <p class="text-gray-700 text-sm leading-relaxed">
@@ -87,7 +87,7 @@
                         3
                     </div>
                 </div>
-                <h3 class="mt-2 text-lg md:text-xl font-extrabold text-dark-turquoise uppercase tracking-wide mb-3">
+                <h3 class="mt-2 text-lg md:text-xl font-spartan font-extrabold text-dark-turquoise uppercase tracking-wide mb-3">
                     {{ $content->get('landing.step3_title') }}
                 </h3>
                 <p class="text-gray-700 text-sm leading-relaxed">

@@ -36,7 +36,7 @@ class TrackingAddedEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.tracking-added',
+            view: 'emails.tracking-added',
         );
     }
 

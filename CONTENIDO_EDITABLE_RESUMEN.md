@@ -61,7 +61,7 @@
 ### Sistema de Subida de Imágenes
 
 - **Formatos aceptados**: JPG, PNG, WEBP
-- **Tamaño máximo**: 5MB
+- **Tamaño máximo**: 25MB
 - **Ubicación**: `public/images/`
 - **Características**:
   - Preview en tiempo real (48x48)

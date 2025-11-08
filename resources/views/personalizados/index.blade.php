@@ -367,776 +367,140 @@
 </div>
 
 <style>
-/* Cropper.js Custom Styles */
-.cropper-container {
-    width: 100% !important;
-    height: 100% !important;
-}
+    /* Cropper.js Custom Styles */
+    .cropper-container {
+        width: 100% !important;
+        height: 100% !important;
+    }
 
-.cropper-view-box,
-.cropper-face {
-    border-radius: 0 !important;
-}
+    .cropper-view-box,
+    .cropper-face {
+        border-radius: 0 !important;
+    }
 
-/* El crop-box es el recuadro exterior de 644x644 (el que NO debe salirse de la imagen) */
-.cropper-crop-box {
-    /* Borde gris exterior del recuadro de 644x644 */
-    border: 2px solid #999999 !important;
-}
+    /* El crop-box es el recuadro exterior de 644x644 (el que NO debe salirse de la imagen) */
+    .cropper-crop-box {
+        /* Borde gris exterior del recuadro de 644x644 */
+        border: 2px solid #999999 !important;
+    }
 
-/* El view-box (donde se muestra la imagen) - SIN modificar */
-.cropper-view-box {
-    outline: none !important;
-}
+    /* El view-box (donde se muestra la imagen) - SIN modificar */
+    .cropper-view-box {
+        outline: none !important;
+    }
 
-/* Rayado diagonal SOLO en el margen de 22px (fuera del rectángulo rojo) */
-.cropper-crop-box::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 5px,
-        rgba(0, 0, 0, 0.15) 5px,
-        rgba(0, 0, 0, 0.15) 10px
-    );
-    /* Clip-path para recortar solo el marco de 22px (fuera del rectángulo rojo) */
-    clip-path: polygon(
-        /* Marco exterior completo */
-        0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%,
-        /* Recorte interior - área del rectángulo rojo (22px desde cada borde) */
-        22px 22px, 22px calc(100% - 22px),
-        calc(100% - 22px) calc(100% - 22px),
-        calc(100% - 22px) 22px, 22px 22px
-    );
-    pointer-events: none;
-    z-index: 2;
-}
+    /* Rayado diagonal SOLO en el margen de 22px (fuera del rectángulo rojo) */
+    .cropper-crop-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: repeating-linear-gradient(45deg,
+                transparent,
+                transparent 5px,
+                rgba(0, 0, 0, 0.15) 5px,
+                rgba(0, 0, 0, 0.15) 10px);
+        /* Clip-path para recortar solo el marco de 22px (fuera del rectángulo rojo) */
+        clip-path: polygon(
+                /* Marco exterior completo */
+                0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%,
+                /* Recorte interior - área del rectángulo rojo (22px desde cada borde) */
+                22px 22px, 22px calc(100% - 22px),
+                calc(100% - 22px) calc(100% - 22px),
+                calc(100% - 22px) 22px, 22px 22px);
+        pointer-events: none;
+        z-index: 2;
+    }
 
-/* Recuadro interior ROJO (600x600) - con margen de 22px desde el borde del crop-box */
-.cropper-crop-box::after {
-    content: '';
-    position: absolute;
-    top: 22px;
-    left: 22px;
-    right: 22px;
-    bottom: 22px;
-    /* Fondo TRANSPARENTE para ver la imagen */
-    background: transparent;
-    /* Borde punteado rojo */
-    border: 2px dashed #ef4444;
-    pointer-events: none;
-    z-index: 3;
-}
-
-.cropper-line,
-.cropper-point {
-    background-color: #12463c !important;
-}
-
-.cropper-bg {
-    background-image: none !important;
-}
-
-/* Custom range slider styling */
-input[type="range"]::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background: #12463c;
-    cursor: pointer;
-    border-radius: 50%;
-}
-
-input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: #12463c;
-    cursor: pointer;
-    border-radius: 50%;
-    border: none;
-}
-
-/* Active filter button */
-.filter-btn.active {
-    border-color: #12463c !important;
-    background-color: #12463c !important;
-    color: white !important;
-}
-
-/* Prevent body scroll when modal is open */
-body.modal-open {
-    overflow: hidden;
-}
-
-/* Touch-friendly controls on mobile */
-@media (max-width: 1024px) {
-    .mode-controls input[type="range"] {
-        height: 32px;
-        -webkit-appearance: none;
-        appearance: none;
+    /* Recuadro interior ROJO (600x600) - con margen de 22px desde el borde del crop-box */
+    .cropper-crop-box::after {
+        content: '';
+        position: absolute;
+        top: 22px;
+        left: 22px;
+        right: 22px;
+        bottom: 22px;
+        /* Fondo TRANSPARENTE para ver la imagen */
         background: transparent;
+        /* Borde punteado rojo */
+        border: 2px dashed #ef4444;
+        pointer-events: none;
+        z-index: 3;
     }
 
-    .mode-controls input[type="range"]::-webkit-slider-thumb {
-        width: 24px;
-        height: 24px;
+    .cropper-line,
+    .cropper-point {
+        background-color: #12463c !important;
     }
 
-    .mode-controls input[type="range"]::-moz-range-thumb {
-        width: 24px;
-        height: 24px;
+    .cropper-bg {
+        background-image: none !important;
     }
-}
+
+    /* Custom range slider styling */
+    input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #12463c;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: #12463c;
+        cursor: pointer;
+        border-radius: 50%;
+        border: none;
+    }
+
+    /* Active filter button */
+    .filter-btn.active {
+        border-color: #12463c !important;
+        background-color: #12463c !important;
+        color: white !important;
+    }
+
+    /* Prevent body scroll when modal is open */
+    body.modal-open {
+        overflow: hidden;
+    }
+
+    /* Touch-friendly controls on mobile */
+    @media (max-width: 1024px) {
+        .mode-controls input[type="range"] {
+            height: 32px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+        }
+
+        .mode-controls input[type="range"]::-webkit-slider-thumb {
+            width: 24px;
+            height: 24px;
+        }
+
+        .mode-controls input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+        }
+    }
 </style>
 
 <script>
-// ============================================
-// GLOBAL STATE
-// ============================================
-let uploadedImages = Array(9).fill(null);
-let editedImages = Array(9).fill(null);
-let editStates = Array(9).fill(null); // Store filter and crop states
-let currentEditIndex = null;
-let cropper = null;
-let currentFilters = {
-    brightness: 100,
-    contrast: 100,
-    saturation: 100,
-    exposure: 0,
-    warmth: 0,
-    blur: 0,
-    sepia: 0,
-    grayscale: 0
-};
-let targetSlotIndex = null; // Track which slot should receive the uploaded image
-
-// ============================================
-// UPLOAD FUNCTIONALITY
-// ============================================
-document.addEventListener('DOMContentLoaded', function() {
-    const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('file-input');
-
-    // Prevent default drag behaviors
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropzone.addEventListener(eventName, preventDefaults, false);
-        document.body.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    // Highlight drop zone when dragging over it
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropzone.addEventListener(eventName, highlight, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropzone.addEventListener(eventName, unhighlight, false);
-    });
-
-    function highlight(e) {
-        dropzone.classList.add('border-dark-turquoise', 'bg-gray-50');
-    }
-
-    function unhighlight(e) {
-        dropzone.classList.remove('border-dark-turquoise', 'bg-gray-50');
-    }
-
-    // Handle dropped files
-    dropzone.addEventListener('drop', handleDrop, false);
-    dropzone.addEventListener('click', () => fileInput.click());
-
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        handleFiles(files);
-    }
-
-    // Handle file selection
-    fileInput.addEventListener('change', function(e) {
-        handleFiles(this.files);
-    });
-
-    function handleFiles(files) {
-        if (files.length === 0) {
-            targetSlotIndex = null; // Reset if no files
-            return;
-        }
-
-        const validFiles = Array.from(files).filter(file => {
-            if (!file.type.match('image/(png|jpeg|jpg)')) {
-                alert(`El archivo ${file.name} no es una imagen válida (PNG, JPG o JPEG).`);
-                return false;
-            }
-            if (file.size > 10 * 1024 * 1024) {
-                alert(`El archivo ${file.name} excede el tamaño máximo de 10MB.`);
-                return false;
-            }
-            return true;
-        });
-
-        if (validFiles.length === 0) {
-            targetSlotIndex = null; // Reset if no valid files
-            return;
-        }
-
-        // Check if we're uploading to a specific slot
-        if (targetSlotIndex !== null) {
-            // Single file upload to specific slot
-            const file = validFiles[0];
-            const slotIndex = targetSlotIndex; // Store it before reset
-            targetSlotIndex = null; // Reset immediately
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                uploadedImages[slotIndex] = e.target.result;
-                renderGrid();
-            };
-            reader.readAsDataURL(file);
-            return;
-        }
-
-        // Multiple file upload to empty slots
-        // Show progress
-        const progressContainer = document.getElementById('progress-container');
-        const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
-        progressContainer.classList.remove('hidden');
-
-        let loaded = 0;
-        const total = validFiles.length;
-
-        validFiles.forEach((file, index) => {
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                // Find next empty slot
-                const emptyIndex = uploadedImages.findIndex(img => img === null);
-                if (emptyIndex !== -1 && emptyIndex < 9) {
-                    uploadedImages[emptyIndex] = e.target.result;
-                }
-
-                loaded++;
-                const progress = Math.round((loaded / total) * 100);
-                progressBar.style.width = progress + '%';
-                progressText.textContent = progress + '%';
-
-                if (loaded === total) {
-                    setTimeout(() => {
-                        progressContainer.classList.add('hidden');
-                        showImageGrid();
-                    }, 500);
-                }
-            };
-
-            reader.readAsDataURL(file);
-        });
-    }
-});
-
-function showImageGrid() {
-    // Both areas are always visible now - just render the grid
-    renderGrid();
-}
-
-function renderGrid() {
-    const gridItems = document.querySelectorAll('.grid-item');
-    let readyCount = 0;
-
-    gridItems.forEach((item, index) => {
-        item.innerHTML = '';
-
-        if (editedImages[index] || uploadedImages[index]) {
-            const imgSrc = editedImages[index] || uploadedImages[index];
-            const isEdited = editedImages[index] !== null;
-
-            const imgContainer = document.createElement('div');
-            imgContainer.className = 'relative w-full h-full group';
-
-            const img = document.createElement('img');
-            img.src = imgSrc;
-            img.className = 'w-full h-full object-cover rounded-lg';
-
-            // Add green checkmark if image is edited
-            if (isEdited) {
-                const checkmark = document.createElement('div');
-                checkmark.className = 'absolute top-1 right-1 bg-green-500 text-white rounded-full p-1 shadow-lg';
-                checkmark.innerHTML = `
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                `;
-                imgContainer.appendChild(checkmark);
-            }
-
-            const overlay = document.createElement('div');
-            overlay.className = 'absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center gap-2';
-
-            const editBtn = document.createElement('button');
-            editBtn.innerHTML = `
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                </svg>
-            `;
-            editBtn.className = 'p-1.5 bg-dark-turquoise text-white rounded-full hover:bg-gray-brown transition-all';
-            editBtn.onclick = () => openEditor(index);
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.innerHTML = `
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                </svg>
-            `;
-            deleteBtn.className = 'p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all';
-            deleteBtn.onclick = () => deleteImage(index);
-
-            overlay.appendChild(editBtn);
-            overlay.appendChild(deleteBtn);
-            imgContainer.appendChild(img);
-            imgContainer.appendChild(overlay);
-            item.appendChild(imgContainer);
-
-            item.classList.remove('border-dashed', 'border-gray-300');
-            item.classList.add('border-solid', 'border-dark-turquoise');
-
-            // Only count as ready if image has been edited and saved
-            if (isEdited) {
-                readyCount++;
-            }
-        } else {
-            const placeholder = document.createElement('div');
-            placeholder.className = 'text-center';
-            placeholder.innerHTML = `
-                <div class="text-2xl text-gray-300 mb-0.5">+</div>
-                <p class="text-xs text-gray-400">Foto ${index + 1}</p>
-            `;
-            item.appendChild(placeholder);
-            item.classList.remove('border-solid', 'border-dark-turquoise');
-            item.classList.add('border-dashed', 'border-gray-300');
-        }
-
-        // Click handler for empty slots
-        item.onclick = uploadedImages[index] ? null : () => {
-            const input = document.getElementById('file-input');
-
-            // Clear previous value
-            input.value = '';
-
-            // Set target slot index
-            targetSlotIndex = index;
-
-            // Open file picker
-            input.click();
-        };
-
-        // Drag and drop handlers for individual slots
-        if (!uploadedImages[index]) {
-            // Prevent default drag behaviors
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                item.addEventListener(eventName, function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }, false);
-            });
-
-            // Highlight slot when dragging over it
-            item.addEventListener('dragenter', function(e) {
-                this.classList.add('border-dark-turquoise', 'bg-gray-50');
-            });
-
-            item.addEventListener('dragleave', function(e) {
-                // Only remove highlight if we're actually leaving the item
-                if (e.target === this) {
-                    this.classList.remove('border-dark-turquoise', 'bg-gray-50');
-                }
-            });
-
-            // Handle drop
-            item.addEventListener('drop', function(e) {
-                this.classList.remove('border-dark-turquoise', 'bg-gray-50');
-
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    const file = files[0];
-
-                    // Validate file type
-                    if (!file.type.match('image/(png|jpeg|jpg)')) {
-                        alert('Por favor selecciona una imagen válida (PNG, JPG o JPEG).');
-                        return;
-                    }
-
-                    // Validate file size
-                    if (file.size > 10 * 1024 * 1024) {
-                        alert('El archivo excede el tamaño máximo de 10MB.');
-                        return;
-                    }
-
-                    // Read and upload the file
-                    const reader = new FileReader();
-                    reader.onload = function(readerEvent) {
-                        uploadedImages[index] = readerEvent.target.result;
-                        renderGrid();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-    });
-
-    document.getElementById('images-ready').textContent = `${readyCount}/9`;
-
-    const addToCartBtn = document.getElementById('add-to-cart-btn');
-    if (readyCount === 9) {
-        addToCartBtn.disabled = false;
-        addToCartBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-        addToCartBtn.classList.add('bg-dark-turquoise', 'text-white', 'cursor-pointer', 'hover:bg-gray-brown');
-    } else {
-        addToCartBtn.disabled = true;
-        addToCartBtn.classList.remove('bg-dark-turquoise', 'text-white', 'cursor-pointer', 'hover:bg-gray-brown');
-        addToCartBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-    }
-}
-
-function deleteImage(index) {
-    if (confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
-        uploadedImages[index] = null;
-        editedImages[index] = null;
-        editStates[index] = null;
-        renderGrid();
-    }
-}
-
-function resetUploadArea() {
-    if (confirm('¿Estás seguro de que quieres volver a empezar? Se perderán todas las imágenes cargadas.')) {
-        uploadedImages = Array(9).fill(null);
-        editedImages = Array(9).fill(null);
-        editStates = Array(9).fill(null);
-        document.getElementById('progress-bar').style.width = '0%';
-        document.getElementById('progress-text').textContent = '0%';
-        renderGrid();
-    }
-}
-
-// ============================================
-// IMAGE EDITOR FUNCTIONALITY
-// ============================================
-function openEditor(index) {
-    currentEditIndex = index;
-    // Always load the original image so users can re-crop from different areas
-    const imageSrc = uploadedImages[index];
-
-    // Show modal and prevent body scroll
-    document.getElementById('editor-modal').classList.remove('hidden');
-    document.body.classList.add('modal-open');
-
-    // Initialize image
-    const cropImage = document.getElementById('crop-image');
-    cropImage.src = imageSrc;
-
-    // Load saved state if exists, otherwise reset
-    if (editStates[index]) {
-        currentFilters = { ...editStates[index].filters };
-        updateSliderValues();
-    } else {
-        resetAllFilters();
-    }
-
-    // Initialize Cropper.js
-    setTimeout(() => {
-        if (cropper) {
-            cropper.destroy();
-        }
-
-        // Set container height for mobile responsiveness
-        const wrapper = document.getElementById('cropper-wrapper');
-        const wrapperWidth = wrapper.offsetWidth;
-        wrapper.style.height = wrapperWidth + 'px'; // Force square aspect ratio
-
-        // Adjust minimum crop box size for mobile
-        const isMobile = window.innerWidth < 768;
-        const minCropBoxSize = isMobile ? 150 : 200;
-
-        const cropperOptions = {
-            aspectRatio: 1, // Square crop (1:1)
-            viewMode: 1, // Crop box (644x644) must stay within the canvas (no puede salirse de la imagen)
-            dragMode: 'none', // Imagen fija (no se mueve)
-            autoCropArea: 0.93, // 600/644 = 0.9317 (inner image / outer border)
-            restore: false,
-            guides: true,
-            center: true,
-            highlight: true,
-            background: true,
-            cropBoxMovable: true, // Recuadro SÍ se puede mover
-            cropBoxResizable: true, // Recuadro SÍ se puede redimensionar
-            toggleDragModeOnDblclick: false,
-            movable: false, // La imagen NO se mueve (está fija)
-            zoomable: false, // No zoom de imagen
-            zoomOnWheel: false, // No zoom con rueda
-            minCropBoxWidth: minCropBoxSize,
-            minCropBoxHeight: minCropBoxSize,
-            ready: function() {
-                // Restore crop data if exists
-                if (editStates[index] && editStates[index].cropData) {
-                    cropper.setData(editStates[index].cropData);
-                }
-                // Apply filters once Cropper is ready
-                applyFiltersToImage();
-
-                // Añadir evento de rueda del ratón para redimensionar crop box
-                const cropperContainer = document.querySelector('.cropper-container');
-                if (cropperContainer) {
-                    cropperContainer.addEventListener('wheel', handleCropBoxZoom);
-                }
-            }
-        };
-
-        cropper = new Cropper(cropImage, cropperOptions);
-
-        // Switch to crop mode
-        switchMode('crop');
-    }, 100);
-}
-
-/**
- * Handle mouse wheel to resize crop box (instead of zooming image)
- */
-function handleCropBoxZoom(e) {
-    if (!cropper) return;
-
-    e.preventDefault();
-
-    // Get current crop box data
-    const cropBoxData = cropper.getCropBoxData();
-
-    // Calculate zoom factor based on wheel direction
-    const delta = e.deltaY || e.detail || e.wheelDelta;
-    const zoomFactor = delta > 0 ? 0.95 : 1.05; // Scroll down = smaller, scroll up = bigger
-
-    // Calculate new dimensions
-    let newWidth = cropBoxData.width * zoomFactor;
-    let newHeight = cropBoxData.height * zoomFactor;
-
-    // Get container dimensions to limit max size
-    const containerData = cropper.getContainerData();
-    const maxSize = Math.min(containerData.width, containerData.height);
-
-    // Set minimum size (same as minCropBoxSize)
-    const isMobile = window.innerWidth < 768;
-    const minSize = isMobile ? 150 : 200;
-
-    // Apply limits
-    newWidth = Math.max(minSize, Math.min(newWidth, maxSize));
-    newHeight = Math.max(minSize, Math.min(newHeight, maxSize));
-
-    // Calculate new position to keep crop box centered
-    const newLeft = cropBoxData.left + (cropBoxData.width - newWidth) / 2;
-    const newTop = cropBoxData.top + (cropBoxData.height - newHeight) / 2;
-
-    // Apply new crop box dimensions
-    cropper.setCropBoxData({
-        left: newLeft,
-        top: newTop,
-        width: newWidth,
-        height: newHeight
-    });
-}
-
-function closeEditor() {
-    if (confirm('¿Cerrar el editor? Los cambios no guardados se perderán.')) {
-        document.getElementById('editor-modal').classList.add('hidden');
-        document.body.classList.remove('modal-open');
-
-        // Remove wheel event listener
-        const cropperContainer = document.querySelector('.cropper-container');
-        if (cropperContainer) {
-            cropperContainer.removeEventListener('wheel', handleCropBoxZoom);
-        }
-
-        if (cropper) {
-            cropper.destroy();
-            cropper = null;
-        }
-        currentEditIndex = null;
-    }
-}
-
-function saveImage() {
-    if (!cropper) return;
-
-    // Save current state (filters and crop data) for future edits
-    editStates[currentEditIndex] = {
-        filters: { ...currentFilters },
-        cropData: cropper.getData()
-    };
-
-    // Get cropped canvas
-    const canvas = cropper.getCroppedCanvas({
-        width: 600,
-        height: 600,
-        imageSmoothingEnabled: true,
-        imageSmoothingQuality: 'high'
-    });
-
-    // Create a new canvas to apply filters
-    const finalCanvas = document.createElement('canvas');
-    finalCanvas.width = canvas.width;
-    finalCanvas.height = canvas.height;
-    const ctx = finalCanvas.getContext('2d');
-
-    // Apply CSS filters to the context
-    const filterString = buildFilterString();
-    ctx.filter = filterString;
-
-    // Draw the cropped image with filters applied
-    ctx.drawImage(canvas, 0, 0);
-
-    // Save to edited images as PNG (lossless quality for printing)
-    editedImages[currentEditIndex] = finalCanvas.toDataURL('image/png');
-
-    // Close editor
-    document.getElementById('editor-modal').classList.add('hidden');
-    document.body.classList.remove('modal-open');
-    if (cropper) {
-        cropper.destroy();
-        cropper = null;
-    }
-
-    // Re-render grid
-    renderGrid();
-}
-
-function rotateImage() {
-    if (cropper) {
-        cropper.rotate(90);
-    }
-}
-
-// ============================================
-// MODE SWITCHING
-// ============================================
-function switchMode(mode) {
-    // Update tabs
-    document.querySelectorAll('.mode-tab').forEach(tab => {
-        if (tab.dataset.mode === mode) {
-            tab.classList.add('active', 'border-dark-turquoise', 'text-dark-turquoise');
-            tab.classList.remove('border-transparent', 'text-gray-500');
-        } else {
-            tab.classList.remove('active', 'border-dark-turquoise', 'text-dark-turquoise');
-            tab.classList.add('border-transparent', 'text-gray-500');
-        }
-    });
-
-    // Update controls
-    document.querySelectorAll('.mode-controls').forEach(control => {
-        control.classList.add('hidden');
-    });
-
-    document.getElementById(`${mode}-controls`).classList.remove('hidden');
-}
-
-// ============================================
-// ADJUSTMENT CONTROLS
-// ============================================
-document.addEventListener('DOMContentLoaded', function() {
-    // Brightness
-    const brightnessSlider = document.getElementById('brightness');
-    const brightnessValue = document.getElementById('brightness-value');
-    if (brightnessSlider) {
-        brightnessSlider.addEventListener('input', function() {
-            currentFilters.brightness = this.value;
-            brightnessValue.textContent = this.value + '%';
-            applyFiltersToImage();
-        });
-    }
-
-    // Contrast
-    const contrastSlider = document.getElementById('contrast');
-    const contrastValue = document.getElementById('contrast-value');
-    if (contrastSlider) {
-        contrastSlider.addEventListener('input', function() {
-            currentFilters.contrast = this.value;
-            contrastValue.textContent = this.value + '%';
-            applyFiltersToImage();
-        });
-    }
-
-    // Saturation
-    const saturationSlider = document.getElementById('saturation');
-    const saturationValue = document.getElementById('saturation-value');
-    if (saturationSlider) {
-        saturationSlider.addEventListener('input', function() {
-            currentFilters.saturation = this.value;
-            saturationValue.textContent = this.value + '%';
-            applyFiltersToImage();
-        });
-    }
-
-    // Exposure
-    const exposureSlider = document.getElementById('exposure');
-    const exposureValue = document.getElementById('exposure-value');
-    if (exposureSlider) {
-        exposureSlider.addEventListener('input', function() {
-            currentFilters.exposure = this.value;
-            exposureValue.textContent = this.value + '%';
-            applyFiltersToImage();
-        });
-    }
-
-    // Warmth
-    const warmthSlider = document.getElementById('warmth');
-    const warmthValue = document.getElementById('warmth-value');
-    if (warmthSlider) {
-        warmthSlider.addEventListener('input', function() {
-            currentFilters.warmth = this.value;
-            warmthValue.textContent = this.value;
-            applyFiltersToImage();
-        });
-    }
-
-    // Blur
-    const blurSlider = document.getElementById('blur');
-    const blurValue = document.getElementById('blur-value');
-    if (blurSlider) {
-        blurSlider.addEventListener('input', function() {
-            currentFilters.blur = this.value;
-            blurValue.textContent = this.value + 'px';
-            applyFiltersToImage();
-        });
-    }
-
-    // Sepia
-    const sepiaSlider = document.getElementById('sepia');
-    const sepiaValue = document.getElementById('sepia-value');
-    if (sepiaSlider) {
-        sepiaSlider.addEventListener('input', function() {
-            currentFilters.sepia = this.value;
-            sepiaValue.textContent = this.value + '%';
-            applyFiltersToImage();
-        });
-    }
-
-    // Grayscale
-    const grayscaleSlider = document.getElementById('grayscale');
-    const grayscaleValue = document.getElementById('grayscale-value');
-    if (grayscaleSlider) {
-        grayscaleSlider.addEventListener('input', function() {
-            currentFilters.grayscale = this.value;
-            grayscaleValue.textContent = this.value + '%';
-            applyFiltersToImage();
-        });
-    }
-});
-
-function resetAdjustments() {
-    currentFilters = {
+    // ============================================
+    // GLOBAL STATE
+    // ============================================
+    let uploadedImages = Array(9).fill(null);
+    let editedImages = Array(9).fill(null);
+    let editStates = Array(9).fill(null); // Store filter and crop states
+    let currentEditIndex = null;
+    let cropper = null;
+    let currentFilters = {
         brightness: 100,
         contrast: 100,
         saturation: 100,
@@ -1146,333 +510,977 @@ function resetAdjustments() {
         sepia: 0,
         grayscale: 0
     };
+    let targetSlotIndex = null; // Track which slot should receive the uploaded image
 
-    // Reset sliders - with null checks
-    const brightnessSlider = document.getElementById('brightness');
-    const contrastSlider = document.getElementById('contrast');
-    const saturationSlider = document.getElementById('saturation');
-    const exposureSlider = document.getElementById('exposure');
-    const warmthSlider = document.getElementById('warmth');
-    const blurSlider = document.getElementById('blur');
-    const sepiaSlider = document.getElementById('sepia');
-    const grayscaleSlider = document.getElementById('grayscale');
+    // ============================================
+    // UPLOAD FUNCTIONALITY
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
 
-    if (brightnessSlider) {
-        brightnessSlider.value = 100;
-        document.getElementById('brightness-value').textContent = '100%';
-    }
-    if (contrastSlider) {
-        contrastSlider.value = 100;
-        document.getElementById('contrast-value').textContent = '100%';
-    }
-    if (saturationSlider) {
-        saturationSlider.value = 100;
-        document.getElementById('saturation-value').textContent = '100%';
-    }
-    if (exposureSlider) {
-        exposureSlider.value = 0;
-        document.getElementById('exposure-value').textContent = '0%';
-    }
-    if (warmthSlider) {
-        warmthSlider.value = 0;
-        document.getElementById('warmth-value').textContent = '0';
-    }
-    if (blurSlider) {
-        blurSlider.value = 0;
-        document.getElementById('blur-value').textContent = '0px';
-    }
-    if (sepiaSlider) {
-        sepiaSlider.value = 0;
-        document.getElementById('sepia-value').textContent = '0%';
-    }
-    if (grayscaleSlider) {
-        grayscaleSlider.value = 0;
-        document.getElementById('grayscale-value').textContent = '0%';
-    }
-
-    applyFiltersToImage();
-}
-
-function resetAllFilters() {
-    resetAdjustments();
-    // Remove active class from all filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-}
-
-// ============================================
-// FILTER PRESETS
-// ============================================
-function applyFilter(filterName) {
-    // Remove active from all buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    // Add active to clicked button
-    event.target.classList.add('active');
-
-    switch(filterName) {
-        case 'original':
-            resetAdjustments();
-            break;
-        case 'bw':
-            currentFilters = {
-                brightness: 100,
-                contrast: 110,
-                saturation: 0,
-                exposure: 0,
-                warmth: 0,
-                blur: 0,
-                sepia: 0,
-                grayscale: 100
-            };
-            break;
-        case 'sepia':
-            currentFilters = {
-                brightness: 100,
-                contrast: 90,
-                saturation: 80,
-                exposure: 0,
-                warmth: 0,
-                blur: 0,
-                sepia: 80,
-                grayscale: 0
-            };
-            break;
-        case 'vibrant':
-            currentFilters = {
-                brightness: 110,
-                contrast: 120,
-                saturation: 150,
-                exposure: 10,
-                warmth: 0,
-                blur: 0,
-                sepia: 0,
-                grayscale: 0
-            };
-            break;
-        case 'cool':
-            currentFilters = {
-                brightness: 100,
-                contrast: 105,
-                saturation: 110,
-                exposure: 0,
-                warmth: -30,
-                blur: 0,
-                sepia: 0,
-                grayscale: 0
-            };
-            break;
-        case 'warm':
-            currentFilters = {
-                brightness: 105,
-                contrast: 100,
-                saturation: 120,
-                exposure: 5,
-                warmth: 40,
-                blur: 0,
-                sepia: 0,
-                grayscale: 0
-            };
-            break;
-        case 'vintage':
-            currentFilters = {
-                brightness: 95,
-                contrast: 85,
-                saturation: 70,
-                exposure: -5,
-                warmth: 20,
-                blur: 0.5,
-                sepia: 40,
-                grayscale: 0
-            };
-            break;
-    }
-
-    updateSliderValues();
-    applyFiltersToImage();
-}
-
-function updateSliderValues() {
-    document.getElementById('brightness').value = currentFilters.brightness;
-    document.getElementById('brightness-value').textContent = currentFilters.brightness + '%';
-    document.getElementById('contrast').value = currentFilters.contrast;
-    document.getElementById('contrast-value').textContent = currentFilters.contrast + '%';
-    document.getElementById('saturation').value = currentFilters.saturation;
-    document.getElementById('saturation-value').textContent = currentFilters.saturation + '%';
-    document.getElementById('exposure').value = currentFilters.exposure;
-    document.getElementById('exposure-value').textContent = currentFilters.exposure + '%';
-    document.getElementById('warmth').value = currentFilters.warmth;
-    document.getElementById('warmth-value').textContent = currentFilters.warmth;
-    document.getElementById('blur').value = currentFilters.blur;
-    document.getElementById('blur-value').textContent = currentFilters.blur + 'px';
-    document.getElementById('sepia').value = currentFilters.sepia;
-    document.getElementById('sepia-value').textContent = currentFilters.sepia + '%';
-    document.getElementById('grayscale').value = currentFilters.grayscale;
-    document.getElementById('grayscale-value').textContent = currentFilters.grayscale + '%';
-}
-
-function applyFiltersToImage() {
-    const filterString = buildFilterString();
-
-    // Apply filters to the container that Cropper.js uses
-    if (cropper) {
-        const cropperContainer = document.querySelector('.cropper-container');
-        if (cropperContainer) {
-            // Apply to the main container
-            cropperContainer.style.filter = filterString;
-        }
-
-        // Also apply directly to the canvas images
-        const cropperWrap = document.querySelector('.cropper-wrap-box');
-        if (cropperWrap) {
-            cropperWrap.style.filter = filterString;
-        }
-    }
-
-    // Apply to the original image as fallback
-    const cropImage = document.getElementById('crop-image');
-    if (cropImage) {
-        cropImage.style.filter = filterString;
-    }
-}
-
-function buildFilterString() {
-    const filters = [];
-
-    // Calculate combined brightness (base + exposure)
-    let totalBrightness = currentFilters.brightness;
-    if (currentFilters.exposure !== 0) {
-        const exposureFactor = 1 + (currentFilters.exposure / 100);
-        totalBrightness = (totalBrightness * exposureFactor);
-    }
-
-    filters.push(`brightness(${totalBrightness}%)`);
-    filters.push(`contrast(${currentFilters.contrast}%)`);
-    filters.push(`saturate(${currentFilters.saturation}%)`);
-
-    // Warmth (simulated with hue rotation)
-    if (currentFilters.warmth !== 0) {
-        filters.push(`hue-rotate(${currentFilters.warmth * 0.3}deg)`);
-    }
-
-    if (currentFilters.blur > 0) {
-        filters.push(`blur(${currentFilters.blur}px)`);
-    }
-
-    if (currentFilters.sepia > 0) {
-        filters.push(`sepia(${currentFilters.sepia}%)`);
-    }
-
-    if (currentFilters.grayscale > 0) {
-        filters.push(`grayscale(${currentFilters.grayscale}%)`);
-    }
-
-    return filters.length > 0 ? filters.join(' ') : 'none';
-}
-
-/**
- * Process image to 600x600 square (center crop, like object-fit: cover)
- */
-async function processImageToSquare(imageDataUrl) {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const size = 600;
-            canvas.width = size;
-            canvas.height = size;
-            const ctx = canvas.getContext('2d');
-
-            // Calculate dimensions for center crop (like object-fit: cover)
-            const scale = Math.max(size / img.width, size / img.height);
-            const scaledWidth = img.width * scale;
-            const scaledHeight = img.height * scale;
-
-            // Center the image
-            const x = (size - scaledWidth) / 2;
-            const y = (size - scaledHeight) / 2;
-
-            // Draw image scaled and centered
-            ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
-
-            // Convert to PNG (lossless quality)
-            resolve(canvas.toDataURL('image/png'));
-        };
-        img.src = imageDataUrl;
-    });
-}
-
-// ============================================
-// ADD TO CART FUNCTIONALITY
-// ============================================
-document.getElementById('add-to-cart-btn')?.addEventListener('click', async function() {
-    if (this.disabled) return;
-
-    // Show processing modal
-    document.getElementById('processing-modal').classList.remove('hidden');
-
-    try {
-        // Process ALL images to ensure they're 600x600
-        const images = await Promise.all(editedImages.map(async (img, index) => {
-            // If image was edited, use that version
-            if (img) {
-                return img;
-            }
-
-            // If not edited, process the original to make it 600x600
-            const originalImg = uploadedImages[index];
-            if (originalImg) {
-                return await processImageToSquare(originalImg);
-            }
-
-            return null;
-        }));
-
-        // Send to server to add to cart
-        const response = await fetch('{{ route("personalizados.add-to-cart") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ images })
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
         });
 
-        if (!response.ok) {
-            throw new Error('Error al agregar al carrito');
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
 
-        const data = await response.json();
+        // Highlight drop zone when dragging over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, highlight, false);
+        });
 
-        // Hide processing modal
-        document.getElementById('processing-modal').classList.add('hidden');
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, unhighlight, false);
+        });
 
-        if (data.success) {
-            // Redirect to cart
-            window.location.href = data.redirect_url;
-        } else {
-            throw new Error(data.message || 'Error al agregar al carrito');
+        function highlight(e) {
+            dropzone.classList.add('border-dark-turquoise', 'bg-gray-50');
         }
 
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Hubo un error al agregar al carrito. Por favor intenta de nuevo.');
-        document.getElementById('processing-modal').classList.add('hidden');
+        function unhighlight(e) {
+            dropzone.classList.remove('border-dark-turquoise', 'bg-gray-50');
+        }
+
+        // Handle dropped files
+        dropzone.addEventListener('drop', handleDrop, false);
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        // Handle file selection
+        fileInput.addEventListener('change', function(e) {
+            handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length === 0) {
+                targetSlotIndex = null; // Reset if no files
+                return;
+            }
+
+            const validFiles = Array.from(files).filter(file => {
+                if (!file.type.match('image/(png|jpeg|jpg)')) {
+                    alert(`El archivo ${file.name} no es una imagen válida (PNG, JPG o JPEG).`);
+                    return false;
+                }
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`El archivo ${file.name} excede el tamaño máximo de 10MB.`);
+                    return false;
+                }
+                return true;
+            });
+
+            if (validFiles.length === 0) {
+                targetSlotIndex = null; // Reset if no valid files
+                return;
+            }
+
+            // Check if we're uploading to a specific slot
+            if (targetSlotIndex !== null) {
+                // Single file upload to specific slot
+                const file = validFiles[0];
+                const slotIndex = targetSlotIndex; // Store it before reset
+                targetSlotIndex = null; // Reset immediately
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImages[slotIndex] = e.target.result;
+                    renderGrid();
+                };
+                reader.readAsDataURL(file);
+                return;
+            }
+
+            // Multiple file upload to empty slots
+            // Show progress
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            progressContainer.classList.remove('hidden');
+
+            let loaded = 0;
+            const total = validFiles.length;
+
+            validFiles.forEach((file, index) => {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    // Find next empty slot
+                    const emptyIndex = uploadedImages.findIndex(img => img === null);
+                    if (emptyIndex !== -1 && emptyIndex < 9) {
+                        uploadedImages[emptyIndex] = e.target.result;
+                    }
+
+                    loaded++;
+                    const progress = Math.round((loaded / total) * 100);
+                    progressBar.style.width = progress + '%';
+                    progressText.textContent = progress + '%';
+
+                    if (loaded === total) {
+                        setTimeout(() => {
+                            progressContainer.classList.add('hidden');
+                            showImageGrid();
+                        }, 500);
+                    }
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+
+    function showImageGrid() {
+        // Both areas are always visible now - just render the grid
+        renderGrid();
     }
-});
 
-// Close success modal
-document.getElementById('close-success-modal')?.addEventListener('click', function() {
-    document.getElementById('success-modal').classList.add('hidden');
-    // Reset the form
-    uploadedImages = Array(9).fill(null);
-    editedImages = Array(9).fill(null);
-    editStates = Array(9).fill(null);
-    renderGrid();
-});
+    function renderGrid() {
+        const gridItems = document.querySelectorAll('.grid-item');
+        let readyCount = 0;
+
+        gridItems.forEach((item, index) => {
+            item.innerHTML = '';
+
+            if (editedImages[index] || uploadedImages[index]) {
+                const imgSrc = editedImages[index] || uploadedImages[index];
+                const isEdited = editedImages[index] !== null;
+
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'relative w-full h-full group';
+
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.className = 'w-full h-full object-cover rounded-lg';
+
+                // Add green checkmark if image is edited
+                if (isEdited) {
+                    const checkmark = document.createElement('div');
+                    checkmark.className = 'absolute top-1 right-1 bg-green-500 text-white rounded-full p-1 shadow-lg';
+                    checkmark.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                `;
+                    imgContainer.appendChild(checkmark);
+                }
+
+                const overlay = document.createElement('div');
+                overlay.className = 'absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center gap-2';
+
+                const editBtn = document.createElement('button');
+                editBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+            `;
+                editBtn.className = 'p-1.5 bg-dark-turquoise text-white rounded-full hover:bg-gray-brown transition-all';
+                editBtn.onclick = () => openEditor(index);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            `;
+                deleteBtn.className = 'p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all';
+                deleteBtn.onclick = () => deleteImage(index);
+
+                overlay.appendChild(editBtn);
+                overlay.appendChild(deleteBtn);
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(overlay);
+                item.appendChild(imgContainer);
+
+                item.classList.remove('border-dashed', 'border-gray-300');
+                item.classList.add('border-solid', 'border-dark-turquoise');
+
+                // Only count as ready if image has been edited and saved
+                if (isEdited) {
+                    readyCount++;
+                }
+            } else {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'text-center';
+                placeholder.innerHTML = `
+                <div class="text-2xl text-gray-300 mb-0.5">+</div>
+                <p class="text-xs text-gray-400">Foto ${index + 1}</p>
+            `;
+                item.appendChild(placeholder);
+                item.classList.remove('border-solid', 'border-dark-turquoise');
+                item.classList.add('border-dashed', 'border-gray-300');
+            }
+
+            // Click handler for empty slots
+            item.onclick = uploadedImages[index] ? null : () => {
+                const input = document.getElementById('file-input');
+
+                // Clear previous value
+                input.value = '';
+
+                // Set target slot index
+                targetSlotIndex = index;
+
+                // Open file picker
+                input.click();
+            };
+
+            // Drag and drop handlers for individual slots
+            if (!uploadedImages[index]) {
+                // Prevent default drag behaviors
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    item.addEventListener(eventName, function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, false);
+                });
+
+                // Highlight slot when dragging over it
+                item.addEventListener('dragenter', function(e) {
+                    this.classList.add('border-dark-turquoise', 'bg-gray-50');
+                });
+
+                item.addEventListener('dragleave', function(e) {
+                    // Only remove highlight if we're actually leaving the item
+                    if (e.target === this) {
+                        this.classList.remove('border-dark-turquoise', 'bg-gray-50');
+                    }
+                });
+
+                // Handle drop
+                item.addEventListener('drop', function(e) {
+                    this.classList.remove('border-dark-turquoise', 'bg-gray-50');
+
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        const file = files[0];
+
+                        // Validate file type
+                        if (!file.type.match('image/(png|jpeg|jpg)')) {
+                            alert('Por favor selecciona una imagen válida (PNG, JPG o JPEG).');
+                            return;
+                        }
+
+                        // Validate file size
+                        if (file.size > 10 * 1024 * 1024) {
+                            alert('El archivo excede el tamaño máximo de 10MB.');
+                            return;
+                        }
+
+                        // Read and upload the file
+                        const reader = new FileReader();
+                        reader.onload = function(readerEvent) {
+                            uploadedImages[index] = readerEvent.target.result;
+                            renderGrid();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+
+        document.getElementById('images-ready').textContent = `${readyCount}/9`;
+
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        if (readyCount === 9) {
+            addToCartBtn.disabled = false;
+            addToCartBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+            addToCartBtn.classList.add('bg-dark-turquoise', 'text-white', 'cursor-pointer', 'hover:bg-gray-brown');
+        } else {
+            addToCartBtn.disabled = true;
+            addToCartBtn.classList.remove('bg-dark-turquoise', 'text-white', 'cursor-pointer', 'hover:bg-gray-brown');
+            addToCartBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+        }
+    }
+
+    function deleteImage(index) {
+        if (confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
+            uploadedImages[index] = null;
+            editedImages[index] = null;
+            editStates[index] = null;
+            renderGrid();
+        }
+    }
+
+    function resetUploadArea() {
+        if (confirm('¿Estás seguro de que quieres volver a empezar? Se perderán todas las imágenes cargadas.')) {
+            uploadedImages = Array(9).fill(null);
+            editedImages = Array(9).fill(null);
+            editStates = Array(9).fill(null);
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('progress-text').textContent = '0%';
+            renderGrid();
+        }
+    }
+
+    // ============================================
+    // IMAGE EDITOR FUNCTIONALITY
+    // ============================================
+    function openEditor(index) {
+        currentEditIndex = index;
+        // Always load the original image so users can re-crop from different areas
+        const imageSrc = uploadedImages[index];
+
+        // Show modal and prevent body scroll
+        document.getElementById('editor-modal').classList.remove('hidden');
+        document.body.classList.add('modal-open');
+
+        // Initialize image
+        const cropImage = document.getElementById('crop-image');
+        cropImage.src = imageSrc;
+
+        // Load saved state if exists, otherwise reset
+        if (editStates[index]) {
+            currentFilters = {
+                ...editStates[index].filters
+            };
+            updateSliderValues();
+        } else {
+            resetAllFilters();
+        }
+
+        // Initialize Cropper.js
+        setTimeout(() => {
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            // Set container height for mobile responsiveness
+            const wrapper = document.getElementById('cropper-wrapper');
+            const wrapperWidth = wrapper.offsetWidth;
+            wrapper.style.height = wrapperWidth + 'px'; // Force square aspect ratio
+
+            // Adjust minimum crop box size for mobile
+            const isMobile = window.innerWidth < 768;
+            const minCropBoxSize = isMobile ? 150 : 200;
+
+            const cropperOptions = {
+                aspectRatio: 1, // Square crop (1:1)
+                viewMode: 1, // Crop box (644x644) must stay within the canvas (no puede salirse de la imagen)
+                dragMode: 'none', // Imagen fija (no se mueve)
+                autoCropArea: 0.93, // 600/644 = 0.9317 (inner image / outer border)
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: true,
+                background: true,
+                cropBoxMovable: true, // Recuadro SÍ se puede mover
+                cropBoxResizable: true, // Recuadro SÍ se puede redimensionar
+                toggleDragModeOnDblclick: false,
+                movable: false, // La imagen NO se mueve (está fija)
+                zoomable: false, // No zoom de imagen
+                zoomOnWheel: false, // No zoom con rueda
+                minCropBoxWidth: minCropBoxSize,
+                minCropBoxHeight: minCropBoxSize,
+                ready: function() {
+                    // Restore crop data if exists
+                    if (editStates[index] && editStates[index].cropData) {
+                        cropper.setData(editStates[index].cropData);
+                    }
+                    // Apply filters once Cropper is ready
+                    applyFiltersToImage();
+
+                    // Añadir evento de rueda del ratón para redimensionar crop box
+                    const cropperContainer = document.querySelector('.cropper-container');
+                    if (cropperContainer) {
+                        cropperContainer.addEventListener('wheel', handleCropBoxZoom);
+                    }
+                }
+            };
+
+            cropper = new Cropper(cropImage, cropperOptions);
+
+            // Switch to crop mode
+            switchMode('crop');
+        }, 100);
+    }
+
+    /**
+     * Handle mouse wheel to resize crop box (instead of zooming image)
+     */
+    function handleCropBoxZoom(e) {
+        if (!cropper) return;
+
+        e.preventDefault();
+
+        // Get current crop box data
+        const cropBoxData = cropper.getCropBoxData();
+
+        // Calculate zoom factor based on wheel direction
+        const delta = e.deltaY || e.detail || e.wheelDelta;
+        const zoomFactor = delta > 0 ? 0.95 : 1.05; // Scroll down = smaller, scroll up = bigger
+
+        // Calculate new dimensions
+        let newWidth = cropBoxData.width * zoomFactor;
+        let newHeight = cropBoxData.height * zoomFactor;
+
+        // Get container dimensions to limit max size
+        const containerData = cropper.getContainerData();
+        const maxSize = Math.min(containerData.width, containerData.height);
+
+        // Set minimum size (same as minCropBoxSize)
+        const isMobile = window.innerWidth < 768;
+        const minSize = isMobile ? 150 : 200;
+
+        // Apply limits
+        newWidth = Math.max(minSize, Math.min(newWidth, maxSize));
+        newHeight = Math.max(minSize, Math.min(newHeight, maxSize));
+
+        // Calculate new position to keep crop box centered
+        const newLeft = cropBoxData.left + (cropBoxData.width - newWidth) / 2;
+        const newTop = cropBoxData.top + (cropBoxData.height - newHeight) / 2;
+
+        // Apply new crop box dimensions
+        cropper.setCropBoxData({
+            left: newLeft,
+            top: newTop,
+            width: newWidth,
+            height: newHeight
+        });
+    }
+
+    function closeEditor() {
+        if (confirm('¿Cerrar el editor? Los cambios no guardados se perderán.')) {
+            document.getElementById('editor-modal').classList.add('hidden');
+            document.body.classList.remove('modal-open');
+
+            // Remove wheel event listener
+            const cropperContainer = document.querySelector('.cropper-container');
+            if (cropperContainer) {
+                cropperContainer.removeEventListener('wheel', handleCropBoxZoom);
+            }
+
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            currentEditIndex = null;
+        }
+    }
+
+    function saveImage() {
+        if (!cropper) return;
+
+        // Save current state (filters and crop data) for future edits
+        editStates[currentEditIndex] = {
+            filters: {
+                ...currentFilters
+            },
+            cropData: cropper.getData()
+        };
+
+        // Get cropped canvas
+        const canvas = cropper.getCroppedCanvas({
+            width: 600,
+            height: 600,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high'
+        });
+
+        // Create a new canvas to apply filters
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = canvas.width;
+        finalCanvas.height = canvas.height;
+        const ctx = finalCanvas.getContext('2d');
+
+        // Apply CSS filters to the context
+        const filterString = buildFilterString();
+        ctx.filter = filterString;
+
+        // Draw the cropped image with filters applied
+        ctx.drawImage(canvas, 0, 0);
+
+        // Save to edited images as PNG (lossless quality for printing)
+        editedImages[currentEditIndex] = finalCanvas.toDataURL('image/png');
+
+        // Close editor
+        document.getElementById('editor-modal').classList.add('hidden');
+        document.body.classList.remove('modal-open');
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+
+        // Re-render grid
+        renderGrid();
+    }
+
+    function rotateImage() {
+        if (cropper) {
+            cropper.rotate(90);
+        }
+    }
+
+    // ============================================
+    // MODE SWITCHING
+    // ============================================
+    function switchMode(mode) {
+        // Update tabs
+        document.querySelectorAll('.mode-tab').forEach(tab => {
+            if (tab.dataset.mode === mode) {
+                tab.classList.add('active', 'border-dark-turquoise', 'text-dark-turquoise');
+                tab.classList.remove('border-transparent', 'text-gray-500');
+            } else {
+                tab.classList.remove('active', 'border-dark-turquoise', 'text-dark-turquoise');
+                tab.classList.add('border-transparent', 'text-gray-500');
+            }
+        });
+
+        // Update controls
+        document.querySelectorAll('.mode-controls').forEach(control => {
+            control.classList.add('hidden');
+        });
+
+        document.getElementById(`${mode}-controls`).classList.remove('hidden');
+    }
+
+    // ============================================
+    // ADJUSTMENT CONTROLS
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Brightness
+        const brightnessSlider = document.getElementById('brightness');
+        const brightnessValue = document.getElementById('brightness-value');
+        if (brightnessSlider) {
+            brightnessSlider.addEventListener('input', function() {
+                currentFilters.brightness = this.value;
+                brightnessValue.textContent = this.value + '%';
+                applyFiltersToImage();
+            });
+        }
+
+        // Contrast
+        const contrastSlider = document.getElementById('contrast');
+        const contrastValue = document.getElementById('contrast-value');
+        if (contrastSlider) {
+            contrastSlider.addEventListener('input', function() {
+                currentFilters.contrast = this.value;
+                contrastValue.textContent = this.value + '%';
+                applyFiltersToImage();
+            });
+        }
+
+        // Saturation
+        const saturationSlider = document.getElementById('saturation');
+        const saturationValue = document.getElementById('saturation-value');
+        if (saturationSlider) {
+            saturationSlider.addEventListener('input', function() {
+                currentFilters.saturation = this.value;
+                saturationValue.textContent = this.value + '%';
+                applyFiltersToImage();
+            });
+        }
+
+        // Exposure
+        const exposureSlider = document.getElementById('exposure');
+        const exposureValue = document.getElementById('exposure-value');
+        if (exposureSlider) {
+            exposureSlider.addEventListener('input', function() {
+                currentFilters.exposure = this.value;
+                exposureValue.textContent = this.value + '%';
+                applyFiltersToImage();
+            });
+        }
+
+        // Warmth
+        const warmthSlider = document.getElementById('warmth');
+        const warmthValue = document.getElementById('warmth-value');
+        if (warmthSlider) {
+            warmthSlider.addEventListener('input', function() {
+                currentFilters.warmth = this.value;
+                warmthValue.textContent = this.value;
+                applyFiltersToImage();
+            });
+        }
+
+        // Blur
+        const blurSlider = document.getElementById('blur');
+        const blurValue = document.getElementById('blur-value');
+        if (blurSlider) {
+            blurSlider.addEventListener('input', function() {
+                currentFilters.blur = this.value;
+                blurValue.textContent = this.value + 'px';
+                applyFiltersToImage();
+            });
+        }
+
+        // Sepia
+        const sepiaSlider = document.getElementById('sepia');
+        const sepiaValue = document.getElementById('sepia-value');
+        if (sepiaSlider) {
+            sepiaSlider.addEventListener('input', function() {
+                currentFilters.sepia = this.value;
+                sepiaValue.textContent = this.value + '%';
+                applyFiltersToImage();
+            });
+        }
+
+        // Grayscale
+        const grayscaleSlider = document.getElementById('grayscale');
+        const grayscaleValue = document.getElementById('grayscale-value');
+        if (grayscaleSlider) {
+            grayscaleSlider.addEventListener('input', function() {
+                currentFilters.grayscale = this.value;
+                grayscaleValue.textContent = this.value + '%';
+                applyFiltersToImage();
+            });
+        }
+    });
+
+    function resetAdjustments() {
+        currentFilters = {
+            brightness: 100,
+            contrast: 100,
+            saturation: 100,
+            exposure: 0,
+            warmth: 0,
+            blur: 0,
+            sepia: 0,
+            grayscale: 0
+        };
+
+        // Reset sliders - with null checks
+        const brightnessSlider = document.getElementById('brightness');
+        const contrastSlider = document.getElementById('contrast');
+        const saturationSlider = document.getElementById('saturation');
+        const exposureSlider = document.getElementById('exposure');
+        const warmthSlider = document.getElementById('warmth');
+        const blurSlider = document.getElementById('blur');
+        const sepiaSlider = document.getElementById('sepia');
+        const grayscaleSlider = document.getElementById('grayscale');
+
+        if (brightnessSlider) {
+            brightnessSlider.value = 100;
+            document.getElementById('brightness-value').textContent = '100%';
+        }
+        if (contrastSlider) {
+            contrastSlider.value = 100;
+            document.getElementById('contrast-value').textContent = '100%';
+        }
+        if (saturationSlider) {
+            saturationSlider.value = 100;
+            document.getElementById('saturation-value').textContent = '100%';
+        }
+        if (exposureSlider) {
+            exposureSlider.value = 0;
+            document.getElementById('exposure-value').textContent = '0%';
+        }
+        if (warmthSlider) {
+            warmthSlider.value = 0;
+            document.getElementById('warmth-value').textContent = '0';
+        }
+        if (blurSlider) {
+            blurSlider.value = 0;
+            document.getElementById('blur-value').textContent = '0px';
+        }
+        if (sepiaSlider) {
+            sepiaSlider.value = 0;
+            document.getElementById('sepia-value').textContent = '0%';
+        }
+        if (grayscaleSlider) {
+            grayscaleSlider.value = 0;
+            document.getElementById('grayscale-value').textContent = '0%';
+        }
+
+        applyFiltersToImage();
+    }
+
+    function resetAllFilters() {
+        resetAdjustments();
+        // Remove active class from all filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+    }
+
+    // ============================================
+    // FILTER PRESETS
+    // ============================================
+    function applyFilter(filterName) {
+        // Remove active from all buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Add active to clicked button
+        event.target.classList.add('active');
+
+        switch (filterName) {
+            case 'original':
+                resetAdjustments();
+                break;
+            case 'bw':
+                currentFilters = {
+                    brightness: 100,
+                    contrast: 110,
+                    saturation: 0,
+                    exposure: 0,
+                    warmth: 0,
+                    blur: 0,
+                    sepia: 0,
+                    grayscale: 100
+                };
+                break;
+            case 'sepia':
+                currentFilters = {
+                    brightness: 100,
+                    contrast: 90,
+                    saturation: 80,
+                    exposure: 0,
+                    warmth: 0,
+                    blur: 0,
+                    sepia: 80,
+                    grayscale: 0
+                };
+                break;
+            case 'vibrant':
+                currentFilters = {
+                    brightness: 110,
+                    contrast: 120,
+                    saturation: 150,
+                    exposure: 10,
+                    warmth: 0,
+                    blur: 0,
+                    sepia: 0,
+                    grayscale: 0
+                };
+                break;
+            case 'cool':
+                currentFilters = {
+                    brightness: 100,
+                    contrast: 105,
+                    saturation: 110,
+                    exposure: 0,
+                    warmth: -30,
+                    blur: 0,
+                    sepia: 0,
+                    grayscale: 0
+                };
+                break;
+            case 'warm':
+                currentFilters = {
+                    brightness: 105,
+                    contrast: 100,
+                    saturation: 120,
+                    exposure: 5,
+                    warmth: 40,
+                    blur: 0,
+                    sepia: 0,
+                    grayscale: 0
+                };
+                break;
+            case 'vintage':
+                currentFilters = {
+                    brightness: 95,
+                    contrast: 85,
+                    saturation: 70,
+                    exposure: -5,
+                    warmth: 20,
+                    blur: 0.5,
+                    sepia: 40,
+                    grayscale: 0
+                };
+                break;
+        }
+
+        updateSliderValues();
+        applyFiltersToImage();
+    }
+
+    function updateSliderValues() {
+        document.getElementById('brightness').value = currentFilters.brightness;
+        document.getElementById('brightness-value').textContent = currentFilters.brightness + '%';
+        document.getElementById('contrast').value = currentFilters.contrast;
+        document.getElementById('contrast-value').textContent = currentFilters.contrast + '%';
+        document.getElementById('saturation').value = currentFilters.saturation;
+        document.getElementById('saturation-value').textContent = currentFilters.saturation + '%';
+        document.getElementById('exposure').value = currentFilters.exposure;
+        document.getElementById('exposure-value').textContent = currentFilters.exposure + '%';
+        document.getElementById('warmth').value = currentFilters.warmth;
+        document.getElementById('warmth-value').textContent = currentFilters.warmth;
+        document.getElementById('blur').value = currentFilters.blur;
+        document.getElementById('blur-value').textContent = currentFilters.blur + 'px';
+        document.getElementById('sepia').value = currentFilters.sepia;
+        document.getElementById('sepia-value').textContent = currentFilters.sepia + '%';
+        document.getElementById('grayscale').value = currentFilters.grayscale;
+        document.getElementById('grayscale-value').textContent = currentFilters.grayscale + '%';
+    }
+
+    function applyFiltersToImage() {
+        const filterString = buildFilterString();
+
+        // Apply filters to the container that Cropper.js uses
+        if (cropper) {
+            const cropperContainer = document.querySelector('.cropper-container');
+            if (cropperContainer) {
+                // Apply to the main container
+                cropperContainer.style.filter = filterString;
+            }
+
+            // Also apply directly to the canvas images
+            const cropperWrap = document.querySelector('.cropper-wrap-box');
+            if (cropperWrap) {
+                cropperWrap.style.filter = filterString;
+            }
+        }
+
+        // Apply to the original image as fallback
+        const cropImage = document.getElementById('crop-image');
+        if (cropImage) {
+            cropImage.style.filter = filterString;
+        }
+    }
+
+    function buildFilterString() {
+        const filters = [];
+
+        // Calculate combined brightness (base + exposure)
+        let totalBrightness = currentFilters.brightness;
+        if (currentFilters.exposure !== 0) {
+            const exposureFactor = 1 + (currentFilters.exposure / 100);
+            totalBrightness = (totalBrightness * exposureFactor);
+        }
+
+        filters.push(`brightness(${totalBrightness}%)`);
+        filters.push(`contrast(${currentFilters.contrast}%)`);
+        filters.push(`saturate(${currentFilters.saturation}%)`);
+
+        // Warmth (simulated with hue rotation)
+        if (currentFilters.warmth !== 0) {
+            filters.push(`hue-rotate(${currentFilters.warmth * 0.3}deg)`);
+        }
+
+        if (currentFilters.blur > 0) {
+            filters.push(`blur(${currentFilters.blur}px)`);
+        }
+
+        if (currentFilters.sepia > 0) {
+            filters.push(`sepia(${currentFilters.sepia}%)`);
+        }
+
+        if (currentFilters.grayscale > 0) {
+            filters.push(`grayscale(${currentFilters.grayscale}%)`);
+        }
+
+        return filters.length > 0 ? filters.join(' ') : 'none';
+    }
+
+    /**
+     * Process image to 600x600 square (center crop, like object-fit: cover)
+     */
+    async function processImageToSquare(imageDataUrl) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const size = 600;
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                // Calculate dimensions for center crop (like object-fit: cover)
+                const scale = Math.max(size / img.width, size / img.height);
+                const scaledWidth = img.width * scale;
+                const scaledHeight = img.height * scale;
+
+                // Center the image
+                const x = (size - scaledWidth) / 2;
+                const y = (size - scaledHeight) / 2;
+
+                // Draw image scaled and centered
+                ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+
+                // Convert to PNG (lossless quality)
+                resolve(canvas.toDataURL('image/png'));
+            };
+            img.src = imageDataUrl;
+        });
+    }
+
+    // ============================================
+    // ADD TO CART FUNCTIONALITY
+    // ============================================
+    document.getElementById('add-to-cart-btn')?.addEventListener('click', async function() {
+        if (this.disabled) return;
+
+        // Show processing modal
+        document.getElementById('processing-modal').classList.remove('hidden');
+
+        try {
+            // Process ALL images to ensure they're 600x600
+            const images = await Promise.all(editedImages.map(async (img, index) => {
+                // If image was edited, use that version
+                if (img) {
+                    return img;
+                }
+
+                // If not edited, process the original to make it 600x600
+                const originalImg = uploadedImages[index];
+                if (originalImg) {
+                    return await processImageToSquare(originalImg);
+                }
+
+                return null;
+            }));
+
+            // Send to server to add to cart
+            const response = await fetch('{{ route("personalizados.add-to-cart") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    images
+                })
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error('Status:', response.status);
+                console.error('Body:', text);
+                throw new Error('Error al agregar al carrito');
+            }
+
+            const data = await response.json();
+
+            // Hide processing modal
+            document.getElementById('processing-modal').classList.add('hidden');
+
+            if (data.success) {
+                // Redirect to cart
+                window.location.href = data.redirect_url;
+            } else {
+                throw new Error(data.message || 'Error al agregar al carrito');
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Hubo un error al agregar al carrito. Por favor intenta de nuevo.');
+            document.getElementById('processing-modal').classList.add('hidden');
+        }
+    });
+
+    // Close success modal
+    document.getElementById('close-success-modal')?.addEventListener('click', function() {
+        document.getElementById('success-modal').classList.add('hidden');
+        // Reset the form
+        uploadedImages = Array(9).fill(null);
+        editedImages = Array(9).fill(null);
+        editStates = Array(9).fill(null);
+        renderGrid();
+    });
 </script>
 
 @endsection

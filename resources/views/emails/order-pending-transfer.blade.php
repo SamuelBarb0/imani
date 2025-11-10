@@ -1,196 +1,120 @@
 @extends('emails.layouts.base')
 
 @section('content')
-   <style>
-    .title {
-        font-family: 'Corinthia', cursive;
-        font-size: 74px;
-        color: #00352b;
-        text-align: center;
-        margin: 0 0 30px 0;
-        font-weight: normal;
-    }
-    .step-indicator {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-        gap: 110px;
-    }
-    .step {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex: 1;
-    }
-    .step-number {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 18px;
-        flex-shrink: 0;
-    }
-    .step-number.active {
-        background-color: #00352b;
-        color: white;
-    }
-    .step-number.inactive {
-        background-color: #c2b59b;
-        color: white;
-    }
-    .step-text {
-        font-size: 11px;
-        color: #5c533b;
-        line-height: 1.3;
-        text-align: left;
-    }
-    .message-box {
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-    .message-box p {
-        margin: 0 0 15px 0;
-        color: #333;
-        line-height: 1.6;
-    }
-    .order-number {
-        font-weight: bold;
-        color: #0f3d35;
-    }
-    .product-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 20px 0;
-    }
-    .product-table th {
-        background-color: #f8f8f8;
-        padding: 12px;
-        text-align: left;
-        border-bottom: 2px solid #ddd;
-        font-weight: 600;
-        color: #333;
-    }
-    .product-table td {
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-    }
-    .product-image {
-        width: 60px;
-        height: 60px;
-        object-fit: cover;
-        border-radius: 4px;
-    }
-    .totals {
-        text-align: right;
-        margin-top: 20px;
-    }
-    .totals .row {
-        display: flex;
-        justify-content: flex-end;
-        padding: 8px 0;
-    }
-    .totals .label {
-        margin-right: 20px;
-        font-weight: 600;
-    }
-    .totals .total-row {
-        border-top: 2px solid #0f3d35;
-        padding-top: 12px;
-        margin-top: 8px;
-        font-weight: bold;
-        font-size: 18px;
-    }
-    .signature {
-        margin-top: 30px;
-        color: #333;
-    }
-</style>
 
-<h1 class="title">¡Esperamos tu pago!</h1>
+<h1 style="font-family: 'Corinthia', cursive; font-size: 74px; color: #00352b; text-align: center; margin: 0 0 30px 0; font-weight: normal;">¡Esperamos tu pago!</h1>
 
 <!-- Step Indicator -->
-<div class="step-indicator">
-    <div class="step">
-        <div class="step-number active">1</div>
-        <div class="step-text">Pedido<br/>realizado</div>
-    </div>
-    <div class="step">
-        <div class="step-number inactive">2</div>
-        <div class="step-text">Pago<br/>confirmado</div>
-    </div>
-    <div class="step">
-        <div class="step-number inactive">3</div>
-        <div class="step-text">Pedido<br/>enviado</div>
-    </div>
-</div>
+<table style="width: 100%; margin-bottom: 30px;" cellpadding="0" cellspacing="0">
+    <tr>
+        <td style="width: 33%; padding: 0 10px;">
+            <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                <tr>
+                    <td style="width: 45px; vertical-align: middle;">
+                        <div style="width: 45px; height: 45px; border-radius: 50%; background-color: #00352b; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">1</div>
+                    </td>
+                    <td style="padding-left: 10px; vertical-align: middle;">
+                        <span style="font-size: 13px; color: #5c533b; line-height: 1.3; font-weight: 600;">Pedido<br/>realizado</span>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td style="width: 33%; padding: 0 10px;">
+            <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                <tr>
+                    <td style="width: 45px; vertical-align: middle;">
+                        <div style="width: 45px; height: 45px; border-radius: 50%; background-color: #c2b59b; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">2</div>
+                    </td>
+                    <td style="padding-left: 10px; vertical-align: middle;">
+                        <span style="font-size: 13px; color: #5c533b; line-height: 1.3; font-weight: 600;">Pago<br/>confirmado</span>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td style="width: 33%; padding: 0 10px;">
+            <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                <tr>
+                    <td style="width: 45px; vertical-align: middle;">
+                        <div style="width: 45px; height: 45px; border-radius: 50%; background-color: #c2b59b; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">3</div>
+                    </td>
+                    <td style="padding-left: 10px; vertical-align: middle;">
+                        <span style="font-size: 13px; color: #5c533b; line-height: 1.3; font-weight: 600;">Pedido<br/>enviado</span>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 
 <!-- Message -->
-<div class="message-box">
-    <p>Hola {{ $order->customer_name }},</p>
+<div style="background-color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+    <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Hola {{ $order->customer_name }},</p>
 
-    <p>¡Gracias por tu pedido en Imani Magnets!</p>
+    <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">¡Gracias por tu pedido en Imani Magnets!</p>
 
-    <p>Nos alegra que hayas elegido nuestros imanes para dar vida a tus recuerdos.</p>
+    <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Nos alegra que hayas elegido nuestros imanes para dar vida a tus recuerdos.</p>
 
-    <p class="important">Importante:</p>
-    <p>Tu pedido será procesado una vez que hayamos recibido el comprobante de la transferencia. Por favor envíalo a <strong>comprobantes@imanimagnets.com</strong> o vía WhatsApp al <strong>+593 98 595 9303</strong>.</p>
+    <p style="margin: 0 0 5px 0; color: #333; line-height: 1.6; font-weight: bold;">Importante:</p>
+    <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Tu pedido será procesado una vez que hayamos recibido el comprobante de la transferencia. Por favor envíalo a <strong>comprobantes@imanimagnets.com</strong> o vía WhatsApp al <strong>+593 98 595 9303</strong>.</p>
 
-    <p class="order-number">Número del pedido: [{{ $order->order_number }}]</p>
+    <p style="margin: 0 0 15px 0; color: #0f3d35; line-height: 1.6; font-weight: bold;">Número del pedido: [{{ $order->order_number }}]</p>
 
     <!-- Product Table -->
-    <table class="product-table">
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;" cellpadding="0" cellspacing="0">
         <thead>
             <tr>
-                <th colspan="2">Producto</th>
-                <th>Cantidad</th>
-                <th>Total</th>
+                <th colspan="2" style="background-color: #f8f8f8; padding: 12px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Producto</th>
+                <th style="background-color: #f8f8f8; padding: 12px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Cantidad</th>
+                <th style="background-color: #f8f8f8; padding: 12px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Total</th>
             </tr>
         </thead>
         <tbody>
             @foreach($order->items as $item)
             <tr>
-                <td style="width: 80px;">
+                <td style="width: 80px; padding: 12px; border-bottom: 1px solid #eee;">
                     @if($item->images && count($item->images) > 0)
-                        <img src="{{ asset('storage/' . $item->images[0]) }}" alt="{{ $item->product_name }}" class="product-image">
+                        <img src="{{ asset('storage/' . $item->images[0]) }}" alt="{{ $item->product_name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
                     @endif
                 </td>
-                <td>{{ $item->product_name }}</td>
-                <td>{{ $item->quantity }}</td>
-                <td>${{ number_format($item->subtotal, 2) }}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $item->product_name }}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $item->quantity }}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">${{ number_format($item->subtotal, 2) }}</td>
             </tr>
             @endforeach
         </tbody>
     </table>
 
     <!-- Totals -->
-    <div class="totals">
-        <div class="row">
-            <span class="label">Subtotal:</span>
-            <span>${{ number_format($order->subtotal, 2) }}</span>
-        </div>
-        <div class="row">
-            <span class="label">IVA:</span>
-            <span>${{ number_format($order->subtotal * 0.15, 2) }}</span>
-        </div>
-        <div class="row">
-            <span class="label">Envío:</span>
-            <span>${{ number_format($order->shipping_cost, 2) }}</span>
-        </div>
-        <div class="row total-row">
-            <span class="label">Total:</span>
-            <span>${{ number_format($order->total, 2) }}</span>
-        </div>
-    </div>
+    <table style="width: 100%; margin-top: 20px;" cellpadding="0" cellspacing="0">
+        <tr>
+            <td style="text-align: right; padding: 8px 0;">
+                <span style="margin-right: 20px; font-weight: 600;">Subtotal:</span>
+                <span>${{ number_format($order->subtotal, 2) }}</span>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: right; padding: 8px 0;">
+                <span style="margin-right: 20px; font-weight: 600;">IVA:</span>
+                <span>${{ number_format($order->subtotal * 0.15, 2) }}</span>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: right; padding: 8px 0;">
+                <span style="margin-right: 20px; font-weight: 600;">Envío:</span>
+                <span>${{ number_format($order->shipping_cost, 2) }}</span>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: right; padding: 12px 0 8px 0; border-top: 2px solid #0f3d35; margin-top: 8px; font-weight: bold; font-size: 18px;">
+                <span style="margin-right: 20px;">Total:</span>
+                <span>${{ number_format($order->total, 2) }}</span>
+            </td>
+        </tr>
+    </table>
 
-    <div class="signature">
-        <p>En cuanto recibamos tu pago, te lo confirmaremos por correo y empezaremos la producción de tus imanes.</p>
-        <p>Con cariño,<br><strong>Julia</strong></p>
+    <div style="margin-top: 30px; color: #333;">
+        <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">En cuanto recibamos tu pago, te lo confirmaremos por correo y empezaremos la producción de tus imanes.</p>
+        <p style="margin: 0; color: #333; line-height: 1.6;">Con cariño,<br><strong>Julia</strong></p>
     </div>
 </div>
 @endsection

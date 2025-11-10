@@ -36,6 +36,9 @@ Route::prefix('pruebas')->group(function () {
         // Creador / generador de plantilla
         Route::get('/crear', [PersonalizadosController::class, 'crear'])->name('personalizados.crear');
 
+        // Upload images in batches (new endpoint to avoid 403)
+        Route::post('/upload-batch', [PersonalizadosController::class, 'uploadBatch'])->name('personalizados.upload-batch');
+
         // Agregar al carrito
         Route::post('/agregar-carrito', [PersonalizadosController::class, 'addToCart'])->name('personalizados.add-to-cart');
 

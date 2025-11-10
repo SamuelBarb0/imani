@@ -1407,20 +1407,38 @@
     }
 
     // ============================================
-    // WEBP CONVERSION HELPER
+    // WEBP CONVERSION HELPER WITH RESIZE
     // ============================================
-    async function convertToWebP(base64Image, quality = 0.85) {
+    async function convertToWebP(base64Image, maxSize = 644, quality = 0.65) {
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
+
+                // Resize if image is larger than maxSize
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxSize || height > maxSize) {
+                    if (width > height) {
+                        height = (height / width) * maxSize;
+                        width = maxSize;
+                    } else {
+                        width = (width / height) * maxSize;
+                        height = maxSize;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
 
                 const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
+                // Use high-quality scaling
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(img, 0, 0, width, height);
 
-                // Convert to WebP with specified quality
+                // Convert to WebP with quality 65% (excellent visual quality, much smaller)
                 const webpDataUrl = canvas.toDataURL('image/webp', quality);
                 resolve(webpDataUrl);
             };
@@ -1430,7 +1448,60 @@
     }
 
     // ============================================
-    // ADD TO CART FUNCTIONALITY
+    // BATCH UPLOAD HELPER (upload images in batches to avoid 403)
+    // ============================================
+    async function uploadImagesBatch(images, batchSize = 3) {
+        const batches = [];
+        for (let i = 0; i < images.length; i += batchSize) {
+            batches.push(images.slice(i, i + batchSize));
+        }
+
+        console.log(`📦 Dividiendo ${images.length} imágenes en ${batches.length} lotes de ${batchSize}`);
+
+        const uploadedPaths = [];
+
+        for (let i = 0; i < batches.length; i++) {
+            const batch = batches[i];
+            const batchNumber = i + 1;
+
+            console.log(`📤 Subiendo lote ${batchNumber}/${batches.length} (${batch.length} imágenes)...`);
+
+            const response = await fetch('{{ route("personalizados.upload-batch") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    batch: batch,
+                    batch_number: batchNumber,
+                    total_batches: batches.length
+                })
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error(`❌ Error en lote ${batchNumber}:`, response.status, text);
+                throw new Error(`Error al subir lote ${batchNumber}`);
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || `Error en lote ${batchNumber}`);
+            }
+
+            uploadedPaths.push(...data.paths);
+            console.log(`✅ Lote ${batchNumber} completado`);
+        }
+
+        return uploadedPaths;
+    }
+
+    // ============================================
+    // ADD TO CART FUNCTIONALITY (with batch upload)
     // ============================================
     document.getElementById('add-to-cart-btn')?.addEventListener('click', async function() {
         if (this.disabled) return;
@@ -1455,19 +1526,24 @@
                 return null;
             }));
 
-            // Convert all images to WebP for smaller payload
+            // Convert all images to WebP for smaller payload (maxSize 644px, quality 65%)
             const images = await Promise.all(
-                processedImages.map(img => img ? convertToWebP(img, 0.85) : Promise.resolve(null))
+                processedImages.map(img => img ? convertToWebP(img, 644, 0.65) : Promise.resolve(null))
             );
 
             // Log size comparison (for debugging)
             const originalSize = JSON.stringify(processedImages).length;
             const webpSize = JSON.stringify(images).length;
             console.log(`📊 Tamaño original: ${(originalSize / 1024 / 1024).toFixed(2)}MB`);
-            console.log(`📊 Tamaño WebP: ${(webpSize / 1024 / 1024).toFixed(2)}MB`);
+            console.log(`📊 Tamaño WebP (644px, 65%): ${(webpSize / 1024 / 1024).toFixed(2)}MB`);
             console.log(`✅ Reducción: ${((1 - webpSize/originalSize) * 100).toFixed(1)}%`);
 
-            // Send to server to add to cart
+            // Upload images in batches of 3
+            const imagePaths = await uploadImagesBatch(images, 3);
+
+            console.log(`🎉 Todas las imágenes subidas. Agregando al carrito...`);
+
+            // Add to cart with just the paths (not the base64 data)
             const response = await fetch('{{ route("personalizados.add-to-cart") }}', {
                 method: 'POST',
                 headers: {
@@ -1477,7 +1553,7 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 },
                 body: JSON.stringify({
-                    images
+                    image_paths: imagePaths
                 })
             });
 

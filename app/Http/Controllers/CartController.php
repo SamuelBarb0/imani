@@ -86,12 +86,21 @@ class CartController extends Controller
                 Log::info('Processing image', [
                     'image_index' => $imageIndex,
                     'has_data' => isset($imageData['data']),
+                    'has_path' => isset($imageData['path']),
                     'data_length' => isset($imageData['data']) ? strlen($imageData['data']) : 0,
                 ]);
 
-                if (isset($imageData['data'])) {
+                // Check if image is already uploaded (batch upload method)
+                if (isset($imageData['path'])) {
+                    // Image already saved by batch upload endpoint
+                    $imagePaths[] = [
+                        'index' => $imageData['index'],
+                        'path' => $imageData['path'],
+                    ];
+                    Log::info('Using pre-uploaded image', ['path' => $imageData['path']]);
+                } elseif (isset($imageData['data'])) {
+                    // Old method: save base64 image to temporary storage
                     try {
-                        // Save base64 image to temporary storage
                         $imagePath = $this->saveBase64Image($imageData['data'], $imageData['index']);
                         $imagePaths[] = [
                             'index' => $imageData['index'],

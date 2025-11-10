@@ -39,12 +39,73 @@ class PersonalizadosController extends Controller
 
 
     /**
+     * Upload a batch of images (to avoid 403 errors with large payloads)
+     */
+    public function uploadBatch(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'batch' => 'required|array|min:1|max:3',
+            'batch.*' => 'required|string',
+            'batch_number' => 'required|integer|min:1',
+            'total_batches' => 'required|integer|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $paths = [];
+            $sessionId = session()->getId();
+
+            foreach ($request->batch as $index => $imageBase64) {
+                // Extract extension from data URL
+                $extension = 'webp'; // Default to webp
+                if (preg_match('/^data:image\/(\w+);base64,/', $imageBase64, $matches)) {
+                    $extension = $matches[1];
+                    $imageBase64 = substr($imageBase64, strpos($imageBase64, ',') + 1);
+                }
+
+                $imageData = base64_decode($imageBase64);
+
+                // Create unique filename
+                $filename = 'temp_' . $sessionId . '_batch' . $request->batch_number . '_' . $index . '_' . time() . '.' . $extension;
+                $path = 'temp/cart/' . $filename;
+
+                // Save to storage
+                Storage::disk('public')->put($path, $imageData);
+
+                $paths[] = [
+                    'path' => $path,
+                    'index' => ($request->batch_number - 1) * 3 + $index
+                ];
+            }
+
+            return response()->json([
+                'success' => true,
+                'paths' => $paths,
+                'batch_number' => $request->batch_number,
+                'total_batches' => $request->total_batches
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al subir lote: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Agrega imanes personalizados al carrito
      */
     public function addToCart(Request $request)
     {
         $t0 = microtime(true);
-        $rid = (string) Str::uuid(); // correlación para seguir el request en logs
+        $rid = (string) Str::uuid();
 
         Log::info('addToCart: inicio', [
             'rid' => $rid,
@@ -53,16 +114,29 @@ class PersonalizadosController extends Controller
             'payload_keys' => array_keys($request->all()),
         ]);
 
-        $validator = Validator::make($request->all(), [
-            'images' => 'required|array|size:9',
-            'images.*' => 'required|string', // Base64 images
-        ]);
+        // Check if using new batch upload method (image_paths) or old method (images)
+        $usingBatchUpload = $request->has('image_paths');
+
+        if ($usingBatchUpload) {
+            // New method: validate image paths
+            $validator = Validator::make($request->all(), [
+                'image_paths' => 'required|array|size:9',
+                'image_paths.*.path' => 'required|string',
+                'image_paths.*.index' => 'required|integer|min:0|max:8',
+            ]);
+        } else {
+            // Old method: validate base64 images
+            $validator = Validator::make($request->all(), [
+                'images' => 'required|array|size:9',
+                'images.*' => 'required|string',
+            ]);
+        }
 
         if ($validator->fails()) {
             Log::warning('addToCart: validación fallida', [
                 'rid' => $rid,
                 'errors' => $validator->errors()->toArray(),
-                'images_count' => is_array($request->images ?? null) ? count($request->images) : null,
+                'using_batch' => $usingBatchUpload,
             ]);
 
             return response()->json([
@@ -71,28 +145,38 @@ class PersonalizadosController extends Controller
             ], 422);
         }
 
-        // Métricas seguras sobre las imágenes (sin guardar el base64)
-        $imgMeta = [];
-        foreach (($request->images ?? []) as $i => $img) {
-            $imgMeta[] = [
-                'index' => $i,
-                'len'   => is_string($img) ? strlen($img) : null, // tamaño del string base64
-                'head'  => is_string($img) ? substr($img, 0, 20) : null, // prefijo para diagnosticar (no sensible)
-            ];
-        }
-        Log::info('addToCart: imágenes recibidas', [
-            'rid' => $rid,
-            'images_meta' => $imgMeta,
-        ]);
-
         try {
-            // Preparar los datos de las imágenes para el carrito
             $imagesData = [];
-            foreach ($request->images as $index => $imageBase64) {
-                $imagesData[] = [
-                    'index' => $index,
-                    'data'  => $imageBase64
-                ];
+
+            if ($usingBatchUpload) {
+                // Images already uploaded via batch endpoint
+                Log::info('addToCart: usando imágenes pre-subidas (batch upload)', [
+                    'rid' => $rid,
+                    'paths_count' => count($request->image_paths),
+                ]);
+
+                // Sort by index to ensure correct order
+                $sortedPaths = collect($request->image_paths)->sortBy('index')->values()->all();
+
+                foreach ($sortedPaths as $pathData) {
+                    $imagesData[] = [
+                        'index' => $pathData['index'],
+                        'path' => $pathData['path']
+                    ];
+                }
+            } else {
+                // Old method: base64 images need to be processed
+                Log::info('addToCart: procesando imágenes base64 (método antiguo)', [
+                    'rid' => $rid,
+                    'images_count' => count($request->images),
+                ]);
+
+                foreach ($request->images as $index => $imageBase64) {
+                    $imagesData[] = [
+                        'index' => $index,
+                        'data'  => $imageBase64
+                    ];
+                }
             }
 
             Log::info('addToCart: construyendo request para CartController@store', [
@@ -101,6 +185,7 @@ class PersonalizadosController extends Controller
                 'quantity' => 1,
                 'price' => 26.99,
                 'custom_data_keys' => ['images','type','name'],
+                'using_batch' => $usingBatchUpload,
             ]);
 
             // Agregar al carrito usando el CartController

@@ -89,7 +89,7 @@
         @else
             <div class="bg-white rounded-lg shadow-md p-12 text-center">
                 <p class="text-gray-500 mb-4">No tienes pedidos aún</p>
-                <a href="{{ route('personalizados') }}" class="inline-block px-6 py-3 bg-gray-orange text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown transition-all duration-300">
+                <a href="{{ route('personalizados.index') }}" class="inline-block px-6 py-3 bg-gray-orange text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown transition-all duration-300">
                     EXPLORAR PRODUCTOS
                 </a>
             </div>

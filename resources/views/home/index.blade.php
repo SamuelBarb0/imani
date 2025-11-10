@@ -317,19 +317,11 @@
             ¡Inspírate! De momentos míos que se vuelven tuyos, y aquellos tuyos que compartes en Instagram.
         </p>
 
-        <!-- Instagram Grid - Responsive -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 lg:gap-5">
-            @for ($i = 1; $i <= 8; $i++)
-                <div class="relative group aspect-square overflow-hidden rounded-md md:rounded-lg">
-                <img src="{{ asset('images/instagram/ig-'.$i.'.jpg') }}" alt="Instagram post {{ $i }}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
-                <div class="absolute inset-0 bg-dark-turquoise/70 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                    <svg class="w-8 h-8 md:w-10 md:h-10 text-white transform group-hover:scale-110 transition duration-300" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                </div>
+        <!-- Instagram Feed Widget - LightWidget -->
+        <div class="w-full">
+            <script src="https://cdn.lightwidget.com/widgets/lightwidget.js"></script>
+            <iframe src="//lightwidget.com/widgets/716f84ee302a56498cfc2e376ba9bb47.html" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;"></iframe>
         </div>
-        @endfor
-    </div>
     </div>
 </section>
 

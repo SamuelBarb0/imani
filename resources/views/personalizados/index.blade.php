@@ -1466,35 +1466,55 @@
 
             console.log(`📤 Subiendo lote ${batchNumber}/${batches.length} (${batch.length} imágenes)...`);
 
-            const response = await fetch('{{ route("personalizados.upload-batch") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({
-                    batch: batch,
-                    batch_number: batchNumber,
-                    total_batches: batches.length
-                })
-            });
+            // Log payload size for debugging
+            const payloadSize = JSON.stringify({batch, batch_number: batchNumber}).length;
+            console.log(`📏 Tamaño del lote ${batchNumber}: ${(payloadSize / 1024).toFixed(2)}KB`);
 
-            if (!response.ok) {
-                const text = await response.text();
-                console.error(`❌ Error en lote ${batchNumber}:`, response.status, text);
-                throw new Error(`Error al subir lote ${batchNumber}`);
+            try {
+                const response = await fetch('{{ route("personalizados.upload-batch") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        batch: batch,
+                        batch_number: batchNumber,
+                        total_batches: batches.length
+                    })
+                }).catch(err => {
+                    console.error(`❌ Error de conexión en lote ${batchNumber}:`, err);
+                    throw new Error(`Error de conexión: ${err.message}. Verifica que el servidor esté funcionando y que la ruta /upload-batch exista.`);
+                });
+
+                console.log(`✅ Respuesta recibida para lote ${batchNumber}, status: ${response.status}`);
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error(`❌ Error HTTP en lote ${batchNumber}:`, response.status, text);
+                    throw new Error(`Error ${response.status} al subir lote ${batchNumber}: ${text}`);
+                }
+
+                const data = await response.json();
+                console.log(`📄 Datos del lote ${batchNumber}:`, data);
+
+                if (!data.success) {
+                    throw new Error(data.message || `Error en lote ${batchNumber}`);
+                }
+
+                uploadedPaths.push(...data.paths);
+                console.log(`✅ Lote ${batchNumber} completado - ${data.paths.length} rutas agregadas`);
+
+                // Small delay between batches to avoid overwhelming the server
+                if (i < batches.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            } catch (error) {
+                console.error(`❌ Error capturado en lote ${batchNumber}:`, error);
+                throw error;
             }
-
-            const data = await response.json();
-
-            if (!data.success) {
-                throw new Error(data.message || `Error en lote ${batchNumber}`);
-            }
-
-            uploadedPaths.push(...data.paths);
-            console.log(`✅ Lote ${batchNumber} completado`);
         }
 
         return uploadedPaths;

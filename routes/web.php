@@ -202,6 +202,101 @@ Route::prefix('pruebas')->group(function () {
 });
 
 /**
+ * 📧 EMAIL PREVIEWS (Solo para desarrollo)
+ * Rutas temporales para previsualizar los templates de emails
+ */
+Route::prefix('pruebas/email-preview')->group(function () {
+    // Order Pending Transfer
+    Route::get('/order-pending', function () {
+        $order = new stdClass();
+        $order->customer_name = 'María González';
+        $order->order_number = 'IM-12345678';
+        $order->subtotal = 26.99;
+        $order->shipping_cost = 3.50;
+        $order->total = 35.02;
+
+        $item = new stdClass();
+        $item->product_name = 'Imanes Personalizados x9';
+        $item->quantity = 1;
+        $item->subtotal = 26.99;
+        $item->images = ['temp/example.jpg'];
+
+        $order->items = [$item];
+
+        return view('emails.order-pending-transfer', ['order' => $order]);
+    });
+
+    // Order Confirmed
+    Route::get('/order-confirmed', function () {
+        $order = new stdClass();
+        $order->customer_name = 'María González';
+        $order->order_number = 'IM-12345678';
+        $order->subtotal = 26.99;
+        $order->shipping_cost = 3.50;
+        $order->total = 35.02;
+        $order->payment_method = 'transferencia';
+        $order->shipping_address = 'Av. Principal 123';
+        $order->shipping_city = 'Quito';
+        $order->shipping_state = 'Pichincha';
+        $order->shipping_zip = '170515';
+        $order->shipping_country = 'Ecuador';
+
+        $item = new stdClass();
+        $item->product_name = 'Imanes Personalizados x9';
+        $item->quantity = 1;
+        $item->subtotal = 26.99;
+        $item->images = ['temp/example.jpg'];
+
+        $order->items = [$item];
+
+        return view('emails.order-confirmed', ['order' => $order]);
+    });
+
+    // Tracking Added
+    Route::get('/tracking-added', function () {
+        $order = new stdClass();
+        $order->customer_name = 'María González';
+        $order->order_number = 'IM-12345678';
+        $order->tracking_number = 'SERVIENTREGA123456789';
+
+        return view('emails.tracking-added', ['order' => $order]);
+    });
+
+    // Contact Form
+    Route::get('/contact-form', function () {
+        return view('emails.contact-form', [
+            'name' => 'María González',
+            'userMessage' => 'Hola, me gustaría saber más información sobre los imanes personalizados. ¿Tienen descuentos por cantidad?'
+        ]);
+    });
+
+    // Wholesale Form
+    Route::get('/wholesale-form', function () {
+        return view('emails.wholesale-form', [
+            'name' => 'Carlos Ramírez',
+            'email' => 'carlos@example.com',
+            'phone' => '+593 99 123 4567',
+            'quantity' => '500 imanes',
+            'deadline' => '15 de diciembre 2025',
+            'comment' => 'Necesito imanes con diseños personalizados para un evento corporativo.'
+        ]);
+    });
+
+    // Welcome Email
+    Route::get('/welcome', function () {
+        $user = new stdClass();
+        $user->name = 'María González';
+        $user->email = 'maria@example.com';
+
+        return view('emails.welcome', [
+            'user' => $user,
+            'password' => 'temporal123',
+            'orderNumber' => 'IM-12345678'
+        ]);
+    });
+});
+
+/**
  * 💰 PAYPHONE WEBHOOK
  * (Outside pruebas group - public endpoint for PayPhone notifications)
  */

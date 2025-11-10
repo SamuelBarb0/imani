@@ -1407,6 +1407,29 @@
     }
 
     // ============================================
+    // WEBP CONVERSION HELPER
+    // ============================================
+    async function convertToWebP(base64Image, quality = 0.85) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                // Convert to WebP with specified quality
+                const webpDataUrl = canvas.toDataURL('image/webp', quality);
+                resolve(webpDataUrl);
+            };
+            img.onerror = reject;
+            img.src = base64Image;
+        });
+    }
+
+    // ============================================
     // ADD TO CART FUNCTIONALITY
     // ============================================
     document.getElementById('add-to-cart-btn')?.addEventListener('click', async function() {
@@ -1417,7 +1440,7 @@
 
         try {
             // Process ALL images to ensure they're 600x600
-            const images = await Promise.all(editedImages.map(async (img, index) => {
+            const processedImages = await Promise.all(editedImages.map(async (img, index) => {
                 // If image was edited, use that version
                 if (img) {
                     return img;
@@ -1431,6 +1454,18 @@
 
                 return null;
             }));
+
+            // Convert all images to WebP for smaller payload
+            const images = await Promise.all(
+                processedImages.map(img => img ? convertToWebP(img, 0.85) : Promise.resolve(null))
+            );
+
+            // Log size comparison (for debugging)
+            const originalSize = JSON.stringify(processedImages).length;
+            const webpSize = JSON.stringify(images).length;
+            console.log(`📊 Tamaño original: ${(originalSize / 1024 / 1024).toFixed(2)}MB`);
+            console.log(`📊 Tamaño WebP: ${(webpSize / 1024 / 1024).toFixed(2)}MB`);
+            console.log(`✅ Reducción: ${((1 - webpSize/originalSize) * 100).toFixed(1)}%`);
 
             // Send to server to add to cart
             const response = await fetch('{{ route("personalizados.add-to-cart") }}', {

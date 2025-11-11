@@ -45,7 +45,7 @@
                                 <!-- Product Info -->
                                 <div class="flex-grow">
                                     <h3 class="font-spartan text-base font-semibold text-dark-turquoise mb-1">
-                                        {{ $item->getProductName() }}
+                                        {!! nl2br($item->getProductName()) !!}
                                     </h3>
 
                                     @if($item->product_id === 'custom-magnets-9')
@@ -54,7 +54,7 @@
                                         </p>
                                     @elseif(str_starts_with($item->product_id, 'collection-'))
                                         <p class="text-xs text-gray-brown mb-2">
-                                            Set de 6 imanes • 2" x 2" cada uno
+                                            Set de 6 imanes
                                         </p>
                                     @endif
 

@@ -87,16 +87,16 @@
         <div class="footer">
             <div class="social-icons">
                 <a href="https://www.instagram.com/imanimagnets" target="_blank" title="Instagram">
-                    <img src="{{ asset('images/instagram.png') }}" alt="Instagram" style="width: 24px; height: 24px; vertical-align: middle; filter: brightness(0) invert(1);">
+                    <img src="{{ asset('images/instagram.png') }}" alt="Instagram" style="width: 24px; height: 24px; vertical-align: middle;">
                 </a>
                 <a href="mailto:contacto@imanimagnets.com" title="Email">
-                    <img src="{{ asset('images/email.png') }}" alt="Email" style="width: 36px; height: 36px; vertical-align: middle; filter: brightness(0) invert(1);">
+                    <img src="{{ asset('images/email.png') }}" alt="Email" style="width: 36px; height: 36px; vertical-align: middle;">
                 </a>
                 <a href="https://wa.me/593985959303" target="_blank" title="WhatsApp">
-                    <img src="{{ asset('images/whatsapp.png') }}" alt="WhatsApp" style="width: 36px; height: 36px; vertical-align: middle; filter: brightness(0) invert(1);">
+                    <img src="{{ asset('images/whatsapp.png') }}" alt="WhatsApp" style="width: 36px; height: 36px; vertical-align: middle;">
                 </a>
                 <a href="https://imanimagnets.com" target="_blank" title="Website">
-                    <img src="{{ asset('images/globe.png') }}" alt="Website" style="width: 24px; height: 24px; vertical-align: middle; filter: brightness(0) invert(1);">
+                    <img src="{{ asset('images/globe.png') }}" alt="Website" style="width: 24px; height: 24px; vertical-align: middle;">
                 </a>
             </div>
             <p class="footer-text">© {{ date('Y') }} Imani Magnets. All rights reserved.</p>

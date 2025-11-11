@@ -389,7 +389,7 @@
         outline: none !important;
     }
 
-    /* Rayado diagonal SOLO en el margen de 22px (fuera del rectángulo rojo) */
+    /* Rayado diagonal SOLO en el margen proporcional (fuera del rectángulo rojo) */
     .cropper-crop-box::before {
         content: '';
         position: absolute;
@@ -402,26 +402,27 @@
                 transparent 5px,
                 rgba(0, 0, 0, 0.15) 5px,
                 rgba(0, 0, 0, 0.15) 10px);
-        /* Clip-path para recortar solo el marco de 22px (fuera del rectángulo rojo) */
+        /* Clip-path para recortar solo el marco proporcional (fuera del rectángulo rojo) */
+        /* Margen de 3.42% en cada lado (600/644 = 0.9316, margen = (1-0.9316)/2 = 3.42%) */
         clip-path: polygon(
                 /* Marco exterior completo */
                 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%,
-                /* Recorte interior - área del rectángulo rojo (22px desde cada borde) */
-                22px 22px, 22px calc(100% - 22px),
-                calc(100% - 22px) calc(100% - 22px),
-                calc(100% - 22px) 22px, 22px 22px);
+                /* Recorte interior - área del rectángulo rojo (3.42% desde cada borde) */
+                3.42% 3.42%, 3.42% 96.58%,
+                96.58% 96.58%,
+                96.58% 3.42%, 3.42% 3.42%);
         pointer-events: none;
         z-index: 2;
     }
 
-    /* Recuadro interior ROJO (600x600) - con margen de 22px desde el borde del crop-box */
+    /* Recuadro interior ROJO (93.16% del crop-box) - proporcional según la relación 600/644 */
     .cropper-crop-box::after {
         content: '';
         position: absolute;
-        top: 22px;
-        left: 22px;
-        right: 22px;
-        bottom: 22px;
+        top: 3.42%;
+        left: 3.42%;
+        right: 3.42%;
+        bottom: 3.42%;
         /* Fondo TRANSPARENTE para ver la imagen */
         background: transparent;
         /* Borde punteado rojo */
@@ -867,7 +868,7 @@
                 aspectRatio: 1, // Square crop (1:1)
                 viewMode: 1, // Crop box (644x644) must stay within the canvas (no puede salirse de la imagen)
                 dragMode: 'none', // Imagen fija (no se mueve)
-                autoCropArea: 0.93, // 600/644 = 0.9317 (inner image / outer border)
+                autoCropArea: 0.9316, // 600/644 = 0.9316 (relación entre cuadro de referencia y guía de recorte)
                 restore: false,
                 guides: true,
                 center: true,

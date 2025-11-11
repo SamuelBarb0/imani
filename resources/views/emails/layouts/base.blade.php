@@ -87,16 +87,16 @@
         <div class="footer">
             <div class="social-icons">
                 <a href="https://www.instagram.com/imanimagnets" target="_blank" title="Instagram">
-                    <i class="fab fa-instagram"></i>
+                    <img src="{{ asset('images/instagram.svg') }}" alt="Instagram" style="width: 24px; height: 24px; vertical-align: middle; filter: brightness(0) invert(1);">
                 </a>
                 <a href="mailto:contacto@imanimagnets.com" title="Email">
-                    <i class="fas fa-envelope"></i>
+                    <img src="{{ asset('images/email.svg') }}" alt="Email" style="width: 24px; height: 24px; vertical-align: middle; filter: brightness(0) invert(1);">
                 </a>
                 <a href="https://wa.me/593985959303" target="_blank" title="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
+                    <img src="{{ asset('images/whatsapp.svg') }}" alt="WhatsApp" style="width: 24px; height: 24px; vertical-align: middle; filter: brightness(0) invert(1);">
                 </a>
                 <a href="https://imanimagnets.com" target="_blank" title="Website">
-                    <i class="fas fa-globe"></i>
+                    <img src="{{ asset('images/Globe_icon.svg') }}" alt="Website" style="width: 24px; height: 24px; vertical-align: middle; filter: brightness(0) invert(1);">
                 </a>
             </div>
             <p class="footer-text">© {{ date('Y') }} Imani Magnets. All rights reserved.</p>

@@ -2,7 +2,14 @@
 
 @section('content')
 
-<h1 style="font-family: 'Corinthia', cursive; font-size: 74px; color: #00352b; text-align: center; margin: 0 0 30px 0; font-weight: normal;">¡Gracias por tu mensaje!</h1>
+<!-- Step Indicator -->
+<table style="width: 100%; margin-bottom: 30px;" cellpadding="0" cellspacing="0">
+    <tr>
+        <td style="text-align: center;">
+            <img src="{{ asset('images/emails/thank-you-for-your-message.png') }}" alt="Indicadores de proceso" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+        </td>
+    </tr>
+</table>
 
 <!-- Message -->
 <div style="background-color: white; padding: 30px; border-radius: 8px; margin-bottom: 20px;">

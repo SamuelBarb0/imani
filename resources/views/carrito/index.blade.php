@@ -44,8 +44,8 @@
 
                                 <!-- Product Info -->
                                 <div class="flex-grow">
-                                    <h3 class="font-spartan text-base font-semibold text-dark-turquoise mb-1 [&_span]:hidden">
-                                        {!! nl2br($item->getProductName()) !!}
+                                    <h3 class="font-spartan text-base font-semibold text-dark-turquoise mb-1">
+                                        {!! preg_replace('/<span[^>]*>.*?<\/span>/i', '', nl2br($item->getProductName())) !!}
                                     </h3>
 
                                     @if($item->product_id === 'custom-magnets-9')

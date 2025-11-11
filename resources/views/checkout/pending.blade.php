@@ -97,7 +97,7 @@
                     @foreach($order->items as $item)
                         <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                             <div class="flex-grow">
-                                <p class="font-semibold text-gray-800">{{ $item->product_name }}</p>
+                                <p class="font-semibold text-gray-800">{!! preg_replace('/<span[^>]*>.*?<\/span>/i', '', nl2br($item->product_name)) !!}</p>
                                 <p class="text-xs text-gray-brown">Cantidad: {{ $item->quantity }}</p>
                             </div>
                             <div class="text-right">

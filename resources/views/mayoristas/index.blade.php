@@ -1,5 +1,18 @@
 @extends('layouts.app')
 
+@push('styles')
+<style>
+    /* Estilo para el input date cuando está vacío */
+    input[type="date"]:not(:focus):invalid {
+        color: #9ca3af;
+    }
+
+    input[type="date"]:focus:invalid {
+        color: #374151;
+    }
+</style>
+@endpush
+
 @section('content')
 <section class="bg-white py-12 md:py-16">
     <div class="container mx-auto px-6 max-w-6xl">
@@ -93,8 +106,9 @@
                 <!-- Fecha -->
                 <div>
                     <label for="fecha" class="block text-dark-turquoise font-semibold mb-1">{{ $content->get('form.label_fecha') }}</label>
-                    <input type="date" id="fecha" name="fecha"
-                        class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-gray-orange focus:outline-none">
+                    <input type="date" id="fecha" name="fecha" required
+                        class="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-gray-orange focus:outline-none"
+                        style="color-scheme: light;">
                 </div>
 
                 <!-- Comentarios -->

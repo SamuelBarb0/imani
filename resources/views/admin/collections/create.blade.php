@@ -46,7 +46,7 @@
             <label for="gallery" class="block text-sm font-medium text-gray-700 mb-2">Galería de Imágenes (opcional)</label>
             <input type="file" name="gallery[]" id="gallery" accept="image/*" multiple
                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
-            <p class="text-sm text-gray-500 mt-1">Selecciona hasta 6 imágenes adicionales. JPG, PNG, GIF, WEBP. Máximo 2MB cada una.</p>
+            <p class="text-sm text-gray-500 mt-1">Selecciona hasta 7 imágenes adicionales. JPG, PNG, GIF, WEBP. Máximo 2MB cada una.</p>
 
             <!-- Gallery Preview -->
             <div id="gallery-preview" class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 hidden"></div>
@@ -104,9 +104,9 @@ document.addEventListener('DOMContentLoaded', function() {
     galleryInput.addEventListener('change', function(e) {
         const files = Array.from(e.target.files);
 
-        // Limit to 6 images
-        if (files.length > 6) {
-            alert('Puedes seleccionar hasta 6 imágenes para la galería.');
+        // Limit to 7 images
+        if (files.length > 7) {
+            alert('Puedes seleccionar hasta 7 imágenes para la galería.');
             return;
         }
 

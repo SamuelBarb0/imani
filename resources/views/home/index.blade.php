@@ -294,7 +294,7 @@
             {{ $content->get('quality.title') }}
         </h2>
         <div class="flex flex-col lg:flex-row gap-8 md:gap-10 lg:gap-16 items-center">
-            <div class="w-full max-w-xl md:max-w-2xl lg:basis-[1000px] xl:basis-[1100px] lg:h-[450px] xl:h-[500px] rounded-lg overflow-hidden shadow-lg flex-shrink-0">
+            <div class="w-full max-w-xl md:max-w-2xl lg:basis-[650px] xl:basis-[750px] lg:h-[320px] xl:h-[360px] rounded-lg overflow-hidden shadow-lg flex-shrink-0">
                 <img src="{{ asset($content->get('quality.image')) }}" alt="{{ $content->get('quality.title') }}" class="w-full h-full object-cover">
             </div>
             <div class="lg:flex-1">

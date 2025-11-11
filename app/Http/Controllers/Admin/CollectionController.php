@@ -33,8 +33,8 @@ class CollectionController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:25480',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:25480',
             'price' => 'required|numeric|min:0',
             'items' => 'nullable|string',
             'is_active' => 'boolean',
@@ -60,8 +60,8 @@ class CollectionController extends Controller
             }
 
             foreach ($request->file('gallery') as $index => $galleryImage) {
-                // Limit to 6 images
-                if ($index >= 6) {
+                // Limit to 7 images
+                if ($index >= 7) {
                     break;
                 }
 
@@ -102,8 +102,8 @@ class CollectionController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:25480',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:25480',
             'deleted_gallery.*' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'items' => 'nullable|string',
@@ -154,8 +154,8 @@ class CollectionController extends Controller
             $totalImages = count($currentGallery);
 
             foreach ($request->file('gallery') as $index => $galleryImage) {
-                // Limit total gallery to 6 images
-                if ($totalImages >= 6) {
+                // Limit total gallery to 7 images
+                if ($totalImages >= 7) {
                     break;
                 }
 

@@ -15,13 +15,13 @@
             <!-- Galería de Imágenes -->
             <div class="space-y-4">
                 <!-- Imagen Principal Grande -->
-                <div class="w-full h-[400px] lg:h-[500px] overflow-hidden rounded-lg shadow-lg">
+                <div class="w-full overflow-hidden rounded-lg shadow-lg" style="height: 380px;">
                     <img
                         id="mainImage"
                         src="{{ asset($collection->image) }}"
                         alt="{{ $collection->name }}"
                         class="w-full h-full object-cover cursor-pointer"
-                        onclick="openLightbox({{ json_encode($collection->image) }})"
+                        onclick="openLightbox()"
                     >
                 </div>
 
@@ -47,7 +47,7 @@
             <div class="space-y-6">
                 <div>
                     <h1 class="font-spartan text-3xl md:text-4xl font-bold text-dark-turquoise mb-3 uppercase">
-                        {{ $collection->name }}
+                        {!! nl2br($collection->name) !!}
                     </h1>
 
                     @if($collection->description)
@@ -75,13 +75,12 @@
                 @endif
 
                 <!-- Precio y Compra -->
-                <div class="border-t border-gray-200 pt-6">
+                <div class="border-t-2 border-dark-turquoise pt-6">
                     <div class="mb-6">
-                        <p class="text-sm text-gray-500 uppercase tracking-wide mb-2">Precio</p>
                         <p class="font-spartan text-4xl font-bold text-dark-turquoise">
-                            ${{ number_format($collection->price, 2) }} USD
+                            {{ number_format($collection->price, 2) }} USD
                         </p>
-                        <p class="text-sm text-gray-500 italic mt-2">{{ $content->get('collections.shipping_note') }}</p>
+                        <p class="text-sm text-gray-500 italic mt-2 whitespace-pre-line">{!! $content->get('collections.shipping_note') !!}</p>
                     </div>
 
                     <!-- Cantidad -->
@@ -127,18 +126,6 @@
                     </button>
                 </div>
 
-                <!-- Información Adicional -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div class="flex items-start">
-                        <svg class="w-6 h-6 text-blue-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <div class="text-sm text-gray-700">
-                            <p class="font-semibold mb-1">Información importante</p>
-                            <p>Los imanes son de 2x2 pulgadas. Perfectos para decorar refrigeradores, pizarras metálicas y más.</p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -268,7 +255,11 @@ function changeMainImage(imagePath) {
     event.currentTarget.classList.add('border-dark-turquoise');
 }
 
-function openLightbox(imagePath) {
+function openLightbox() {
+    // Get the current main image source
+    const mainImage = document.getElementById('mainImage');
+    const currentSrc = mainImage.src;
+
     // Create lightbox overlay
     const lightbox = document.createElement('div');
     lightbox.id = 'lightbox';
@@ -276,7 +267,7 @@ function openLightbox(imagePath) {
     lightbox.onclick = function() { document.body.removeChild(lightbox); };
 
     const img = document.createElement('img');
-    img.src = '{{ asset('') }}' + imagePath;
+    img.src = currentSrc;
     img.className = 'max-w-full max-h-full object-contain';
     img.onclick = function(e) { e.stopPropagation(); };
 

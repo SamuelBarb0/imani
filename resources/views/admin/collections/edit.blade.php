@@ -131,9 +131,9 @@ document.addEventListener('DOMContentLoaded', function() {
     galleryInput.addEventListener('change', function(e) {
         const files = Array.from(e.target.files);
 
-        // Limit to 6 images
-        if (files.length > 6) {
-            alert('Puedes seleccionar hasta 6 imágenes para la galería.');
+        // Limit to 7 images
+        if (files.length > 7) {
+            alert('Puedes seleccionar hasta 7 imágenes para la galería.');
             return;
         }
 

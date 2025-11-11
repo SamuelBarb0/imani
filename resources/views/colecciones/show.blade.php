@@ -147,7 +147,7 @@
                                 >
                             </div>
                             <h3 class="text-lg font-bold text-dark-turquoise mb-2 uppercase group-hover:text-gray-orange transition">
-                                {{ $otherCollection->name }}
+                                {!! nl2br($otherCollection->name) !!}
                             </h3>
                             <p class="font-bold text-dark-turquoise">
                                 ${{ number_format($otherCollection->price, 2) }} USD

@@ -302,7 +302,7 @@
                         <div class="space-y-3 mb-4 pb-4 border-b border-gray-200">
                             @foreach($items as $item)
                                 <div class="flex justify-between text-sm">
-                                    <span class="text-gray-brown">
+                                    <span class="text-gray-brown [&_span]:hidden">
                                         {!! nl2br($item->getProductName()) !!} (x{{ $item->quantity }})
                                     </span>
                                     <span class="font-semibold">${{ number_format($item->getSubtotal(), 2) }}</span>

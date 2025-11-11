@@ -55,7 +55,9 @@
                         <img src="{{ asset('storage/' . $item->images[0]) }}" alt="{{ $item->product_name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
                     @endif
                 </td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee;">{!! nl2br($item->product_name) !!}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">
+                    {!! preg_replace('/<span[^>]*>.*?<\/span>/i', '', nl2br($item->product_name)) !!}
+                </td>
                 <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $item->quantity }}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #eee;">${{ number_format($item->subtotal, 2) }}</td>
             </tr>

@@ -105,7 +105,7 @@
                 @foreach($order->items as $item)
                     <div class="flex justify-between items-center border-b border-gray-200 pb-4">
                         <div class="flex-1">
-                            <p class="font-semibold">{!! nl2br($item->product_name) !!}</p>
+                            <p class="font-semibold [&_span]:hidden">{!! nl2br($item->product_name) !!}</p>
                             <p class="text-sm text-gray-brown">Cantidad: {{ $item->quantity }}</p>
                             <p class="text-sm text-gray-brown">Precio unitario: ${{ number_format($item->price, 2) }}</p>
                         </div>

@@ -2,49 +2,15 @@
 
 @section('content')
 
-<h1 style="font-family: 'Corinthia', cursive; font-size: 74px; color: #00352b; text-align: center; margin: 0 0 30px 0; font-weight: normal;">¡Gracias por tu compra!</h1>
-
 <!-- Step Indicator -->
 <table style="width: 100%; margin-bottom: 30px;" cellpadding="0" cellspacing="0">
     <tr>
-        <td style="width: 33%; padding: 0 10px;">
-            <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                <tr>
-                    <td style="width: 45px; vertical-align: middle;">
-                        <div style="width: 45px; height: 45px; border-radius: 50%; background-color: #c2b59b; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">1</div>
-                    </td>
-                    <td style="padding-left: 10px; vertical-align: middle;">
-                        <span style="font-size: 13px; color: #5c533b; line-height: 1.3; font-weight: 600;">Pedido<br/>realizado</span>
-                    </td>
-                </tr>
-            </table>
-        </td>
-        <td style="width: 33%; padding: 0 10px;">
-            <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                <tr>
-                    <td style="width: 45px; vertical-align: middle;">
-                        <div style="width: 45px; height: 45px; border-radius: 50%; background-color: #00352b; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">2</div>
-                    </td>
-                    <td style="padding-left: 10px; vertical-align: middle;">
-                        <span style="font-size: 13px; color: #5c533b; line-height: 1.3; font-weight: 600;">Pago<br/>confirmado</span>
-                    </td>
-                </tr>
-            </table>
-        </td>
-        <td style="width: 33%; padding: 0 10px;">
-            <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                <tr>
-                    <td style="width: 45px; vertical-align: middle;">
-                        <div style="width: 45px; height: 45px; border-radius: 50%; background-color: #c2b59b; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">3</div>
-                    </td>
-                    <td style="padding-left: 10px; vertical-align: middle;">
-                        <span style="font-size: 13px; color: #5c533b; line-height: 1.3; font-weight: 600;">Pedido<br/>enviado</span>
-                    </td>
-                </tr>
-            </table>
+        <td style="text-align: center;">
+            <img src="{{ asset('images/emails/thanks-for-purchase.png') }}" alt="Indicadores de proceso" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
         </td>
     </tr>
 </table>
+
 
 <!-- Message -->
 <div style="background-color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">

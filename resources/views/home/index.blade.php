@@ -318,10 +318,7 @@
         </p>
 
         <!-- Instagram Feed Widget - LightWidget -->
-        <div class="w-full">
-            <script src="https://cdn.lightwidget.com/widgets/lightwidget.js"></script>
-            <iframe src="//lightwidget.com/widgets/716f84ee302a56498cfc2e376ba9bb47.html" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;"></iframe>
-        </div>
+       <script src="https://cdn.lightwidget.com/widgets/lightwidget.js"></script><iframe src="https://cdn.lightwidget.com/widgets/716f84ee302a56498cfc2e376ba9bb47.html" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;"></iframe>
     </div>
 </section>
 

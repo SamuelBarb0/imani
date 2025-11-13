@@ -137,10 +137,10 @@
             </p>
             <div class="space-y-2 text-sm">
                 <p class="text-gray-800">
-                    📱 <strong>WhatsApp:</strong> <a href="https://wa.me/593XXXXXXXXX" class="text-dark-turquoise hover:underline">+593 XX XXX XXXX</a>
+                    📱 <strong>WhatsApp:</strong> <a href="{{ \App\Helpers\ContentHelper::getWhatsAppLink() }}" class="text-dark-turquoise hover:underline">{{ config('site.whatsapp.number') }}</a>
                 </p>
                 <p class="text-gray-800">
-                    📧 <strong>Email:</strong> <a href="mailto:soporte@imanimagnets.com" class="text-dark-turquoise hover:underline">soporte@imanimagnets.com</a>
+                    📧 <strong>Email:</strong> <a href="mailto:{{ config('site.email') }}" class="text-dark-turquoise hover:underline">{{ config('site.email') }}</a>
                 </p>
             </div>
         </div>

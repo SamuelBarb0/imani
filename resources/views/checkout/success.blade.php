@@ -205,8 +205,8 @@
                                     Envía el comprobante de pago por:
                                 </p>
                                 <ul class="text-yellow-800 text-xs space-y-1 ml-4">
-                                    <li>📱 <strong>WhatsApp:</strong> [Número de WhatsApp]</li>
-                                    <li>📧 <strong>Email:</strong> comprobantes@imanimagnets.com</li>
+                                    <li>📱 <strong>WhatsApp:</strong> <a href="{{ \App\Helpers\ContentHelper::getWhatsAppLink() }}" class="text-yellow-800 hover:underline font-semibold" target="_blank">{{ config('site.whatsapp.number') }}</a></li>
+                                    <li>📧 <strong>Email:</strong> <a href="mailto:comprobantes@imanimagnets.com" class="text-yellow-800 hover:underline font-semibold">comprobantes@imanimagnets.com</a></li>
                                 </ul>
                                 <p class="text-yellow-800 text-xs mt-2 font-semibold">
                                     📋 Indica tu número de orden: <span class="bg-yellow-100 px-2 py-1 rounded">{{ $order->order_number }}</span> o el correo usado: <span class="bg-yellow-100 px-2 py-1 rounded">{{ $order->customer_email }}</span>

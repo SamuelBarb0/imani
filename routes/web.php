@@ -69,6 +69,7 @@ Route::prefix('pruebas')->group(function () {
         $seoPage = 'mayoristas';
         return view('mayoristas.index', compact('content', 'seoPage'));
     })->name('mayoristas');
+    Route::post('/mayoristas', [App\Http\Controllers\WholesaleController::class, 'submit'])->name('mayoristas.submit');
 
     /** 🎁 GIFT CARD */
     Route::get('/gift-card', function () {
@@ -82,6 +83,7 @@ Route::prefix('pruebas')->group(function () {
         $seoPage = 'contacto';
         return view('contacto.index', compact('content', 'seoPage'));
     })->name('contacto');
+    Route::post('/contacto', [App\Http\Controllers\ContactController::class, 'submit'])->name('contacto.submit');
 
     /** 📦 TRACKING DE PEDIDOS */
     Route::get('/rastrear-pedido', [App\Http\Controllers\OrderTrackingController::class, 'index'])->name('tracking.index');
@@ -159,6 +161,10 @@ Route::prefix('pruebas')->group(function () {
         Route::put('/contenido/{page}', [App\Http\Controllers\Admin\ContentController::class, 'update'])->name('content.update');
         Route::post('/contenido/upload-image', [App\Http\Controllers\Admin\ContentController::class, 'uploadImage'])->name('content.upload-image');
         Route::delete('/contenido/delete-image', [App\Http\Controllers\Admin\ContentController::class, 'deleteImage'])->name('content.delete-image');
+
+        // Settings Management
+        Route::get('/configuracion', [App\Http\Controllers\Admin\SettingsController::class, 'edit'])->name('settings.edit');
+        Route::put('/configuracion', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
 
         // Collections Management
         Route::resource('collections', App\Http\Controllers\Admin\CollectionController::class);

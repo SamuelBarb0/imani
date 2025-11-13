@@ -46,7 +46,7 @@
                             PNG, JPG o JPEG (máximo 10MB)
                         </p>
                         <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg" multiple class="hidden">
-                        <button onclick="document.getElementById('file-input').click()" class="px-3 py-1.5 bg-gray-orange text-white rounded-full font-spartan font-semibold text-xs tracking-wider uppercase hover:bg-gray-brown transition-all duration-300">
+                        <button id="select-photos-btn" class="px-3 py-1.5 bg-gray-orange text-white rounded-full font-spartan font-semibold text-xs tracking-wider uppercase hover:bg-gray-brown transition-all duration-300">
                             SELECCIONAR FOTOS
                         </button>
                     </div>
@@ -519,6 +519,15 @@
     document.addEventListener('DOMContentLoaded', function() {
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('file-input');
+        const selectPhotosBtn = document.getElementById('select-photos-btn');
+
+        // Button click handler - only open if there are empty slots
+        selectPhotosBtn.addEventListener('click', () => {
+            const hasEmptySlot = uploadedImages.some(img => img === null);
+            if (hasEmptySlot) {
+                fileInput.click();
+            }
+        });
 
         // Prevent default drag behaviors
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -550,7 +559,13 @@
 
         // Handle dropped files
         dropzone.addEventListener('drop', handleDrop, false);
-        dropzone.addEventListener('click', () => fileInput.click());
+        dropzone.addEventListener('click', () => {
+            // Only open file picker if there are empty slots
+            const hasEmptySlot = uploadedImages.some(img => img === null);
+            if (hasEmptySlot) {
+                fileInput.click();
+            }
+        });
 
         function handleDrop(e) {
             const dt = e.dataTransfer;
@@ -561,6 +576,8 @@
         // Handle file selection
         fileInput.addEventListener('change', function(e) {
             handleFiles(this.files);
+            // Clear the input value to allow re-uploading the same file
+            this.value = '';
         });
 
         function handleFiles(files) {
@@ -687,6 +704,15 @@
                 editBtn.className = 'p-1.5 bg-dark-turquoise text-white rounded-full hover:bg-gray-brown transition-all';
                 editBtn.onclick = () => openEditor(index);
 
+                const duplicateBtn = document.createElement('button');
+                duplicateBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+            `;
+                duplicateBtn.className = 'p-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all';
+                duplicateBtn.onclick = () => duplicateImage(index);
+
                 const deleteBtn = document.createElement('button');
                 deleteBtn.innerHTML = `
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -697,6 +723,7 @@
                 deleteBtn.onclick = () => deleteImage(index);
 
                 overlay.appendChild(editBtn);
+                overlay.appendChild(duplicateBtn);
                 overlay.appendChild(deleteBtn);
                 imgContainer.appendChild(img);
                 imgContainer.appendChild(overlay);
@@ -812,6 +839,35 @@
         }
     }
 
+    function duplicateImage(index) {
+        // Find the next empty slot
+        const emptySlotIndex = uploadedImages.findIndex(img => img === null);
+
+        if (emptySlotIndex === -1) {
+            alert('No hay espacios disponibles. Elimina una imagen primero.');
+            return;
+        }
+
+        // Duplicate the original image
+        uploadedImages[emptySlotIndex] = uploadedImages[index];
+
+        // Duplicate the edited image (if exists)
+        if (editedImages[index]) {
+            editedImages[emptySlotIndex] = editedImages[index];
+        }
+
+        // Duplicate the edit state (filters and crop data)
+        if (editStates[index]) {
+            editStates[emptySlotIndex] = {
+                filters: { ...editStates[index].filters },
+                cropData: editStates[index].cropData ? { ...editStates[index].cropData } : null
+            };
+        }
+
+        // Re-render grid
+        renderGrid();
+    }
+
     function resetUploadArea() {
         if (confirm('¿Estás seguro de que quieres volver a empezar? Se perderán todas las imágenes cargadas.')) {
             uploadedImages = Array(9).fill(null);
@@ -835,10 +891,6 @@
         document.getElementById('editor-modal').classList.remove('hidden');
         document.body.classList.add('modal-open');
 
-        // Initialize image
-        const cropImage = document.getElementById('crop-image');
-        cropImage.src = imageSrc;
-
         // Load saved state if exists, otherwise reset
         if (editStates[index]) {
             currentFilters = {
@@ -849,22 +901,38 @@
             resetAllFilters();
         }
 
+        // Clean up existing cropper and listeners BEFORE setting new image
+        const existingContainer = document.querySelector('.cropper-container');
+        if (existingContainer) {
+            existingContainer.removeEventListener('wheel', handleCropBoxZoom);
+        }
+
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+
+        // Initialize image
+        const cropImage = document.getElementById('crop-image');
+        cropImage.src = '';  // Clear first
+
         // Initialize Cropper.js
         setTimeout(() => {
-            if (cropper) {
-                cropper.destroy();
-            }
+            // Now set the actual image source
+            cropImage.src = imageSrc;
 
-            // Set container height for mobile responsiveness
-            const wrapper = document.getElementById('cropper-wrapper');
-            const wrapperWidth = wrapper.offsetWidth;
-            wrapper.style.height = wrapperWidth + 'px'; // Force square aspect ratio
+            // Wait for image to load before initializing cropper
+            cropImage.onload = function() {
+                // Set container height for mobile responsiveness
+                const wrapper = document.getElementById('cropper-wrapper');
+                const wrapperWidth = wrapper.offsetWidth;
+                wrapper.style.height = wrapperWidth + 'px'; // Force square aspect ratio
 
-            // Adjust minimum crop box size for mobile
-            const isMobile = window.innerWidth < 768;
-            const minCropBoxSize = isMobile ? 150 : 200;
+                // Adjust minimum crop box size for mobile
+                const isMobile = window.innerWidth < 768;
+                const minCropBoxSize = isMobile ? 150 : 200;
 
-            const cropperOptions = {
+                const cropperOptions = {
                 aspectRatio: 1, // Square crop (1:1)
                 viewMode: 1, // Crop box (644x644) must stay within the canvas (no puede salirse de la imagen)
                 dragMode: 'none', // Imagen fija (no se mueve)
@@ -891,17 +959,24 @@
                     applyFiltersToImage();
 
                     // Añadir evento de rueda del ratón para redimensionar crop box
-                    const cropperContainer = document.querySelector('.cropper-container');
-                    if (cropperContainer) {
-                        cropperContainer.addEventListener('wheel', handleCropBoxZoom);
-                    }
+                    // Usar setTimeout para asegurar que el DOM está completamente renderizado
+                    setTimeout(() => {
+                        const cropperContainer = document.querySelector('.cropper-container');
+                        if (cropperContainer) {
+                            // Remover listener previo si existe (para evitar duplicados)
+                            cropperContainer.removeEventListener('wheel', handleCropBoxZoom);
+                            // Agregar nuevo listener
+                            cropperContainer.addEventListener('wheel', handleCropBoxZoom, { passive: false });
+                        }
+                    }, 50);
                 }
+                };
+
+                cropper = new Cropper(cropImage, cropperOptions);
+
+                // Switch to crop mode
+                switchMode('crop');
             };
-
-            cropper = new Cropper(cropImage, cropperOptions);
-
-            // Switch to crop mode
-            switchMode('crop');
         }, 100);
     }
 
@@ -1006,6 +1081,13 @@
         // Close editor
         document.getElementById('editor-modal').classList.add('hidden');
         document.body.classList.remove('modal-open');
+
+        // Remove wheel event listener before destroying cropper
+        const cropperContainer = document.querySelector('.cropper-container');
+        if (cropperContainer) {
+            cropperContainer.removeEventListener('wheel', handleCropBoxZoom);
+        }
+
         if (cropper) {
             cropper.destroy();
             cropper = null;
@@ -1298,22 +1380,61 @@
     }
 
     function updateSliderValues() {
-        document.getElementById('brightness').value = currentFilters.brightness;
-        document.getElementById('brightness-value').textContent = currentFilters.brightness + '%';
-        document.getElementById('contrast').value = currentFilters.contrast;
-        document.getElementById('contrast-value').textContent = currentFilters.contrast + '%';
-        document.getElementById('saturation').value = currentFilters.saturation;
-        document.getElementById('saturation-value').textContent = currentFilters.saturation + '%';
-        document.getElementById('exposure').value = currentFilters.exposure;
-        document.getElementById('exposure-value').textContent = currentFilters.exposure + '%';
-        document.getElementById('warmth').value = currentFilters.warmth;
-        document.getElementById('warmth-value').textContent = currentFilters.warmth;
-        document.getElementById('blur').value = currentFilters.blur;
-        document.getElementById('blur-value').textContent = currentFilters.blur + 'px';
-        document.getElementById('sepia').value = currentFilters.sepia;
-        document.getElementById('sepia-value').textContent = currentFilters.sepia + '%';
-        document.getElementById('grayscale').value = currentFilters.grayscale;
-        document.getElementById('grayscale-value').textContent = currentFilters.grayscale + '%';
+        const brightness = document.getElementById('brightness');
+        const brightnessValue = document.getElementById('brightness-value');
+        if (brightness && brightnessValue) {
+            brightness.value = currentFilters.brightness;
+            brightnessValue.textContent = currentFilters.brightness + '%';
+        }
+
+        const contrast = document.getElementById('contrast');
+        const contrastValue = document.getElementById('contrast-value');
+        if (contrast && contrastValue) {
+            contrast.value = currentFilters.contrast;
+            contrastValue.textContent = currentFilters.contrast + '%';
+        }
+
+        const saturation = document.getElementById('saturation');
+        const saturationValue = document.getElementById('saturation-value');
+        if (saturation && saturationValue) {
+            saturation.value = currentFilters.saturation;
+            saturationValue.textContent = currentFilters.saturation + '%';
+        }
+
+        const exposure = document.getElementById('exposure');
+        const exposureValue = document.getElementById('exposure-value');
+        if (exposure && exposureValue) {
+            exposure.value = currentFilters.exposure;
+            exposureValue.textContent = currentFilters.exposure + '%';
+        }
+
+        const warmth = document.getElementById('warmth');
+        const warmthValue = document.getElementById('warmth-value');
+        if (warmth && warmthValue) {
+            warmth.value = currentFilters.warmth;
+            warmthValue.textContent = currentFilters.warmth;
+        }
+
+        const blur = document.getElementById('blur');
+        const blurValue = document.getElementById('blur-value');
+        if (blur && blurValue) {
+            blur.value = currentFilters.blur;
+            blurValue.textContent = currentFilters.blur + 'px';
+        }
+
+        const sepia = document.getElementById('sepia');
+        const sepiaValue = document.getElementById('sepia-value');
+        if (sepia && sepiaValue) {
+            sepia.value = currentFilters.sepia;
+            sepiaValue.textContent = currentFilters.sepia + '%';
+        }
+
+        const grayscale = document.getElementById('grayscale');
+        const grayscaleValue = document.getElementById('grayscale-value');
+        if (grayscale && grayscaleValue) {
+            grayscale.value = currentFilters.grayscale;
+            grayscaleValue.textContent = currentFilters.grayscale + '%';
+        }
     }
 
     function applyFiltersToImage() {

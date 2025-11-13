@@ -20,7 +20,7 @@
     <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Nos alegra que hayas elegido nuestros imanes para dar vida a tus recuerdos.</p>
 
     <p style="margin: 0 0 5px 0; color: #333; line-height: 1.6; font-weight: bold;">Importante:</p>
-    <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Tu pedido será procesado una vez que hayamos recibido el comprobante de la transferencia. Por favor envíalo a <strong>comprobantes@imanimagnets.com</strong> o vía WhatsApp al <strong>+593 98 595 9303</strong>.</p>
+    <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Tu pedido será procesado una vez que hayamos recibido el comprobante de la transferencia. Por favor envíalo a <strong>comprobantes@imanimagnets.com</strong> o vía WhatsApp al <strong>{{ config('site.whatsapp.number') }}</strong>.</p>
 
     <p style="margin: 0 0 15px 0; color: #0f3d35; line-height: 1.6; font-weight: bold;">Número del pedido: [{{ $order->order_number }}]</p>
 

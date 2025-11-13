@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<section class="bg-white py-12 md:py-16 text-[17px] md:text-[18px] leading-relaxed">
+<section class="bg-white py-12 md:py-16  leading-relaxed">
     <div class="container mx-auto px-6 max-w-6xl">
         <!-- Encabezado -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start mb-12">
@@ -37,7 +37,7 @@
             {{ $content->get('collections.section_title') }}
         </h2>
 
-        <div class="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        <div class="grid md:grid-cols-3 gap-6">
             @forelse($collections as $collection)
                 <div class="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col border-2 border-transparent hover:border-dark-turquoise hover:scale-105">
                     <!-- Imagen del producto -->
@@ -84,7 +84,7 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-2 text-center py-12">
+                <div class="col-span-3 text-center py-12">
                     <p class="text-gray-500 text-lg">No hay colecciones disponibles en este momento.</p>
                 </div>
             @endforelse

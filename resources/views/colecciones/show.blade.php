@@ -15,7 +15,7 @@
             <!-- Galería de Imágenes -->
             <div class="space-y-4">
                 <!-- Imagen Principal Grande -->
-                <div class="w-full overflow-hidden rounded-lg shadow-lg" style="height: 380px;">
+                <div class="w-full overflow-hidden rounded-lg shadow-lg" style="aspect-ratio: 1/1; max-width: 100%;">
                     <img
                         id="mainImage"
                         src="{{ asset($collection->image) }}"
@@ -132,14 +132,14 @@
         <!-- Otras Colecciones -->
         <div class="border-t border-gray-200 pt-12">
             <h2 class="font-spartan text-2xl md:text-3xl font-bold text-dark-turquoise mb-8">
-                Otras Colecciones
+                OTRAS COLECCIONES 
             </h2>
 
             <div class="grid md:grid-cols-3 gap-6">
                 @foreach(App\Models\Collection::active()->where('id', '!=', $collection->id)->take(3)->get() as $otherCollection)
                     <a href="{{ route('colecciones.show', $otherCollection) }}" class="group">
-                        <div class="bg-[#F7F6F2] rounded-md p-4 shadow-sm hover:shadow-md transition">
-                            <div class="w-full h-[180px] overflow-hidden rounded-md mb-3">
+                        <div class="bg-white rounded-md p-4 shadow-sm hover:shadow-md transition">
+                            <div class="w-full overflow-hidden rounded-md mb-3" style="aspect-ratio: 1/1;">
                                 <img
                                     src="{{ asset($otherCollection->image) }}"
                                     alt="{{ $otherCollection->name }}"

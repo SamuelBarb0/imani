@@ -44,7 +44,7 @@
         🔐 Cambiar tu contraseña
     </p>
 
-    <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Si tienes alguna pregunta sobre tu pedido o necesitas ayuda, no dudes en contactarnos por WhatsApp al <strong>+593 98 595 9303</strong> o por correo a <strong>contacto@imanimagnets.com</strong>.</p>
+    <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Si tienes alguna pregunta sobre tu pedido o necesitas ayuda, no dudes en contactarnos por WhatsApp al <strong>{{ config('site.whatsapp.number') }}</strong> o por correo a <strong>{{ config('site.email') }}</strong>.</p>
 
     <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Síguenos en Instagram <strong>@ImaniMagnets</strong> para inspirarte con ideas creativas y ver cómo otros clientes disfrutan de sus imanes personalizados.</p>
 

@@ -23,6 +23,19 @@
 <section class="bg-gray-50 py-8">
     <div class="container mx-auto px-6 max-w-7xl">
 
+        <!-- Messages -->
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <!-- Search -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <form method="GET" action="{{ route('admin.users.index') }}" class="flex gap-4">
@@ -52,6 +65,7 @@
                                 <th class="text-left py-3 px-4 text-xs font-semibold text-gray-brown uppercase">Teléfono</th>
                                 <th class="text-left py-3 px-4 text-xs font-semibold text-gray-brown uppercase">Rol</th>
                                 <th class="text-left py-3 px-4 text-xs font-semibold text-gray-brown uppercase">Registrado</th>
+                                <th class="text-right py-3 px-4 text-xs font-semibold text-gray-brown uppercase">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -70,6 +84,30 @@
                                         </span>
                                     </td>
                                     <td class="py-3 px-4 text-sm">{{ $user->created_at->format('d/m/Y') }}</td>
+                                    <td class="py-3 px-4 text-right">
+                                        <div class="flex justify-end gap-2">
+                                            <a href="{{ route('admin.users.edit', $user) }}"
+                                               class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded font-semibold">
+                                                Editar
+                                            </a>
+                                            @if(auth()->id() !== $user->id)
+                                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline"
+                                                      onsubmit="return confirm('¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                            class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded font-semibold">
+                                                        Eliminar
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <span class="px-3 py-1 bg-gray-300 text-gray-500 text-xs rounded font-semibold cursor-not-allowed"
+                                                      title="No puedes eliminarte a ti mismo">
+                                                    Eliminar
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

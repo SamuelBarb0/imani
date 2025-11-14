@@ -158,6 +158,9 @@ Route::prefix('pruebas')->group(function () {
 
         // Users management
         Route::get('/usuarios', [App\Http\Controllers\Admin\AdminController::class, 'users'])->name('users.index');
+        Route::get('/usuarios/{id}/editar', [App\Http\Controllers\Admin\AdminController::class, 'editUser'])->name('users.edit');
+        Route::put('/usuarios/{id}', [App\Http\Controllers\Admin\AdminController::class, 'updateUser'])->name('users.update');
+        Route::delete('/usuarios/{id}', [App\Http\Controllers\Admin\AdminController::class, 'destroyUser'])->name('users.destroy');
 
         // Content Management
         Route::get('/contenido', [App\Http\Controllers\Admin\ContentController::class, 'index'])->name('content.index');

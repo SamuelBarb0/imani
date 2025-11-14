@@ -157,6 +157,67 @@ class AdminController extends Controller
     }
 
     /**
+     * Show edit user form
+     */
+    public function editUser($id)
+    {
+        $user = User::findOrFail($id);
+        return view('admin.users.edit', compact('user'));
+    }
+
+    /**
+     * Update user
+     */
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+            'role' => 'required|in:user,admin',
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        // Update basic fields
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->phone = $validated['phone'] ?? null;
+        $user->role = $validated['role'];
+
+        // Update password only if provided
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Usuario actualizado exitosamente.');
+    }
+
+    /**
+     * Delete user
+     */
+    public function destroyUser($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Prevent deleting yourself
+        if ($user->id === auth()->id()) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'No puedes eliminar tu propia cuenta.');
+        }
+
+        $userName = $user->name;
+        $user->delete();
+
+        return redirect()->route('admin.users.index')
+            ->with('success', "Usuario '{$userName}' eliminado exitosamente.");
+    }
+
+    /**
      * Upload payment proof
      */
     public function uploadPaymentProof(Request $request, $id)

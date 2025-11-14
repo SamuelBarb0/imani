@@ -23,24 +23,24 @@
                     {{ $content->get('header.title') }}
                 </h1>
 
-                <p class="text-gray-700 mb-4 leading-relaxed">
+                <p class="text-gray-brown mb-4 leading-relaxed">
                     {!! $content->get('header.intro') !!}
                 </p>
 
                 <div class="bg-[#E9E6DF] p-4 rounded-md mb-4">
                     <p class="text-dark-turquoise font-bold mb-2">{{ $content->get('header.perfect_for_title') }}</p>
-                    <ul class="list-disc list-inside text-gray-700 text-[17px]">
+                    <ul class="list-disc list-inside text-gray-brown text-[17px]">
                         <li>{{ $content->get('header.use_1') }}</li>
                         <li>{{ $content->get('header.use_2') }}</li>
                         <li>{{ $content->get('header.use_3') }}</li>
                     </ul>
                 </div>
 
-                <p class="text-gray-700 mb-4">
+                <p class="text-gray-brown mb-4">
                     {!! $content->get('header.help_text') !!}
                 </p>
 
-                <p class="text-gray-700">
+                <p class="text-gray-brown">
                     {!! $content->get('header.contact_info') !!}
                 </p>
             </div>

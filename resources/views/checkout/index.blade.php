@@ -103,7 +103,7 @@
                             </h2>
                             <label class="flex items-center cursor-pointer">
                                 <input type="checkbox" id="same-as-billing" class="w-4 h-4 text-dark-turquoise border-gray-300 rounded focus:ring-dark-turquoise">
-                                <span class="ml-2 text-sm text-gray-700">Misma que facturación</span>
+                                <span class="ml-2 text-sm text-gray-brown">Misma que facturación</span>
                             </label>
                         </div>
 
@@ -237,7 +237,7 @@
 
                                 <div class="mt-4 p-3 bg-white rounded border border-blue-300">
                                     <p class="font-semibold text-sm text-gray-800 mb-2">🏦 Instrucciones importantes:</p>
-                                    <ul class="text-xs text-gray-700 space-y-1 list-disc list-inside">
+                                    <ul class="text-xs text-gray-brown space-y-1 list-disc list-inside">
                                         <li>Realiza tu transferencia por el monto total del pedido</li>
                                         <li>Envía el comprobante a: <strong class="text-dark-turquoise">comprobantes@imanimagnets.com</strong></li>
                                         <li>Incluye tu número de orden o email en el asunto</li>
@@ -264,7 +264,7 @@
                             <label class="flex items-start cursor-pointer">
                                 <input type="checkbox" name="newsletter_subscription" value="1" {{ old('newsletter_subscription') ? 'checked' : '' }}
                                     class="w-4 h-4 text-dark-turquoise border-gray-300 rounded focus:ring-dark-turquoise mt-1">
-                                <span class="ml-3 text-sm text-gray-700">
+                                <span class="ml-3 text-sm text-gray-brown">
                                     Quiero recibir novedades, promociones y ofertas exclusivas por correo electrónico
                                 </span>
                             </label>
@@ -272,7 +272,7 @@
                             <label class="flex items-start cursor-pointer">
                                 <input type="checkbox" name="social_media_consent" value="1" {{ old('social_media_consent') ? 'checked' : '' }}
                                     class="w-4 h-4 text-dark-turquoise border-gray-300 rounded focus:ring-dark-turquoise mt-1">
-                                <span class="ml-3 text-sm text-gray-700">
+                                <span class="ml-3 text-sm text-gray-brown">
                                     Autorizo a Imani Magnets a usar fotos de mi pedido en redes sociales y material promocional
                                 </span>
                             </label>

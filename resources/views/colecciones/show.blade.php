@@ -51,7 +51,7 @@
                     </h1>
 
                     @if($collection->description)
-                        <p class="text-gray-700 text-lg leading-relaxed mb-4">
+                        <p class="text-gray-brown text-lg leading-relaxed mb-4">
                             {{ $collection->description }}
                         </p>
                     @endif
@@ -67,7 +67,7 @@
                                     <svg class="w-5 h-5 text-dark-turquoise mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
-                                    <span class="text-gray-700">{{ $item }}</span>
+                                    <span class="text-gray-brown">{{ $item }}</span>
                                 </li>
                             @endforeach
                         </ul>
@@ -85,7 +85,7 @@
 
                     <!-- Cantidad -->
                     <div class="mb-6">
-                        <label for="cantidad" class="block text-sm font-medium text-gray-700 mb-3">
+                        <label for="cantidad" class="block text-sm font-medium text-gray-brown mb-3">
                             {{ $content->get('collections.quantity_label') }}
                         </label>
                         <div class="flex items-center space-x-4">
@@ -93,7 +93,7 @@
                                 <button
                                     type="button"
                                     onclick="decreaseQuantity()"
-                                    class="px-6 py-3 bg-gray-100 text-gray-700 hover:bg-gray-200 transition font-bold text-lg"
+                                    class="px-6 py-3 bg-gray-100 text-gray-brown hover:bg-gray-200 transition font-bold text-lg"
                                 >
                                     -
                                 </button>
@@ -108,7 +108,7 @@
                                 <button
                                     type="button"
                                     onclick="increaseQuantity()"
-                                    class="px-6 py-3 bg-gray-100 text-gray-700 hover:bg-gray-200 transition font-bold text-lg"
+                                    class="px-6 py-3 bg-gray-100 text-gray-brown hover:bg-gray-200 transition font-bold text-lg"
                                 >
                                     +
                                 </button>

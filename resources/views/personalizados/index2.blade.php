@@ -6,7 +6,7 @@
         <!-- Imagen principal -->
         <div class="flex justify-center h-[580px] overflow-hidden rounded-lg shadow-lg">
             <img
-                src="{{ asset('images/IMG-20251016-WA0037.jpg') }}"
+                src="{{ asset($content->get('hero.image')) }}"
                 alt="Imanes personalizados Imani Magnets"
                 class="w-full h-full object-cover">
         </div>

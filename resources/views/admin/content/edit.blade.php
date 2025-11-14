@@ -422,9 +422,13 @@
             const data = await response.json();
 
             if (data.success) {
+                // Get base URL for assets
+                const baseUrl = '{{ config('app.url') }}';
+                const imagePath = data.path.startsWith('/') ? data.path : '/' + data.path;
+
                 // Update preview or create new preview structure
                 if (preview) {
-                    preview.src = '/' + data.path;
+                    preview.src = baseUrl + imagePath;
                     preview.setAttribute('data-rotation', '0');
                     preview.style.transform = 'rotate(0deg)';
                 } else {
@@ -436,7 +440,7 @@
                         newStructure.innerHTML = `
                             <div class="relative group" data-preview-container>
                                 <img
-                                    src="/${data.path}"
+                                    src="${baseUrl}${imagePath}"
                                     alt="Preview"
                                     class="w-48 h-48 object-cover rounded-lg border-2 border-gray-300 transition-transform"
                                     data-preview-image

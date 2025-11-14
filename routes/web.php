@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PayPhoneWebhookController;
 use App\Http\Controllers\PayPhoneBoxController;
+use App\Http\Controllers\TestTemplateController;
 
 /**
  * 🌐 RUTA RAÍZ
@@ -20,6 +21,9 @@ Route::get('/', function () {
  * (todas las rutas del sitio bajo /pruebas)
  */
 Route::prefix('pruebas')->group(function () {
+
+    /** 🧪 TEST TEMPLATE */
+    Route::get('/test-template', [TestTemplateController::class, 'testTemplate'])->name('test.template');
 
     /** 🏠 HOME */
     Route::get('/', function () {

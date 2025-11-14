@@ -69,7 +69,7 @@ class TemplateGeneratorService
         // Process each magnet
         foreach ($imagePaths as $index => $imagePath) {
             [$x, $y] = self::POSITIONS[$index];
-            $this->renderMagnet($canvas, $imagePath, $x, $y);
+            $this->renderMagnet($canvas, $imagePath, $x, $y, $index, $black, $orderNumber);
         }
 
         // Save PNG
@@ -103,9 +103,16 @@ class TemplateGeneratorService
     /**
      * Render a single magnet (ultra-simplified - just the image, no borders or margins)
      * Simply pastes the 644x644px image at the specified position
+     * Also adds the order number to the left of each image (vertically)
      */
-    private function renderMagnet($canvas, string $imagePath, int $x, int $y): void
+    private function renderMagnet($canvas, string $imagePath, int $x, int $y, int $index, $color, string $orderNumber): void
     {
+        // Add the order number to the left of the image - vertically
+        $orderX = $x - 20; // 20px to the left of the image
+        $orderY = $y + (self::IMAGE_SIZE / 2) + (strlen($orderNumber) * 5); // Centered vertically
+
+        imagestringup($canvas, 5, $orderX, $orderY, $orderNumber, $color);
+
         // Add the image at the specified position (644x644px)
         $this->addImage($canvas, $imagePath, $x, $y, self::IMAGE_SIZE);
     }

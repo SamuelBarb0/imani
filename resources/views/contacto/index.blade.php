@@ -8,7 +8,7 @@
             <h1 class="text-3xl md:text-4xl font-spartan font-bold text-dark-turquoise mb-3 text-left">
                 {{ $content->get('header.title') }}
             </h1>
-            <p class="text-gray-700 text-[17px] leading-relaxed text-left">
+            <p class="text-gray-brown text-[17px] leading-relaxed text-left">
                 {{ $content->get('header.subtitle') }}
             </p>
         </div>

@@ -230,7 +230,7 @@
                             </button>
 
                             <div class="p-4 bg-gray-50 rounded-lg">
-                                <h4 class="font-spartan font-semibold text-sm text-gray-700 mb-2">Instrucciones:</h4>
+                                <h4 class="font-spartan font-semibold text-sm text-gray-brown mb-2">Instrucciones:</h4>
                                 <ul class="text-xs text-gray-600 space-y-1">
                                     <li>• Arrastra el recuadro para seleccionar la parte de la imagen que quieres ver en el frente de tu imán.</li>
                                     <li>• Usa la rueda del mouse o ajusta las esquinas del cuadrado para cambiar su tamaño.</li>
@@ -248,7 +248,7 @@
 
                             <!-- Brightness -->
                             <div>
-                                <label class="flex justify-between text-sm font-semibold text-gray-700 mb-2">
+                                <label class="flex justify-between text-sm font-semibold text-gray-brown mb-2">
                                     <span>Brillo</span>
                                     <span id="brightness-value">100%</span>
                                 </label>
@@ -257,7 +257,7 @@
 
                             <!-- Contrast -->
                             <div>
-                                <label class="flex justify-between text-sm font-semibold text-gray-700 mb-2">
+                                <label class="flex justify-between text-sm font-semibold text-gray-brown mb-2">
                                     <span>Contraste</span>
                                     <span id="contrast-value">100%</span>
                                 </label>
@@ -266,7 +266,7 @@
 
                             <!-- Saturation -->
                             <div>
-                                <label class="flex justify-between text-sm font-semibold text-gray-700 mb-2">
+                                <label class="flex justify-between text-sm font-semibold text-gray-brown mb-2">
                                     <span>Saturación</span>
                                     <span id="saturation-value">100%</span>
                                 </label>
@@ -275,7 +275,7 @@
 
                             <!-- Exposure -->
                             <div>
-                                <label class="flex justify-between text-sm font-semibold text-gray-700 mb-2">
+                                <label class="flex justify-between text-sm font-semibold text-gray-brown mb-2">
                                     <span>Exposición</span>
                                     <span id="exposure-value">0%</span>
                                 </label>
@@ -284,7 +284,7 @@
 
                             <!-- Warmth -->
                             <div>
-                                <label class="flex justify-between text-sm font-semibold text-gray-700 mb-2">
+                                <label class="flex justify-between text-sm font-semibold text-gray-brown mb-2">
                                     <span>Temperatura</span>
                                     <span id="warmth-value">0</span>
                                 </label>
@@ -293,7 +293,7 @@
 
                             <!-- Sepia -->
                             <div>
-                                <label class="flex justify-between text-sm font-semibold text-gray-700 mb-2">
+                                <label class="flex justify-between text-sm font-semibold text-gray-brown mb-2">
                                     <span>Sepia</span>
                                     <span id="sepia-value">0%</span>
                                 </label>
@@ -302,7 +302,7 @@
 
                             <!-- Grayscale -->
                             <div>
-                                <label class="flex justify-between text-sm font-semibold text-gray-700 mb-2">
+                                <label class="flex justify-between text-sm font-semibold text-gray-brown mb-2">
                                     <span>Escala de Grises</span>
                                     <span id="grayscale-value">0%</span>
                                 </label>
@@ -355,7 +355,7 @@
 
         <!-- Footer Actions -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-4 p-3 sm:p-4 md:p-6 border-t border-gray-200">
-            <button onclick="closeEditor()" class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-700 rounded-lg font-spartan font-semibold text-xs sm:text-sm tracking-wider uppercase hover:bg-gray-300 transition-all order-2 sm:order-1">
+            <button onclick="closeEditor()" class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-brown rounded-lg font-spartan font-semibold text-xs sm:text-sm tracking-wider uppercase hover:bg-gray-300 transition-all order-2 sm:order-1">
                 CANCELAR
             </button>
             <button onclick="saveImage()" class="px-6 sm:px-8 py-2 sm:py-3 bg-dark-turquoise text-white rounded-lg font-spartan font-semibold text-xs sm:text-sm tracking-wider uppercase hover:bg-gray-brown transition-all order-1 sm:order-2">

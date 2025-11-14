@@ -12,13 +12,13 @@
                 <p class="text-xl md:text-xl font-spartan font-semibold text-dark-turquoise mb-4">
                     {{ $content->get('header.subtitle') }}
                 </p>
-                <p class="text-gray-700 mb-4 ">
+                <p class="text-gray-brown mb-4 ">
                     {{ $content->get('header.intro_1') }}
                 </p>
-                <p class="text-gray-700 mb-4">
+                <p class="text-gray-brown mb-4">
                     {{ $content->get('header.intro_2') }}
                 </p>
-                <p class="text-gray-700">
+                <p class="text-gray-brown">
                     {!! $content->get('header.size_info') !!}
                 </p>
             </div>
@@ -61,7 +61,7 @@
 
                         <!-- Descripción -->
                         @if($collection->description)
-                            <p class="text-dark-turquoise text-[15px] mb-7 leading-relaxed flex-grow">
+                            <p class="text-gray-brown text-[15px] mb-7 leading-relaxed flex-grow">
                                 {{ $collection->description }}
                             </p>
                         @endif

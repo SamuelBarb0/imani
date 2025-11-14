@@ -4,16 +4,16 @@
 
 @section('content')
 
-<section class="bg-gradient-to-r from-dark-turquoise to-dark-turquoise-alt py-6">
+<section class="bg-white py-6">
     <div class="container mx-auto px-6 max-w-4xl">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="font-spartan text-3xl font-bold text-white mb-2">
+                <h1 class="font-spartan text-3xl font-bold text-dark-turquoise mb-2">
                     EDITAR USUARIO
                 </h1>
-                <p class="text-gray-200">ID: {{ $user->id }} | {{ $user->email }}</p>
+                <p class="text-gray-700">ID: {{ $user->id }} | {{ $user->email }}</p>
             </div>
-            <a href="{{ route('admin.users.index') }}" class="px-4 py-2 bg-white text-dark-turquoise rounded-full font-semibold text-sm hover:bg-gray-100">
+            <a href="{{ route('admin.users.index') }}" class="px-4 py-2 bg-dark-turquoise text-white rounded-full font-semibold text-sm hover:bg-dark-turquoise-alt">
                 ← Volver a Usuarios
             </a>
         </div>

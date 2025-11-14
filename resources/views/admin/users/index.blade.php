@@ -4,16 +4,16 @@
 
 @section('content')
 
-<section class="bg-gradient-to-r from-dark-turquoise to-dark-turquoise-alt py-6">
+<section class="bg-white py-6">
     <div class="container mx-auto px-6 max-w-7xl">
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="font-spartan text-3xl font-bold text-dark-turquoise mb-2">
                     GESTIÓN DE USUARIOS
                 </h1>
-                <p class="text-gray-900">Total: {{ $users->total() }} usuarios</p>
+                <p class="text-gray-700">Total: {{ $users->total() }} usuarios</p>
             </div>
-            <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-white text-dark-turquoise rounded-full font-semibold text-sm hover:bg-gray-100">
+            <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-dark-turquoise text-white rounded-full font-semibold text-sm hover:bg-dark-turquoise-alt">
                 ← Volver al Dashboard
             </a>
         </div>

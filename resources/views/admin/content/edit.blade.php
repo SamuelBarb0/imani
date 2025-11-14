@@ -4,7 +4,7 @@
 
 @push('styles')
 <style>
-    /* Fix para zoom del navegador - contenedor de imagen con posición relativa fija */
+    /* Contenedor de imagen con tamaño fijo */
     [data-preview-container] {
         width: 12rem; /* w-48 = 192px = 12rem */
         height: 12rem;
@@ -16,50 +16,6 @@
         width: 100%;
         height: 100%;
         display: block;
-    }
-
-    [data-edit-overlay] {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-    }
-
-    /* Mejora visual de los botones */
-    [data-edit-overlay] button {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-
-    /* Efecto de pulso cuando se hace clic en el botón de rotar */
-    @keyframes buttonPulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 10px rgba(52, 211, 153, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
-        }
-    }
-
-    .button-pulse {
-        animation: buttonPulse 0.5s ease-out;
-    }
-
-    /* Estado activo mejorado para los botones */
-    [data-edit-overlay] button:active {
-        transform: scale(0.95) !important;
-    }
-
-    /* En mobile, mostrar botones semi-transparentes siempre */
-    @media (max-width: 1024px) {
-        [data-edit-overlay] {
-            background-color: rgba(0, 0, 0, 0.3) !important;
-        }
     }
 </style>
 @endpush
@@ -174,51 +130,31 @@
                                     <div class="space-y-3" data-image-container>
                                         @if($item->value)
                                             <div class="flex flex-col lg:flex-row items-start lg:items-center space-y-4 lg:space-y-0 lg:space-x-4">
-                                                <!-- Image Preview Container with Overlay -->
-                                                <div class="relative group" data-preview-container>
+                                                <!-- Image Preview Container -->
+                                                <div class="relative" data-preview-container>
                                                     <img
                                                         src="{{ asset($item->value) }}"
                                                         alt="{{ $item->key }}"
-                                                        class="w-48 h-48 object-cover rounded-lg border-2 border-gray-300 transition-transform"
+                                                        class="w-48 h-48 object-cover rounded-lg border-2 border-gray-300"
                                                         data-preview-image
-                                                        data-rotation="0"
-                                                        style="transform: rotate(0deg);"
                                                     >
-
-                                                    <!-- Overlay with Edit Options - Always Visible on Mobile, Hover on Desktop -->
-                                                    <div class="absolute inset-0 bg-black bg-opacity-0 lg:group-hover:bg-opacity-60 transition-all duration-300 rounded-lg flex items-center justify-center" data-edit-overlay>
-                                                        <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
-                                                            <!-- Rotate Button -->
-                                                            <button
-                                                                type="button"
-                                                                class="p-3 bg-emerald-400 hover:bg-emerald-500 active:bg-emerald-600 text-white rounded-lg shadow-lg transform hover:scale-110 active:scale-95 transition-all duration-150 ring-2 ring-transparent hover:ring-emerald-300"
-                                                                onclick="rotateImage(this)"
-                                                                title="Rotar 90°"
-                                                            >
-                                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                                                </svg>
-                                                            </button>
-
-                                                            <!-- Delete Button -->
-                                                            <button
-                                                                type="button"
-                                                                class="p-3 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white rounded-lg shadow-lg transform hover:scale-110 active:scale-95 transition-all duration-150 ring-2 ring-transparent hover:ring-red-300"
-                                                                onclick="deleteImage(this)"
-                                                                title="Eliminar imagen"
-                                                            >
-                                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                </svg>
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                                    <!-- Delete Button - Top Right Corner -->
+                                                    <button
+                                                        type="button"
+                                                        class="absolute -top-2 -right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg"
+                                                        onclick="deleteImage(this)"
+                                                        title="Eliminar imagen"
+                                                    >
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
                                                 </div>
 
                                                 <!-- Image Info -->
                                                 <div>
                                                     <p class="text-sm text-gray-700 mb-2"><strong>Imagen actual:</strong> {{ basename($item->value) }}</p>
-                                                    <p class="text-xs text-gray-500">Pasa el cursor sobre la imagen para ver las opciones de edición</p>
+                                                    <p class="text-xs text-gray-500">Click en la X para eliminar la imagen</p>
                                                 </div>
                                             </div>
                                         @else
@@ -311,28 +247,6 @@
 
 @push('scripts')
 <script>
-    // Rotate image by 90 degrees
-    function rotateImage(button) {
-        const container = button.closest('[data-preview-container]');
-        const img = container.querySelector('[data-preview-image]');
-        let currentRotation = parseInt(img.getAttribute('data-rotation') || '0');
-
-        // Increment rotation by 90 degrees
-        currentRotation = (currentRotation + 90) % 360;
-
-        // Apply rotation
-        img.style.transform = `rotate(${currentRotation}deg)`;
-        img.setAttribute('data-rotation', currentRotation);
-
-        // Add pulse effect to button
-        button.classList.add('button-pulse');
-        setTimeout(() => {
-            button.classList.remove('button-pulse');
-        }, 500);
-
-        showNotification(`Imagen rotada ${currentRotation}°`, 'success');
-    }
-
     // Delete image
     function deleteImage(button) {
         if (!confirm('¿Estás seguro de eliminar esta imagen?')) return;
@@ -429,8 +343,6 @@
                 // Update preview or create new preview structure
                 if (preview) {
                     preview.src = baseUrl + imagePath;
-                    preview.setAttribute('data-rotation', '0');
-                    preview.style.transform = 'rotate(0deg)';
                 } else {
                     // Create complete preview structure
                     const emptyPlaceholder = container.querySelector('[data-empty-placeholder]');
@@ -438,43 +350,27 @@
                         const newStructure = document.createElement('div');
                         newStructure.className = 'flex flex-col lg:flex-row items-start lg:items-center space-y-4 lg:space-y-0 lg:space-x-4';
                         newStructure.innerHTML = `
-                            <div class="relative group" data-preview-container>
+                            <div class="relative" data-preview-container>
                                 <img
                                     src="${baseUrl}${imagePath}"
                                     alt="Preview"
-                                    class="w-48 h-48 object-cover rounded-lg border-2 border-gray-300 transition-transform"
+                                    class="w-48 h-48 object-cover rounded-lg border-2 border-gray-300"
                                     data-preview-image
-                                    data-rotation="0"
-                                    style="transform: rotate(0deg);"
                                 >
-                                <div class="absolute inset-0 bg-black bg-opacity-0 lg:group-hover:bg-opacity-60 transition-all duration-300 rounded-lg flex items-center justify-center" data-edit-overlay>
-                                    <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
-                                        <button
-                                            type="button"
-                                            class="p-3 bg-emerald-400 hover:bg-emerald-500 active:bg-emerald-600 text-white rounded-lg shadow-lg transform hover:scale-110 active:scale-95 transition-all duration-150 ring-2 ring-transparent hover:ring-emerald-300"
-                                            onclick="rotateImage(this)"
-                                            title="Rotar 90°"
-                                        >
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                            </svg>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="p-3 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white rounded-lg shadow-lg transform hover:scale-110 active:scale-95 transition-all duration-150 ring-2 ring-transparent hover:ring-red-300"
-                                            onclick="deleteImage(this)"
-                                            title="Eliminar imagen"
-                                        >
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
+                                <button
+                                    type="button"
+                                    class="absolute -top-2 -right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg"
+                                    onclick="deleteImage(this)"
+                                    title="Eliminar imagen"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
                             </div>
                             <div>
                                 <p class="text-sm text-gray-700 mb-2"><strong>Imagen actual:</strong> ${data.path.split('/').pop()}</p>
-                                <p class="text-xs text-gray-500">Pasa el cursor sobre la imagen para ver las opciones de edición</p>
+                                <p class="text-xs text-gray-500">Click en la X para eliminar la imagen</p>
                             </div>
                         `;
                         emptyPlaceholder.replaceWith(newStructure);

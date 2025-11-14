@@ -33,7 +33,7 @@ class WholesaleController extends Controller
                 'comment' => $validated['comentarios'] ?? '',
             ], function ($message) use ($validated, $fullName) {
                 $message->to($validated['correo'], $fullName)
-                    ->subject('Hemos recibido tu solicitud de mayoreo - Imani Magnets');
+                    ->subject('Hemos recibido tu consulta por pedidos al por mayor – Imani Magnets ');
             });
 
             // Send notification to admin
@@ -43,7 +43,7 @@ class WholesaleController extends Controller
                 'phone' => $validated['celular'],
                 'quantity' => $validated['cantidad'],
                 'deadline' => \Carbon\Carbon::parse($validated['fecha'])->format('d/m/Y'),
-                'comment' => "Nueva solicitud de mayoreo:\n\n".
+                'comment' => "Nueva solicitud de Por Mayor:\n\n".
                     "Nombre: {$fullName}\n".
                     "Email: {$validated['correo']}\n".
                     "Teléfono: {$validated['celular']}\n".
@@ -53,7 +53,7 @@ class WholesaleController extends Controller
             ], function ($message) use ($fullName, $validated) {
                 $message->to(config('mail.admin_email', 'mayoristas@imanimagnets.com'))
                     ->replyTo($validated['correo'], $fullName)
-                    ->subject('Nueva Solicitud de Mayoreo - '.$fullName);
+                    ->subject('Nueva Solicitud de Por Mayor - '.$fullName);
             });
 
             return back()->with('success', '¡Gracias por tu interés! Pronto nos pondremos en contacto contigo.');

@@ -104,6 +104,13 @@ use Illuminate\Support\Facades\Storage;
                         <p class="text-sm">{{ $order->customer_phone ?? 'N/A' }}</p>
                     </div>
                     <div>
+                        <p class="text-xs font-semibold text-gray-brown">Documento de Identificación:</p>
+                        <p class="text-sm">
+                            <span class="font-semibold">{{ strtoupper($order->document_type) }}:</span>
+                            {{ $order->document_number }}
+                        </p>
+                    </div>
+                    <div>
                         <p class="text-xs font-semibold text-gray-brown">Dirección de Envío:</p>
                         <p class="text-sm">{{ $order->shipping_address }}</p>
                         <p class="text-sm">{{ $order->shipping_city }}, {{ $order->shipping_state }} {{ $order->shipping_zip }}</p>

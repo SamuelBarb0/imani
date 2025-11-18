@@ -12,6 +12,9 @@
 
     {!! App\Helpers\SeoHelper::renderMetaTags($seoPage, $seoDefaults) !!}
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/Imani.png') }}">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

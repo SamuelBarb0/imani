@@ -173,17 +173,7 @@
         <!-- Gestión de Envíos -->
         <div class="mb-6">
             <h3 class="font-spartan text-lg font-semibold text-gray-700 mb-4">Configuración de Envíos</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="{{ route('admin.shipping-prices.index') }}" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border-l-4 border-yellow-500">
-                    <div class="flex items-center mb-2">
-                        <svg class="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <h3 class="font-spartan text-base font-bold text-dark-turquoise">Precios de Envío</h3>
-                    </div>
-                    <p class="text-sm text-gray-600">Matriz de precios por ciudad</p>
-                </a>
-
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <a href="{{ route('admin.couriers.index') }}" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border-l-4 border-orange-500">
                     <div class="flex items-center mb-2">
                         <svg class="w-6 h-6 text-orange-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,25 +184,24 @@
                     <p class="text-sm text-gray-600">Gestionar empresas de envío</p>
                 </a>
 
-                <a href="{{ route('admin.provinces.index') }}" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border-l-4 border-pink-500">
-                    <div class="flex items-center mb-2">
-                        <svg class="w-6 h-6 text-pink-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
-                        </svg>
-                        <h3 class="font-spartan text-base font-bold text-dark-turquoise">Provincias</h3>
-                    </div>
-                    <p class="text-sm text-gray-600">Gestionar provincias</p>
-                </a>
-
-                <a href="{{ route('admin.cities.index') }}" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border-l-4 border-teal-500">
+                <a href="{{ route('admin.shipping.zones') }}" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border-l-4 border-teal-500">
                     <div class="flex items-center mb-2">
                         <svg class="w-6 h-6 text-teal-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
                         </svg>
-                        <h3 class="font-spartan text-base font-bold text-dark-turquoise">Ciudades</h3>
+                        <h3 class="font-spartan text-base font-bold text-dark-turquoise">Zonas de Envío</h3>
                     </div>
-                    <p class="text-sm text-gray-600">Gestionar ciudades</p>
+                    <p class="text-sm text-gray-600">Gestionar zonas geográficas</p>
+                </a>
+
+                <a href="{{ route('admin.shipping.prices') }}" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border-l-4 border-yellow-500">
+                    <div class="flex items-center mb-2">
+                        <svg class="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <h3 class="font-spartan text-base font-bold text-dark-turquoise">Códigos de Precio</h3>
+                    </div>
+                    <p class="text-sm text-gray-600">Gestionar precios de envío</p>
                 </a>
             </div>
         </div>

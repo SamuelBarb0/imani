@@ -14,6 +14,12 @@
                 <p class="text-gray-700">Asigna códigos de precio a las parroquias de Ecuador</p>
             </div>
             <div class="flex gap-3">
+                <button
+                    onclick="openCreateZoneModal()"
+                    class="px-4 py-2 bg-dark-turquoise text-white rounded-full font-semibold text-sm hover:bg-dark-turquoise-alt"
+                >
+                    + Nueva Zona
+                </button>
                 <a href="{{ route('admin.shipping.prices') }}" class="px-4 py-2 bg-gray-200 text-gray-brown rounded-full font-semibold text-sm hover:bg-gray-300">
                     Ver Códigos de Precio
                 </a>
@@ -275,6 +281,116 @@
     </div>
 </section>
 
+<!-- Create Zone Modal -->
+<div id="createZoneModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+        <h3 class="text-xl font-semibold text-gray-brown mb-4">Nueva Zona de Envío</h3>
+        <form action="{{ route('admin.shipping.zones.store') }}" method="POST">
+            @csrf
+
+            @if($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <ul class="list-disc list-inside text-sm">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <div class="mb-4">
+                <label for="create_provincia" class="block text-sm font-semibold text-gray-brown mb-2">
+                    Provincia *
+                </label>
+                <input
+                    type="text"
+                    name="provincia"
+                    id="create_provincia"
+                    required
+                    value="{{ old('provincia') }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent @error('provincia') border-red-500 @enderror"
+                    placeholder="Ej: Pichincha"
+                >
+                @error('provincia')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="mb-4">
+                <label for="create_canton" class="block text-sm font-semibold text-gray-brown mb-2">
+                    Cantón *
+                </label>
+                <input
+                    type="text"
+                    name="canton"
+                    id="create_canton"
+                    required
+                    value="{{ old('canton') }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent @error('canton') border-red-500 @enderror"
+                    placeholder="Ej: Quito"
+                >
+                @error('canton')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="mb-4">
+                <label for="create_parroquia" class="block text-sm font-semibold text-gray-brown mb-2">
+                    Parroquia *
+                </label>
+                <input
+                    type="text"
+                    name="parroquia"
+                    id="create_parroquia"
+                    required
+                    value="{{ old('parroquia') }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent @error('parroquia') border-red-500 @enderror"
+                    placeholder="Ej: Tumbaco"
+                >
+                @error('parroquia')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="mb-4">
+                <label for="create_price_code" class="block text-sm font-semibold text-gray-brown mb-2">
+                    Código de Precio (opcional)
+                </label>
+                <select
+                    name="price_code"
+                    id="create_price_code"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent @error('price_code') border-red-500 @enderror"
+                >
+                    <option value="">-- Sin código --</option>
+                    @foreach($prices as $price)
+                        <option value="{{ $price->code_name }}" {{ old('price_code') == $price->code_name ? 'selected' : '' }}>
+                            {{ $price->code_name }} - ${{ number_format($price->price, 2) }}
+                            @if($price->courier_name)
+                                ({{ $price->courier_name }})
+                            @endif
+                        </option>
+                    @endforeach
+                </select>
+                @error('price_code')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="flex gap-4">
+                <button
+                    type="submit"
+                    class="px-6 py-2 bg-dark-turquoise hover:bg-dark-turquoise-alt text-white rounded-lg font-semibold"
+                >
+                    Crear Zona
+                </button>
+                <button
+                    type="button"
+                    onclick="closeCreateZoneModal()"
+                    class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-brown rounded-lg font-semibold"
+                >
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Edit Zone Modal -->
 <div id="editZoneModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
@@ -347,6 +463,17 @@ function loadCantones() {
         });
 }
 
+// Create zone modal
+function openCreateZoneModal() {
+    document.getElementById('createZoneModal').classList.remove('hidden');
+    document.getElementById('createZoneModal').classList.add('flex');
+}
+
+function closeCreateZoneModal() {
+    document.getElementById('createZoneModal').classList.add('hidden');
+    document.getElementById('createZoneModal').classList.remove('flex');
+}
+
 // Edit zone modal
 function editZone(id, currentPriceCode) {
     document.getElementById('editZoneForm').action = `/pruebas/admin/shipping/zones/${id}`;
@@ -360,7 +487,13 @@ function closeEditZoneModal() {
     document.getElementById('editZoneModal').classList.remove('flex');
 }
 
-// Close modal on background click
+// Close modals on background click
+document.getElementById('createZoneModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeCreateZoneModal();
+    }
+});
+
 document.getElementById('editZoneModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeEditZoneModal();

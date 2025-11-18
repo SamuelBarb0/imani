@@ -124,6 +124,36 @@ class ShippingController extends Controller
     }
 
     /**
+     * Store new shipping zone
+     */
+    public function storeZone(Request $request)
+    {
+        $validated = $request->validate([
+            'provincia' => 'required|string|max:255',
+            'canton' => 'required|string|max:255',
+            'parroquia' => 'required|string|max:255',
+            'price_code' => 'nullable|exists:shipping_prices,code_name',
+        ]);
+
+        // Check if zone already exists
+        $existingZone = ShippingZone::byLocation(
+            $validated['provincia'],
+            $validated['canton'],
+            $validated['parroquia']
+        )->first();
+
+        if ($existingZone) {
+            return redirect()->back()
+                ->with('error', 'Esta zona ya existe en el sistema');
+        }
+
+        ShippingZone::create($validated);
+
+        return redirect()->route('admin.shipping.zones')
+            ->with('success', 'Zona de envío creada exitosamente');
+    }
+
+    /**
      * Update zone price code
      */
     public function updateZone(Request $request, ShippingZone $zone)

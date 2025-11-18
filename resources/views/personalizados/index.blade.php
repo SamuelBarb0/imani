@@ -977,23 +977,10 @@
 
             // Wait for image to load before initializing cropper
             cropImage.onload = function() {
-                // Set container height to ensure full image is visible
+                // Set container height for mobile responsiveness
                 const wrapper = document.getElementById('cropper-wrapper');
-                const img = cropImage;
-
-                // Calculate dimensions to show full image
                 const wrapperWidth = wrapper.offsetWidth;
-                const imgRatio = img.naturalHeight / img.naturalWidth;
-
-                // For vertical images (height > width), we need more height
-                // For horizontal or square images, keep it square
-                if (imgRatio > 1) {
-                    // Vertical image - adjust height to show full image
-                    wrapper.style.height = (wrapperWidth * imgRatio) + 'px';
-                } else {
-                    // Horizontal or square - keep square
-                    wrapper.style.height = wrapperWidth + 'px';
-                }
+                wrapper.style.height = wrapperWidth + 'px'; // Force square aspect ratio
 
                 // Adjust minimum crop box size for mobile
                 const isMobile = window.innerWidth < 768;
@@ -1167,28 +1154,6 @@
     function rotateImage() {
         if (cropper) {
             cropper.rotate(90);
-
-            // After rotation, recalculate container size to fit the rotated image
-            setTimeout(() => {
-                const wrapper = document.getElementById('cropper-wrapper');
-                const imageData = cropper.getImageData();
-
-                // Get the current displayed dimensions after rotation
-                const wrapperWidth = wrapper.offsetWidth;
-                const displayRatio = imageData.height / imageData.width;
-
-                // Adjust wrapper height based on new orientation
-                if (displayRatio > 1) {
-                    // Now vertical after rotation
-                    wrapper.style.height = (wrapperWidth * displayRatio) + 'px';
-                } else {
-                    // Now horizontal or square after rotation
-                    wrapper.style.height = wrapperWidth + 'px';
-                }
-
-                // Replace the cropper to apply new container dimensions
-                cropper.replace(cropper.url);
-            }, 100);
         }
     }
 

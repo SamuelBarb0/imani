@@ -81,6 +81,7 @@ class CheckoutController extends Controller
             'notes' => 'nullable|string|max:1000',
             'newsletter_subscription' => 'nullable|boolean',
             'social_media_consent' => 'nullable|boolean',
+            'accept_terms' => 'required|accepted',
         ]);
 
         $cart = $this->getCart();

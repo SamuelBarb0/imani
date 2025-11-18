@@ -346,6 +346,24 @@
                             </div>
                         </div>
 
+                        <!-- Terms and Conditions Checkbox -->
+                        <div class="mb-4">
+                            <label class="flex items-start">
+                                <input type="checkbox" name="accept_terms" id="accept_terms" required
+                                       class="w-4 h-4 text-dark-turquoise border-gray-300 rounded focus:ring-dark-turquoise mt-1">
+                                <span class="ml-2 text-xs text-gray-700">
+                                    He leído y acepto la
+                                    <a href="{{ route('policies.show', 'privacidad') }}" target="_blank" class="text-dark-turquoise hover:underline">Política de Privacidad</a>
+                                    y los
+                                    <a href="{{ route('policies.show', 'terminos') }}" target="_blank" class="text-dark-turquoise hover:underline">Términos del Servicio</a>
+                                    *
+                                </span>
+                            </label>
+                            @error('accept_terms')
+                                <p class="text-red-500 text-xs mt-1 ml-6">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <button type="submit" class="w-full px-6 py-3 bg-gray-orange text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown transition-all duration-300 mb-3">
                             CONFIRMAR PEDIDO
                         </button>

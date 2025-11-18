@@ -24,13 +24,17 @@
     <p style="margin: 5px 0 5px 0; color: #333; line-height: 1.6;"><strong>Número de seguimiento:</strong> {{ $order->tracking_number }}</p>
 
     @if($order->tracking_url)
-    <p style="margin: 5px 0 20px 0; color: #333; line-height: 1.6;">
-        <strong>Rastrea tu pedido:</strong>
+    <p style="margin: 5px 0 5px 0; color: #333; line-height: 1.6;">
+        <strong>Link de seguimiento:</strong>
         <a href="{{ $order->tracking_url }}" style="color: #12463c; text-decoration: underline;" target="_blank">
-            Ver seguimiento detallado
+            {{ $order->tracking_url }}
         </a>
     </p>
     @endif
+
+    <p style="margin: 5px 0 20px 0; color: #666; font-size: 13px; line-height: 1.6;">
+        <em>Ingresa el número de seguimiento en la página del courier para rastrear tu pedido.</em>
+    </p>
 
     <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Esperamos que disfrutes mucho tus imanes y que llenen de alegría tu espacio.</p>
 

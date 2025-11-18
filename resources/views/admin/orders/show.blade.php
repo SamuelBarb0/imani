@@ -76,7 +76,6 @@ use Illuminate\Support\Facades\Storage;
                             @endforeach
                         </select>
                         <input type="text" name="tracking_number" placeholder="# de Tracking" required class="w-full text-sm p-2 border rounded">
-                        <input type="url" name="tracking_url" placeholder="Link de Tracking (opcional)" class="w-full text-sm p-2 border rounded">
                         <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700">
                             Enviar Tracking y Marcar como Enviado
                         </button>

@@ -136,7 +136,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                 </svg>
                 <h2 class="font-spartan text-2xl font-bold text-dark-turquoise mb-2">
-                    Tu carrito está vacío
+                    TU CARRITO ESTÁ VACÍO
                 </h2>
                 <p class="text-gray-brown mb-6">
                     Agrega productos para comenzar tu pedido

@@ -4,16 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Mail\OrderConfirmedEmail;
 use App\Mail\OrderPendingTransferEmail;
+use App\Mail\WelcomeEmail;
 use App\Models\Cart;
 use App\Models\City;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\User;
 use App\Services\PayPhoneService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
@@ -31,26 +35,28 @@ class CheckoutController extends Controller
 
         $cart->load('items');
 
-        // Load active provinces with their cities grouped
-        $provinces = \App\Models\Province::where('is_active', true)
-            ->with(['cities' => function($query) {
-                $query->where('is_active', true)
-                    ->with(['courierPrices.courier'])
-                    ->orderBy('name');
-            }])
-            ->whereHas('cities', function($query) {
-                $query->where('is_active', true);
-            })
-            ->orderBy('name')
-            ->get();
+        // Load shipping zones data
+        $provincias = \App\Models\ShippingZone::getProvincias();
+
+        // If there's old input, load cantones and parroquias
+        $cantones = [];
+        $parroquias = [];
+        if (old('shipping_provincia')) {
+            $cantones = \App\Models\ShippingZone::getCantones(old('shipping_provincia'));
+        }
+        if (old('shipping_canton')) {
+            $parroquias = \App\Models\ShippingZone::getParroquias(old('shipping_provincia'), old('shipping_canton'));
+        }
 
         return view('checkout.index', [
             'cart' => $cart,
             'items' => $cart->items,
-            'provinces' => $provinces,
+            'provincias' => $provincias,
+            'cantones' => $cantones,
+            'parroquias' => $parroquias,
             'subtotal' => $cart->getTotal(),
-            'shippingCost' => $this->calculateShipping($cart),
-            'total' => $cart->getTotal() + $this->calculateShipping($cart),
+            'shippingCost' => 5.00, // Default, will be calculated when zone is selected
+            'total' => $cart->getTotal() + 5.00,
         ]);
     }
 
@@ -63,13 +69,18 @@ class CheckoutController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:20',
+            'document_type' => 'required|in:cedula,pasaporte,ruc',
+            'document_number' => 'required|string|max:20',
             'shipping_address' => 'required|string',
-            'shipping_city' => 'required|exists:cities,id',
-            'shipping_state' => 'nullable|string|max:100',
-            'shipping_zip' => 'required|string|max:20',
+            'shipping_provincia' => 'required|string|max:100',
+            'shipping_canton' => 'required|string|max:100',
+            'shipping_parroquia' => 'required|string|max:100',
+            'shipping_zip' => 'nullable|string|max:20',
             'shipping_country' => 'required|string|max:100',
             'payment_method' => 'required|in:payphone,transfer',
             'notes' => 'nullable|string|max:1000',
+            'newsletter_subscription' => 'nullable|boolean',
+            'social_media_consent' => 'nullable|boolean',
         ]);
 
         $cart = $this->getCart();
@@ -78,32 +89,68 @@ class CheckoutController extends Controller
             return back()->with('error', 'Tu carrito está vacío');
         }
 
-        // Get city details
-        $city = City::with('province')->findOrFail($validated['shipping_city']);
+        // Get shipping zone
+        $zone = \App\Models\ShippingZone::byLocation(
+            $validated['shipping_provincia'],
+            $validated['shipping_canton'],
+            $validated['shipping_parroquia']
+        )->first();
+
+        if (!$zone) {
+            return back()->with('error', 'Zona de envío no encontrada')->withInput();
+        }
+
+        // Calculate totals BEFORE transaction
+        // Prices include 15% IVA, so we need to extract it
+        $subtotalWithIVA = $cart->getTotal();
+        $shippingCostWithIVA = $this->calculateShippingByZone($zone, $subtotalWithIVA);
+
+        // Calculate base amounts without IVA
+        $subtotal = round($subtotalWithIVA / 1.15, 2);
+        $shippingCost = round($shippingCostWithIVA / 1.15, 2);
+
+        // Calculate IVA (15%)
+        $tax = round(($subtotal + $shippingCost) * 0.15, 2);
+
+        // Calculate total
+        $total = $subtotal + $shippingCost + $tax;
+
+        // Generate order number first (needed for welcome email)
+        $orderNumber = Order::generateOrderNumber();
+
+        // Find or create user account BEFORE transaction (so it persists even if order fails)
+        $user = $this->findOrCreateUser(
+            $validated['customer_email'],
+            $validated['customer_name'],
+            $validated['customer_phone'] ?? null,
+            $orderNumber,
+            $validated['newsletter_subscription'] ?? false,
+            $validated['social_media_consent'] ?? false
+        );
 
         DB::beginTransaction();
 
         try {
-            $subtotal = $cart->getTotal();
-            $shippingCost = $this->calculateShipping($cart, $city);
-            $total = $subtotal + $shippingCost;
 
             // Create order
             $order = Order::create([
-                'order_number' => Order::generateOrderNumber(),
-                'user_id' => Auth::id(),
+                'order_number' => $orderNumber,
+                'user_id' => $user ? $user->id : Auth::id(),
                 'session_id' => session()->getId(),
                 'customer_name' => $validated['customer_name'],
                 'customer_email' => $validated['customer_email'],
                 'customer_phone' => $validated['customer_phone'] ?? null,
+                'document_type' => $validated['document_type'],
+                'document_number' => $validated['document_number'],
                 'shipping_address' => $validated['shipping_address'],
-                'shipping_city' => $city->name,
-                'shipping_state' => $city->province->name,
+                'shipping_city' => $validated['shipping_parroquia'],
+                'shipping_state' => $validated['shipping_provincia'],
+                'shipping_canton' => $validated['shipping_canton'],
                 'shipping_zip' => $validated['shipping_zip'],
                 'shipping_country' => $validated['shipping_country'],
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
-                'tax' => 0,
+                'tax' => $tax,
                 'total' => $total,
                 'payment_method' => $validated['payment_method'],
                 'payment_status' => 'pending',
@@ -358,6 +405,22 @@ class CheckoutController extends Controller
                 'payphone_transaction_id' => $transactionId,
             ]);
 
+            // Send confirmation email to customer
+            try {
+                Mail::to($order->customer_email)->send(new OrderConfirmedEmail($order));
+                $order->update(['email_order_confirmed' => true]);
+                Log::info('Order confirmation email sent after PayPhone payment', [
+                    'order' => $order->order_number,
+                    'email' => $order->customer_email
+                ]);
+            } catch (\Exception $mailError) {
+                Log::error('Failed to send order confirmation email', [
+                    'order' => $order->order_number,
+                    'email' => $order->customer_email,
+                    'error' => $mailError->getMessage(),
+                ]);
+            }
+
             return redirect()->route('checkout.success', $order->order_number)
                 ->with('success', '¡Pago completado exitosamente!');
         } else {
@@ -458,12 +521,12 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Calculate shipping cost based on city
+     * Calculate shipping cost based on city (Legacy - for backward compatibility)
      */
     private function calculateShipping(Cart $cart, ?City $city = null): float
     {
         if (!$city) {
-            return 10.00; // Default shipping if no city provided
+            return 5.00; // Default shipping if no city provided
         }
 
         // Get the first available courier price for this city
@@ -479,7 +542,27 @@ class CheckoutController extends Controller
         }
 
         // Fallback if no courier price found for this city
-        return 10.00;
+        return 5.00;
+    }
+
+    /**
+     * Calculate shipping cost based on shipping zone
+     */
+    private function calculateShippingByZone(\App\Models\ShippingZone $zone, float $subtotal = 0): float
+    {
+        // Free shipping for orders over $50 USD (with IVA included)
+        if ($subtotal >= 50.00) {
+            return 0.00;
+        }
+
+        $cost = $zone->getShippingCost();
+
+        if ($cost === null) {
+            // No price code assigned - return default
+            return 5.00;
+        }
+
+        return $cost;
     }
 
     /**
@@ -492,5 +575,170 @@ class CheckoutController extends Controller
         } else {
             return Cart::where('session_id', session()->getId())->first();
         }
+    }
+
+    /**
+     * Find existing user or create new account
+     * Creates account automatically for guest checkouts
+     */
+    private function findOrCreateUser(
+        string $email,
+        string $name,
+        ?string $phone,
+        ?string $orderNumber = null,
+        bool $newsletterSubscription = false,
+        bool $socialMediaConsent = false
+    ): ?User {
+        // If user is already logged in, return the authenticated user
+        if (Auth::check()) {
+            return Auth::user();
+        }
+
+        // Try to find existing user by email
+        $user = User::where('email', $email)->first();
+
+        if ($user) {
+            // Update preferences if user exists (don't overwrite if they already opted in)
+            if ($newsletterSubscription && !$user->newsletter_subscription) {
+                $user->newsletter_subscription = true;
+            }
+            if ($socialMediaConsent && !$user->social_media_consent) {
+                $user->social_media_consent = true;
+            }
+            $user->save();
+
+            Log::info('Found existing user for order', ['email' => $email, 'user_id' => $user->id]);
+            return $user;
+        }
+
+        // Create new user account
+        try {
+            $password = Str::random(12); // Generate random password
+
+            $user = User::create([
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'password' => Hash::make($password),
+                'newsletter_subscription' => $newsletterSubscription,
+                'social_media_consent' => $socialMediaConsent,
+            ]);
+
+            Log::info('Created new user account after payment', [
+                'email' => $email,
+                'user_id' => $user->id,
+                'temp_password' => $password,
+            ]);
+
+            // Send welcome email with login credentials
+            try {
+                Mail::to($user->email)->send(new WelcomeEmail($user, $password, $orderNumber));
+                Log::info('Welcome email sent successfully', ['email' => $email]);
+            } catch (\Exception $mailError) {
+                Log::error('Failed to send welcome email', [
+                    'email' => $email,
+                    'error' => $mailError->getMessage(),
+                ]);
+                // Don't fail the user creation if email fails
+            }
+
+            return $user;
+
+        } catch (\Exception $e) {
+            Log::error('Failed to create user account', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+            ]);
+
+            // Return null if user creation fails - order will still be created
+            return null;
+        }
+    }
+
+    /**
+     * Get cantones for a provincia (AJAX endpoint)
+     */
+    public function getCantones(Request $request)
+    {
+        $provincia = $request->query('provincia');
+
+        if (!$provincia) {
+            return response()->json([]);
+        }
+
+        $cantones = \App\Models\ShippingZone::getCantones($provincia);
+
+        return response()->json($cantones);
+    }
+
+    /**
+     * Get parroquias for a canton (AJAX endpoint)
+     */
+    public function getParroquias(Request $request)
+    {
+        $provincia = $request->query('provincia');
+        $canton = $request->query('canton');
+
+        if (!$provincia || !$canton) {
+            return response()->json([]);
+        }
+
+        $parroquias = \App\Models\ShippingZone::getParroquias($provincia, $canton);
+
+        return response()->json($parroquias);
+    }
+
+    /**
+     * Get shipping cost for zona (AJAX endpoint)
+     */
+    public function getShippingCostByZone(Request $request)
+    {
+        $provincia = $request->query('provincia');
+        $canton = $request->query('canton');
+        $parroquia = $request->query('parroquia');
+
+        if (!$provincia || !$canton || !$parroquia) {
+            return response()->json([
+                'success' => false,
+                'cost' => 5.00,
+                'message' => 'Datos incompletos'
+            ]);
+        }
+
+        $zone = \App\Models\ShippingZone::byLocation($provincia, $canton, $parroquia)->first();
+
+        if (!$zone) {
+            return response()->json([
+                'success' => false,
+                'cost' => 5.00,
+                'message' => 'Zona no encontrada'
+            ]);
+        }
+
+        $cart = $this->getCart();
+        $subtotalWithIVA = $cart ? $cart->getTotal() : 0;
+        $shippingCostWithIVA = $this->calculateShippingByZone($zone, $subtotalWithIVA);
+
+        // Calculate base amounts without IVA
+        $subtotal = round($subtotalWithIVA / 1.15, 2);
+        $shippingCost = round($shippingCostWithIVA / 1.15, 2);
+
+        // Calculate IVA (15%)
+        $tax = round(($subtotal + $shippingCost) * 0.15, 2);
+
+        // Calculate total
+        $total = $subtotal + $shippingCost + $tax;
+
+        return response()->json([
+            'success' => true,
+            'cost' => $shippingCost,
+            'subtotal' => $subtotal,
+            'tax' => $tax,
+            'total' => $total,
+            'provincia' => $zone->provincia,
+            'canton' => $zone->canton,
+            'parroquia' => $zone->parroquia,
+            'price_code' => $zone->price_code
+        ]);
     }
 }

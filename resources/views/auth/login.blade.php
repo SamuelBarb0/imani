@@ -27,7 +27,7 @@
 
                 <!-- Email -->
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-brown mb-2">Email *</label>
+                    <label class="block text-sm font-semibold text-dark-turquoise mb-2">E-mail *</label>
                     <input type="email" name="email" value="{{ old('email') }}" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
                     @error('email')
@@ -37,7 +37,7 @@
 
                 <!-- Password -->
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-brown mb-2">Contraseña *</label>
+                    <label class="block text-sm font-semibold text-dark-turquoise mb-2">Contraseña *</label>
                     <input type="password" name="password" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
                     @error('password')

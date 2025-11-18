@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderConfirmedEmail;
 use App\Models\Order;
 use App\Services\PayPhoneService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PayPhoneWebhookController extends Controller
 {
@@ -57,7 +59,21 @@ class PayPhoneWebhookController extends Controller
                     'transactionId' => $transactionId,
                 ]);
 
-                // TODO: Send confirmation email to customer
+                // Send confirmation email to customer
+                try {
+                    Mail::to($order->customer_email)->send(new OrderConfirmedEmail($order));
+                    $order->update(['email_order_confirmed' => true]);
+                    Log::info('Order confirmation email sent after PayPhone payment', [
+                        'order' => $order->order_number,
+                        'email' => $order->customer_email
+                    ]);
+                } catch (\Exception $mailError) {
+                    Log::error('Failed to send order confirmation email', [
+                        'order' => $order->order_number,
+                        'email' => $order->customer_email,
+                        'error' => $mailError->getMessage(),
+                    ]);
+                }
 
             } else {
                 $order->update([

@@ -20,7 +20,7 @@
 
     <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Nos alegra que hayas elegido nuestros imanes para dar vida a tus recuerdos.</p>
 
-    <p style="margin: 0 0 15px 0; color: #0f3d35; line-height: 1.6; font-weight: bold;">Número del pedido: [{{ $order->order_number }}]</p>
+    <p style="margin: 0 0 15px 0; color: #0f3d35; line-height: 1.6; font-weight: bold;">Número del pedido: {{ $order->order_number }}</p>
 
     <table style="width: 100%; margin: 20px 0;" cellpadding="0" cellspacing="0">
         <tr>

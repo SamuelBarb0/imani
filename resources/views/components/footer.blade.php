@@ -6,10 +6,10 @@
       <div class="text-center md:text-left order-2 md:order-1">
         <div class="flex flex-col gap-2.5 text-xs">
           <a href="{{ route('home') }}" class="hover:text-gray-orange transition uppercase">INICIO</a>
-          <a href="{{ route('politica.envios') }}" class="hover:text-gray-orange transition uppercase">POLÍTICA DE ENVÍOS</a>
-          <a href="{{ route('politica.privacidad') }}" class="hover:text-gray-orange transition uppercase">POLÍTICA DE PRIVACIDAD</a>
-          <a href="{{ route('politica.cookies') }}" class="hover:text-gray-orange transition uppercase">POLÍTICA DE COOKIES</a>
-          <a href="{{ route('politica.terminos') }}" class="hover:text-gray-orange transition uppercase">TÉRMINOS DEL SERVICIO</a>
+          <a href="{{ route('policy.show', 'politica-envios') }}" class="hover:text-gray-orange transition uppercase">POLÍTICA DE ENVÍOS</a>
+          <a href="{{ route('policy.show', 'politica-privacidad') }}" class="hover:text-gray-orange transition uppercase">POLÍTICA DE PRIVACIDAD</a>
+          <a href="{{ route('policy.show', 'politica-cookies') }}" class="hover:text-gray-orange transition uppercase">POLÍTICA DE COOKIES</a>
+          <a href="{{ route('policy.show', 'terminos-condiciones') }}" class="hover:text-gray-orange transition uppercase">TÉRMINOS DEL SERVICIO</a>
         </div>
       </div>
 

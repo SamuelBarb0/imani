@@ -2,7 +2,9 @@
 
 @section('content')
 
-<h1 style="font-family: 'Corinthia', cursive; font-size: 74px; color: #00352b; text-align: center; margin: 0 0 30px 0; font-weight: normal;">¡Bienvenido a Imani!</h1>
+<div style="text-align: center; margin: 0 0 30px 0;">
+    <img src="{{ asset('images/emails/welcome-to-imani.png') }}" alt="¡Bienvenido a Imani!" style="max-width: 100%; height: auto;">
+</div>
 
 <!-- Message -->
 <div style="background-color: white; padding: 30px; border-radius: 8px; margin-bottom: 20px;">

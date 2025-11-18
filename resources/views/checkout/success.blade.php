@@ -60,50 +60,76 @@
         </div>
 
         @if($order->payment_method === 'transfer')
-            <!-- Transfer Payment Alert -->
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-6 rounded-lg">
-                <div class="flex items-start">
-                    <svg class="w-6 h-6 text-yellow-600 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                    </svg>
+            <!-- PASO 1 - Realizar la transferencia -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-6 border-l-4 border-dark-turquoise">
+                <div class="flex items-start mb-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-dark-turquoise rounded-full flex items-center justify-center mr-4">
+                        <span class="text-white font-bold text-lg">$</span>
+                    </div>
+                    <h2 class="font-spartan text-xl font-bold text-dark-turquoise pt-1">PASO 1 - REALIZA LA TRANSFERENCIA</h2>
+                </div>
+                <div class="ml-14 space-y-1 text-gray-700">
+                    <p><strong>Banco de Guayaquil S.A.</strong></p>
+                    <p>Nombre: Julia Schulz</p>
+                    <p>Cédula: 1761553880</p>
+                    <p>Cuenta de ahorros: 50599480</p>
+                </div>
+            </div>
+
+            <!-- PASO 2 - Enviar comprobante -->
+            <div class="bg-yellow-50 rounded-lg shadow-lg p-8 mb-6 border-l-4 border-gray-orange">
+                <div class="flex items-start mb-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-gray-orange rounded-full flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
                     <div class="flex-grow">
-                        <h3 class="font-bold text-yellow-900 text-lg mb-2">Tu pedido está PENDIENTE de verificación</h3>
-                        <p class="text-yellow-800 text-sm mb-3">
-                            Tu pedido ha sido registrado exitosamente pero <strong>NO será procesado</strong> hasta que verifiquemos tu comprobante de pago.
-                        </p>
-                        <div class="bg-white p-4 rounded border border-yellow-200">
-                            <p class="font-semibold text-yellow-900 text-sm mb-2">📤 ¿Ya realizaste la transferencia?</p>
-                            <p class="text-yellow-800 text-xs mb-2">Envía tu comprobante de pago lo antes posible a:</p>
-                            <div class="flex flex-col space-y-1 text-sm">
-                                <p class="text-yellow-900">
-                                    <strong>📧 Email:</strong>
-                                    <a href="mailto:comprobantes@imanimagnets.com?subject=Comprobante - Orden {{ $order->order_number }}" class="text-dark-turquoise hover:underline font-semibold">
-                                        comprobantes@imanimagnets.com
-                                    </a>
-                                </p>
-                                <p class="text-yellow-900"><strong>📋 Asunto:</strong> Comprobante - Orden {{ $order->order_number }}</p>
-                            </div>
-                        </div>
-                        <p class="text-yellow-700 text-xs mt-3 italic">
-                            ⏱️ Una vez recibamos y verifiquemos tu comprobante, procesaremos tu pedido y te enviaremos una confirmación por email.
-                        </p>
+                        <h2 class="font-spartan text-xl font-bold text-dark-turquoise mb-1">PASO 2 - ENVÍA TU COMPROBANTE <span class="text-red-600">(OBLIGATORIO)</span></h2>
+                    </div>
+                </div>
+                <div class="ml-14">
+                    <p class="text-gray-700 mb-3">Envía tu comprobante de pago lo antes posible por correo o WhatsApp:</p>
+                    <div class="space-y-1 text-gray-700 mb-3">
+                        <p><strong>Email:</strong> <a href="mailto:comprobantes@imanimagnets.com" class="text-dark-turquoise hover:underline">comprobantes@imanimagnets.com</a></p>
+                        <p><strong>WhatsApp:</strong> <a href="https://wa.me/593985959303" class="text-green-600 hover:underline" target="_blank">+593 98 595 9303</a></p>
+                    </div>
+                    <p class="text-gray-700">Indica tu nombre y número de pedido <strong class="text-dark-turquoise">{{ $order->order_number }}</strong></p>
+                </div>
+            </div>
+        @endif
 
-                        <div class="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
-                            <p class="font-semibold text-blue-900 text-xs mb-2">📧 Confirmación por Email</p>
-                            <p class="text-blue-800 text-xs">
-                                Recibirás un correo de confirmación en <strong>{{ $order->customer_email }}</strong> con los detalles de tu pedido y el estado actual.
-                            </p>
-                        </div>
+        @if(in_array($order->payment_method, ['payphone', 'payphone_box']))
+            <!-- INFORMACIÓN DE CUENTA (PAYPHONE) - Antes de detalles -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+                <div class="flex items-start mb-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-dark-turquoise rounded-full flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="font-spartan text-xl font-bold text-dark-turquoise pt-1">TU CUENTA</h2>
+                </div>
 
-                        <div class="mt-3 p-3 bg-green-50 rounded border border-green-200">
-                            <p class="font-semibold text-green-900 text-xs mb-2">✅ ¡Cuenta Creada Automáticamente!</p>
-                            <p class="text-green-800 text-xs mb-2">
-                                Se ha creado una cuenta para <strong class="text-green-900">{{ $order->customer_email }}</strong> al realizar tu pedido.
-                            </p>
-                            <p class="text-green-700 text-xs">
-                                💡 <strong>Accede ahora:</strong> Inicia sesión con tu email para ver el estado actualizado de este pedido y todos tus futuros pedidos en tiempo real.
-                            </p>
-                        </div>
+                <div class="ml-14 space-y-4">
+                    <!-- Cuenta creada -->
+                    <div>
+                        <h3 class="font-bold text-dark-turquoise mb-1">CUENTA CREADA:</h3>
+                        <p class="text-gray-700 text-sm">
+                            Se ha creado una cuenta para <strong>{{ $order->customer_email }}</strong>. Te llegará un correo con la contraseña para que puedas acceder y consultar el estado de tu orden y el historial de tus pedidos.
+                        </p>
+                    </div>
+
+                    <!-- Emails enviados -->
+                    <div>
+                        <h3 class="font-bold text-dark-turquoise mb-1">CORREOS ELECTRÓNICOS:</h3>
+                        <p class="text-gray-700 text-sm">
+                            Hemos enviado a <strong>{{ $order->customer_email }}</strong> los siguientes correos:
+                        </p>
+                        <ul class="list-disc list-inside text-gray-700 text-sm mt-2 ml-4">
+                            <li>Confirmación de pedido con los detalles de tu compra</li>
+                            <li>Credenciales de acceso a tu cuenta</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -170,6 +196,10 @@
                         <span class="text-gray-brown">Envío:</span>
                         <span class="font-semibold">${{ number_format($order->shipping_cost, 2) }}</span>
                     </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-brown">IVA (15%):</span>
+                        <span class="font-semibold">${{ number_format($order->tax, 2) }}</span>
+                    </div>
                     <div class="flex justify-between text-lg pt-2 border-t border-gray-200">
                         <span class="font-spartan font-bold text-dark-turquoise">Total:</span>
                         <span class="font-spartan font-bold text-dark-turquoise">${{ number_format($order->total, 2) }}</span>
@@ -177,46 +207,37 @@
                 </div>
             </div>
 
-            <!-- Payment Info -->
-            <div class="mt-6 p-4 @if($order->payment_method === 'payphone' || $order->payment_method === 'transfer') bg-yellow-50 @else bg-blue-50 @endif rounded-lg">
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 @if($order->payment_method === 'payphone' || $order->payment_method === 'transfer') text-yellow-500 @else text-blue-500 @endif mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <div class="flex-grow">
-                        <p class="font-semibold @if($order->payment_method === 'payphone' || $order->payment_method === 'transfer') text-yellow-800 @else text-blue-800 @endif text-sm">Método de Pago</p>
-                        <p class="@if($order->payment_method === 'payphone' || $order->payment_method === 'transfer') text-yellow-700 @else text-blue-700 @endif text-sm">
-                            @if($order->payment_method === 'payphone')
-                                PayPhone - Pendiente de confirmación
-                            @elseif($order->payment_method === 'transfer')
-                                Transferencia Bancaria - Pendiente de confirmación
-                            @else
-                                {{ ucfirst($order->payment_method) }}
-                            @endif
-                        </p>
-                        @if($order->transaction_id)
-                            <p class="@if($order->payment_method === 'payphone' || $order->payment_method === 'transfer') text-yellow-600 @else text-blue-600 @endif text-xs mt-1">ID de Transacción: {{ $order->transaction_id }}</p>
-                        @endif
+        </div>
 
-                        @if($order->payment_method === 'payphone' || $order->payment_method === 'transfer')
-                            <div class="mt-3 p-3 bg-white rounded border-2 border-yellow-200">
-                                <p class="font-bold text-yellow-900 text-sm mb-2">⏰ IMPORTANTE - Tienes 1 hora para completar el pago</p>
-                                <p class="text-yellow-800 text-xs mb-2">
-                                    Envía el comprobante de pago por:
-                                </p>
-                                <ul class="text-yellow-800 text-xs space-y-1 ml-4">
-                                    <li>📱 <strong>WhatsApp:</strong> <a href="{{ \App\Helpers\ContentHelper::getWhatsAppLink() }}" class="text-yellow-800 hover:underline font-semibold" target="_blank">{{ config('site.whatsapp.number') }}</a></li>
-                                    <li>📧 <strong>Email:</strong> <a href="mailto:comprobantes@imanimagnets.com" class="text-yellow-800 hover:underline font-semibold">comprobantes@imanimagnets.com</a></li>
-                                </ul>
-                                <p class="text-yellow-800 text-xs mt-2 font-semibold">
-                                    📋 Indica tu número de orden: <span class="bg-yellow-100 px-2 py-1 rounded">{{ $order->order_number }}</span> o el correo usado: <span class="bg-yellow-100 px-2 py-1 rounded">{{ $order->customer_email }}</span>
-                                </p>
-                            </div>
-                        @endif
+        @if($order->payment_method === 'transfer')
+            <!-- ¿QUÉ SIGUE? (TRANSFERENCIA) - Después de detalles -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+                <div class="flex items-start mb-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-gray-orange rounded-full flex items-center justify-center mr-4">
+                        <span class="text-white font-bold text-2xl">?</span>
+                    </div>
+                    <h2 class="font-spartan text-xl font-bold text-dark-turquoise pt-1">¿QUÉ SIGUE?</h2>
+                </div>
+
+                <div class="ml-14 space-y-4">
+                    <!-- Confirmación por correo -->
+                    <div>
+                        <h3 class="font-bold text-dark-turquoise mb-1">CONFIRMACIÓN POR CORREO:</h3>
+                        <p class="text-gray-700 text-sm">
+                            Te enviaremos un correo a <strong>{{ $order->customer_email }}</strong> cuando verifiquemos tu pago, indicándote los próximos pasos.
+                        </p>
+                    </div>
+
+                    <!-- Cuenta creada -->
+                    <div>
+                        <h3 class="font-bold text-dark-turquoise mb-1">CUENTA CREADA:</h3>
+                        <p class="text-gray-700 text-sm">
+                            Se ha creado una cuenta para <strong>{{ $order->customer_email }}</strong>. Te llegará un correo con la contraseña para que puedas acceder y consultar el estado de tu orden y el historial de tus pedidos.
+                        </p>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
 
         <!-- Action Buttons -->
         <div class="text-center space-x-4">

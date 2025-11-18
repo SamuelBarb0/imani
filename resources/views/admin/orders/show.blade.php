@@ -76,6 +76,7 @@ use Illuminate\Support\Facades\Storage;
                             @endforeach
                         </select>
                         <input type="text" name="tracking_number" placeholder="# de Tracking" required class="w-full text-sm p-2 border rounded">
+                        <input type="url" name="tracking_url" placeholder="Link de Tracking (opcional)" class="w-full text-sm p-2 border rounded">
                         <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700">
                             Enviar Tracking y Marcar como Enviado
                         </button>
@@ -157,8 +158,14 @@ use Illuminate\Support\Facades\Storage;
                             <p class="text-sm">{{ \App\Models\Order::getCouriers()[$order->courier] ?? $order->courier }}</p>
                             <p class="text-xs font-semibold text-gray-brown mt-2">Tracking #:</p>
                             <p class="text-sm font-mono">{{ $order->tracking_number }}</p>
+                            @if($order->tracking_url)
+                                <p class="text-xs font-semibold text-gray-brown mt-2">Link de Tracking:</p>
+                                <a href="{{ $order->tracking_url }}" target="_blank" class="text-sm text-blue-600 hover:underline break-all">
+                                    {{ $order->tracking_url }}
+                                </a>
+                            @endif
                             @if($order->shipped_at)
-                                <p class="text-xs text-gray-500 mt-1">Enviado: {{ $order->shipped_at->format('d/m/Y H:i') }}</p>
+                                <p class="text-xs text-gray-500 mt-2">Enviado: {{ $order->shipped_at->format('d/m/Y H:i') }}</p>
                             @endif
                         </div>
                     @endif

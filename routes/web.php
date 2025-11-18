@@ -114,6 +114,11 @@ Route::prefix('pruebas')->group(function () {
         Route::get('/payphone/return', [CheckoutController::class, 'payphoneReturn'])->name('checkout.payphone.return');
         Route::get('/payphone/confirm', [PayPhoneBoxController::class, 'confirm'])->name('checkout.payphone.confirm');
         Route::get('/shipping-cost/{cityId}', [CheckoutController::class, 'getShippingCost'])->name('checkout.shipping-cost');
+
+        // AJAX endpoints for shipping zones
+        Route::get('/shipping/cantones', [CheckoutController::class, 'getCantones'])->name('checkout.cantones');
+        Route::get('/shipping/parroquias', [CheckoutController::class, 'getParroquias'])->name('checkout.parroquias');
+        Route::get('/shipping/cost-by-zone', [CheckoutController::class, 'getShippingCostByZone'])->name('checkout.shipping-cost-zone');
     });
 
     /** 👤 AUTENTICACIÓN */
@@ -189,32 +194,35 @@ Route::prefix('pruebas')->group(function () {
         Route::get('/shipping-prices', [App\Http\Controllers\Admin\ShippingPriceController::class, 'index'])->name('shipping-prices.index');
         Route::put('/shipping-prices', [App\Http\Controllers\Admin\ShippingPriceController::class, 'update'])->name('shipping-prices.update');
 
+        // Shipping Management (New System)
+        Route::get('/shipping/prices', [App\Http\Controllers\Admin\ShippingController::class, 'prices'])->name('shipping.prices');
+        Route::post('/shipping/prices', [App\Http\Controllers\Admin\ShippingController::class, 'storePrice'])->name('shipping.prices.store');
+        Route::put('/shipping/prices/{price}', [App\Http\Controllers\Admin\ShippingController::class, 'updatePrice'])->name('shipping.prices.update');
+        Route::delete('/shipping/prices/{price}', [App\Http\Controllers\Admin\ShippingController::class, 'destroyPrice'])->name('shipping.prices.destroy');
+
+        Route::get('/shipping/zones', [App\Http\Controllers\Admin\ShippingController::class, 'zones'])->name('shipping.zones');
+        Route::put('/shipping/zones/{zone}', [App\Http\Controllers\Admin\ShippingController::class, 'updateZone'])->name('shipping.zones.update');
+        Route::post('/shipping/zones/bulk-update', [App\Http\Controllers\Admin\ShippingController::class, 'bulkUpdateZones'])->name('shipping.zones.bulk-update');
+
+        // AJAX endpoints
+        Route::get('/shipping/cantones', [App\Http\Controllers\Admin\ShippingController::class, 'getCantones'])->name('shipping.cantones');
+        Route::get('/shipping/parroquias', [App\Http\Controllers\Admin\ShippingController::class, 'getParroquias'])->name('shipping.parroquias');
+
         // SEO Management
         Route::resource('seo', App\Http\Controllers\Admin\SeoController::class);
+
+        // Policy Pages Management
+        Route::get('/politicas', [App\Http\Controllers\Admin\PolicyPageController::class, 'index'])->name('policies.index');
+        Route::get('/politicas/{page}/editar', [App\Http\Controllers\Admin\PolicyPageController::class, 'edit'])->name('policies.edit');
+        Route::put('/politicas/{page}', [App\Http\Controllers\Admin\PolicyPageController::class, 'update'])->name('policies.update');
     });
 
     /**
-     * 📜 POLÍTICAS Y TÉRMINOS
+     * 📜 POLÍTICAS Y TÉRMINOS (Editable desde admin)
      */
-    Route::get('/politica-envios', function () {
-        return view('politicas.envios');
-    })->name('politica.envios');
-
-    Route::get('/politica-devolucion', function () {
-        return view('politicas.devolucion');
-    })->name('politica.devolucion');
-
-    Route::get('/politica-privacidad', function () {
-        return view('politicas.privacidad');
-    })->name('politica.privacidad');
-
-    Route::get('/politica-cookies', function () {
-        return view('politicas.cookies');
-    })->name('politica.cookies');
-
-    Route::get('/terminos-servicio', function () {
-        return view('politicas.terminos');
-    })->name('politica.terminos');
+    Route::get('/{slug}', [App\Http\Controllers\PolicyController::class, 'show'])
+        ->where('slug', 'politica-envios|politica-cookies|politica-privacidad|terminos-condiciones')
+        ->name('policy.show');
 });
 
 /**

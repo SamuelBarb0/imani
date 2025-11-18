@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use App\Models\Cart;
 use App\Models\User;
 use App\Mail\WelcomeEmail;
+use App\Mail\OrderConfirmedEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -160,17 +161,36 @@ class PayPhoneBoxController extends Controller
                 throw new \Exception('Cart is empty');
             }
 
-            $subtotal = $cart->getTotal();
-            $shippingCost = $this->calculateShipping($cart);
-            $total = $subtotal + $shippingCost;
+            // Prices include 15% IVA, so we need to extract it
+            $subtotalWithIVA = $cart->getTotal();
+            $shippingCostWithIVA = $this->calculateShipping($cart);
+
+            // Calculate base amounts without IVA
+            $subtotal = round($subtotalWithIVA / 1.15, 2);
+            $shippingCost = round($shippingCostWithIVA / 1.15, 2);
+
+            // Calculate IVA (15%)
+            $tax = round(($subtotal + $shippingCost) * 0.15, 2);
+
+            // Calculate total
+            $total = $subtotal + $shippingCost + $tax;
 
             // Extract customer data from PayPhone response
             $customerEmail = $paymentData['email'] ?? $request->session()->get('checkout.email', 'no-email@example.com');
             $customerPhone = $paymentData['phoneNumber'] ?? $request->session()->get('checkout.phone', '');
             $customerName = $request->session()->get('checkout.name', 'Customer');
+            $newsletterSubscription = $request->session()->get('checkout.newsletter_subscription', false);
+            $socialMediaConsent = $request->session()->get('checkout.social_media_consent', false);
 
             // Find or create user account (passing order number for the welcome email)
-            $user = $this->findOrCreateUser($customerEmail, $customerName, $customerPhone, $clientTransactionId);
+            $user = $this->findOrCreateUser(
+                $customerEmail,
+                $customerName,
+                $customerPhone,
+                $clientTransactionId,
+                $newsletterSubscription,
+                $socialMediaConsent
+            );
 
             // Create order
             $order = Order::create([
@@ -187,7 +207,7 @@ class PayPhoneBoxController extends Controller
                 'shipping_country' => $request->session()->get('checkout.country', 'Ecuador'),
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
-                'tax' => 0,
+                'tax' => $tax,
                 'total' => $total,
                 'payment_method' => 'payphone_box',
                 'payment_status' => 'completed',
@@ -216,6 +236,22 @@ class PayPhoneBoxController extends Controller
             }
 
             DB::commit();
+
+            // Send order confirmation email
+            try {
+                Mail::to($order->customer_email)->send(new OrderConfirmedEmail($order));
+                $order->update(['email_order_confirmed' => true]);
+                Log::info('Order confirmation email sent after PayPhone Box payment', [
+                    'order' => $order->order_number,
+                    'email' => $order->customer_email
+                ]);
+            } catch (\Exception $mailError) {
+                Log::error('Failed to send order confirmation email', [
+                    'order' => $order->order_number,
+                    'email' => $order->customer_email,
+                    'error' => $mailError->getMessage(),
+                ]);
+            }
 
             return $order;
 
@@ -253,8 +289,15 @@ class PayPhoneBoxController extends Controller
      */
     private function calculateShipping(Cart $cart): float
     {
-        // TODO: Implement real shipping calculation
-        return 10.00;
+        $subtotal = $cart->getTotal();
+
+        // Free shipping for orders over $50 USD (with IVA included)
+        if ($subtotal >= 50.00) {
+            return 0.00;
+        }
+
+        // Default shipping cost (with IVA)
+        return 6.00;
     }
 
     /**
@@ -284,8 +327,14 @@ class PayPhoneBoxController extends Controller
      * Find existing user or create new account
      * Creates account automatically for guest checkouts
      */
-    private function findOrCreateUser(string $email, string $name, ?string $phone, ?string $orderNumber = null): ?User
-    {
+    private function findOrCreateUser(
+        string $email,
+        string $name,
+        ?string $phone,
+        ?string $orderNumber = null,
+        bool $newsletterSubscription = false,
+        bool $socialMediaConsent = false
+    ): ?User {
         // If user is already logged in, return the authenticated user
         if (Auth::check()) {
             return Auth::user();
@@ -295,6 +344,15 @@ class PayPhoneBoxController extends Controller
         $user = User::where('email', $email)->first();
 
         if ($user) {
+            // Update preferences if user exists (don't overwrite if they already opted in)
+            if ($newsletterSubscription && !$user->newsletter_subscription) {
+                $user->newsletter_subscription = true;
+            }
+            if ($socialMediaConsent && !$user->social_media_consent) {
+                $user->social_media_consent = true;
+            }
+            $user->save();
+
             Log::info('Found existing user for order', ['email' => $email, 'user_id' => $user->id]);
             return $user;
         }
@@ -308,6 +366,8 @@ class PayPhoneBoxController extends Controller
                 'email' => $email,
                 'phone' => $phone,
                 'password' => Hash::make($password),
+                'newsletter_subscription' => $newsletterSubscription,
+                'social_media_consent' => $socialMediaConsent,
             ]);
 
             Log::info('Created new user account after payment', [

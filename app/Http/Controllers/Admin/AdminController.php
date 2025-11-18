@@ -186,6 +186,10 @@ class AdminController extends Controller
         $user->phone = $validated['phone'] ?? null;
         $user->role = $validated['role'];
 
+        // Update preferences
+        $user->newsletter_subscription = $request->has('newsletter_subscription');
+        $user->social_media_consent = $request->has('social_media_consent');
+
         // Update password only if provided
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
@@ -270,8 +274,13 @@ class AdminController extends Controller
             'courier' => 'required|string',
         ]);
 
+        // Find the courier and get its tracking URL
+        $courier = \App\Models\Courier::where('name', $validated['courier'])->first();
+        $trackingUrl = $courier?->tracking_url;
+
         $order->update([
             'tracking_number' => $validated['tracking_number'],
+            'tracking_url' => $trackingUrl,
             'courier' => $validated['courier'],
             'status' => 'shipped',
             'shipped_at' => now(),

@@ -1,0 +1,189 @@
+<!-- REEMPLAZAR EL BLOQUE @push('scripts') COMPLETO (líneas 347-506) EN checkout/index.blade.php CON ESTE CÓDIGO: -->
+
+@push('scripts')
+<script>
+    // Generate unique transaction ID for this order
+    const clientTransactionId = 'IM-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('checkout-form');
+        const transferRadio = document.getElementById('transfer-radio');
+        const transferDetails = document.getElementById('transfer-details');
+        const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+
+        const provinciaSelect = document.getElementById('shipping_provincia');
+        const cantonSelect = document.getElementById('shipping_canton');
+        const parroquiaSelect = document.getElementById('shipping_parroquia');
+
+        // Cascading dropdowns: Provincia -> Canton
+        provinciaSelect.addEventListener('change', async function() {
+            const provincia = this.value;
+
+            // Reset canton and parroquia
+            cantonSelect.innerHTML = '<option value="">Seleccionar cantón...</option>';
+            cantonSelect.disabled = !provincia;
+            parroquiaSelect.innerHTML = '<option value="">Seleccionar parroquia...</option>';
+            parroquiaSelect.disabled = true;
+
+            if (!provincia) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/pruebas/checkout/shipping/cantones?provincia=${encodeURIComponent(provincia)}`);
+                const cantones = await response.json();
+
+                cantones.forEach(canton => {
+                    const option = document.createElement('option');
+                    option.value = canton;
+                    option.textContent = canton;
+                    cantonSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error cargando cantones:', error);
+            }
+        });
+
+        // Cascading dropdowns: Canton -> Parroquia
+        cantonSelect.addEventListener('change', async function() {
+            const provincia = provinciaSelect.value;
+            const canton = this.value;
+
+            // Reset parroquia
+            parroquiaSelect.innerHTML = '<option value="">Seleccionar parroquia...</option>';
+            parroquiaSelect.disabled = !canton;
+
+            if (!provincia || !canton) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/pruebas/checkout/shipping/parroquias?provincia=${encodeURIComponent(provincia)}&canton=${encodeURIComponent(canton)}`);
+                const parroquias = await response.json();
+
+                parroquias.forEach(parroquia => {
+                    const option = document.createElement('option');
+                    option.value = parroquia;
+                    option.textContent = parroquia;
+                    parroquiaSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error cargando parroquias:', error);
+            }
+        });
+
+        // Update shipping cost when parroquia changes
+        parroquiaSelect.addEventListener('change', async function() {
+            const provincia = provinciaSelect.value;
+            const canton = cantonSelect.value;
+            const parroquia = this.value;
+
+            if (!provincia || !canton || !parroquia) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/pruebas/checkout/shipping/cost-by-zone?provincia=${encodeURIComponent(provincia)}&canton=${encodeURIComponent(canton)}&parroquia=${encodeURIComponent(parroquia)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update the summary totals
+                    document.getElementById('summary-shipping').textContent = '$' + data.cost.toFixed(2);
+                    document.getElementById('summary-total').textContent = '$' + data.total.toFixed(2);
+                }
+            } catch (error) {
+                console.error('Error fetching shipping cost:', error);
+            }
+        });
+
+        // Toggle transfer details visibility
+        paymentRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'transfer' && this.checked) {
+                    transferDetails.classList.remove('hidden');
+                } else {
+                    transferDetails.classList.add('hidden');
+                }
+            });
+        });
+
+        // Function to save form data to session
+        async function saveCheckoutData() {
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('{{ route("checkout.save-data") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: formData.get('customer_name'),
+                        email: formData.get('customer_email'),
+                        phone: formData.get('customer_phone'),
+                        document_type: formData.get('document_type'),
+                        document_number: formData.get('document_number'),
+                        address: formData.get('shipping_address'),
+                        provincia: formData.get('shipping_provincia'),
+                        canton: formData.get('shipping_canton'),
+                        parroquia: formData.get('shipping_parroquia'),
+                        city: formData.get('shipping_parroquia'), // Use parroquia as city
+                        state: formData.get('shipping_provincia'), // Use provincia as state
+                        zip: formData.get('shipping_zip'),
+                        country: formData.get('shipping_country'),
+                        notes: formData.get('notes'),
+                        newsletter_subscription: formData.get('newsletter_subscription') ? true : false,
+                        social_media_consent: formData.get('social_media_consent') ? true : false,
+                        client_transaction_id: clientTransactionId
+                    })
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('Error saving checkout data:', error);
+                return { success: false };
+            }
+        }
+
+        // Intercept form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validate form
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const paymentMethod = form.querySelector('input[name="payment_method"]:checked').value;
+
+            if (paymentMethod === 'payphone') {
+                // Save data to session
+                const result = await saveCheckoutData();
+
+                if (result.success) {
+                    // Redirect to payment page
+                    window.location.href = '{{ route("checkout.payment") }}';
+                } else {
+                    alert('Error al guardar los datos. Por favor intenta nuevamente.');
+                }
+            } else if (paymentMethod === 'transfer') {
+                // Submit form normally for bank transfer
+                form.submit();
+            }
+        });
+
+        // Store client transaction ID in hidden field
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'client_transaction_id';
+        hiddenInput.value = clientTransactionId;
+        form.appendChild(hiddenInput);
+
+        // Trigger change events on page load if values are pre-selected (for old() values)
+        if (provinciaSelect.value) {
+            provinciaSelect.dispatchEvent(new Event('change'));
+        }
+    });
+</script>
+@endpush

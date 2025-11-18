@@ -23,6 +23,8 @@ class User extends Authenticatable
         'password',
         'phone',
         'role',
+        'newsletter_subscription',
+        'social_media_consent',
     ];
 
     /**
@@ -45,6 +47,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'newsletter_subscription' => 'boolean',
+            'social_media_consent' => 'boolean',
         ];
     }
 

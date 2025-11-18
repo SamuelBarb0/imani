@@ -100,6 +100,41 @@
                     <p class="text-xs text-gray-500 mt-1">Los administradores tienen acceso completo al panel de administración.</p>
                 </div>
 
+                <!-- Preferences -->
+                <div class="mb-6 border-t pt-6">
+                    <h3 class="text-lg font-semibold text-gray-brown mb-4">Preferencias de Usuario</h3>
+
+                    <div class="space-y-3">
+                        <label class="flex items-start">
+                            <input
+                                type="checkbox"
+                                name="newsletter_subscription"
+                                value="1"
+                                {{ old('newsletter_subscription', $user->newsletter_subscription) ? 'checked' : '' }}
+                                class="mt-1 w-4 h-4 text-dark-turquoise border-gray-300 rounded focus:ring-dark-turquoise"
+                            >
+                            <span class="ml-2 text-sm text-gray-700">
+                                <strong>Suscrito a Newsletter:</strong><br>
+                                <span class="text-xs text-gray-500">Quiere recibir novedades, promociones y ofertas exclusivas por correo electrónico</span>
+                            </span>
+                        </label>
+
+                        <label class="flex items-start">
+                            <input
+                                type="checkbox"
+                                name="social_media_consent"
+                                value="1"
+                                {{ old('social_media_consent', $user->social_media_consent) ? 'checked' : '' }}
+                                class="mt-1 w-4 h-4 text-dark-turquoise border-gray-300 rounded focus:ring-dark-turquoise"
+                            >
+                            <span class="ml-2 text-sm text-gray-700">
+                                <strong>Autoriza uso de imágenes:</strong><br>
+                                <span class="text-xs text-gray-500">Autoriza a Imani Magnets a usar fotos de su pedido en redes sociales y material promocional</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Password (Optional) -->
                 <div class="mb-6 border-t pt-6">
                     <h3 class="text-lg font-semibold text-gray-brown mb-4">Cambiar Contraseña (Opcional)</h3>

@@ -521,6 +521,19 @@
         const fileInput = document.getElementById('file-input');
         const selectPhotosBtn = document.getElementById('select-photos-btn');
 
+        // Close all overlays when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth < 1024) {
+                const clickedInsideImage = e.target.closest('.relative.group.cursor-pointer');
+                if (!clickedInsideImage) {
+                    document.querySelectorAll('.image-overlay').forEach(overlay => {
+                        overlay.classList.remove('opacity-100');
+                        overlay.classList.add('opacity-0');
+                    });
+                }
+            }
+        });
+
         // Button click handler - only open if there are empty slots
         selectPhotosBtn.addEventListener('click', () => {
             const hasEmptySlot = uploadedImages.some(img => img === null);
@@ -693,38 +706,79 @@
                 }
 
                 const overlay = document.createElement('div');
-                overlay.className = 'absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center gap-2';
+                overlay.className = 'image-overlay absolute inset-0 bg-black/50 opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 rounded-lg';
+                overlay.dataset.index = index;
 
+                // Edit button (center)
                 const editBtn = document.createElement('button');
                 editBtn.innerHTML = `
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                 </svg>
             `;
-                editBtn.className = 'p-1.5 bg-dark-turquoise text-white rounded-full hover:bg-gray-brown transition-all';
-                editBtn.onclick = () => openEditor(index);
+                editBtn.className = 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-2 lg:p-1.5 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-all shadow-lg';
+                editBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    openEditor(index);
+                };
 
+                // Duplicate button (bottom left)
                 const duplicateBtn = document.createElement('button');
                 duplicateBtn.innerHTML = `
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                 </svg>
             `;
-                duplicateBtn.className = 'p-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all';
-                duplicateBtn.onclick = () => duplicateImage(index);
+                duplicateBtn.className = 'absolute bottom-2 left-2 p-2 lg:p-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all shadow-lg';
+                duplicateBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    duplicateImage(index);
+                };
 
+                // Delete button (bottom right)
                 const deleteBtn = document.createElement('button');
                 deleteBtn.innerHTML = `
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>
             `;
-                deleteBtn.className = 'p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all';
-                deleteBtn.onclick = () => deleteImage(index);
+                deleteBtn.className = 'absolute bottom-2 right-2 p-2 lg:p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteImage(index);
+                };
 
                 overlay.appendChild(editBtn);
                 overlay.appendChild(duplicateBtn);
                 overlay.appendChild(deleteBtn);
+
+                // Desktop: Click on overlay background (not on buttons) to edit
+                overlay.onclick = (e) => {
+                    if (window.innerWidth >= 1024 && e.target === overlay) {
+                        openEditor(index);
+                    }
+                };
+
+                // Mobile: toggle overlay on click, DON'T open editor automatically
+                imgContainer.onclick = (e) => {
+                    if (window.innerWidth < 1024) { // Mobile/tablet
+                        e.stopPropagation();
+
+                        const isCurrentlyVisible = overlay.classList.contains('opacity-100');
+
+                        // Hide all other overlays
+                        document.querySelectorAll('.image-overlay').forEach(o => {
+                            o.classList.remove('opacity-100');
+                            o.classList.add('opacity-0');
+                        });
+
+                        // Toggle this overlay (show if hidden, hide if visible)
+                        if (!isCurrentlyVisible) {
+                            overlay.classList.add('opacity-100');
+                            overlay.classList.remove('opacity-0');
+                        }
+                    }
+                };
                 imgContainer.appendChild(img);
                 imgContainer.appendChild(overlay);
                 item.appendChild(imgContainer);

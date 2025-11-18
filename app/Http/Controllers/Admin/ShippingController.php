@@ -169,6 +169,17 @@ class ShippingController extends Controller
     }
 
     /**
+     * Delete shipping zone
+     */
+    public function destroyZone(ShippingZone $zone)
+    {
+        $zone->delete();
+
+        return redirect()->back()
+            ->with('success', 'Zona eliminada exitosamente');
+    }
+
+    /**
      * Bulk update zones
      */
     public function bulkUpdateZones(Request $request)

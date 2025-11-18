@@ -254,12 +254,21 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <button
-                                            onclick="editZone({{ $zone->id }}, '{{ $zone->price_code }}')"
-                                            class="text-blue-600 hover:text-blue-800"
-                                        >
-                                            Editar
-                                        </button>
+                                        <div class="flex gap-3">
+                                            <button
+                                                onclick="editZone({{ $zone->id }}, '{{ $zone->price_code }}')"
+                                                class="text-blue-600 hover:text-blue-800"
+                                            >
+                                                Editar
+                                            </button>
+                                            <form action="{{ route('admin.shipping.zones.destroy', $zone->id) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de eliminar esta zona? Esta acción no se puede deshacer.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-800">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

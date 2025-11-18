@@ -203,6 +203,7 @@ Route::prefix('pruebas')->group(function () {
         Route::get('/shipping/zones', [App\Http\Controllers\Admin\ShippingController::class, 'zones'])->name('shipping.zones');
         Route::post('/shipping/zones', [App\Http\Controllers\Admin\ShippingController::class, 'storeZone'])->name('shipping.zones.store');
         Route::put('/shipping/zones/{zone}', [App\Http\Controllers\Admin\ShippingController::class, 'updateZone'])->name('shipping.zones.update');
+        Route::delete('/shipping/zones/{zone}', [App\Http\Controllers\Admin\ShippingController::class, 'destroyZone'])->name('shipping.zones.destroy');
         Route::post('/shipping/zones/bulk-update', [App\Http\Controllers\Admin\ShippingController::class, 'bulkUpdateZones'])->name('shipping.zones.bulk-update');
 
         // AJAX endpoints

@@ -26,7 +26,9 @@ class OrderConfirmedEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: 'hello@imanimagnets.com',
             subject: '✅ Pago Confirmado - Pedido #' . $this->order->order_number,
+            bcc: ['pedidos@imanimagnets.com'],
         );
     }
 

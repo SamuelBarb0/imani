@@ -26,7 +26,9 @@ class TrackingAddedEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: 'hello@imanimagnets.com',
             subject: '📦 Tu pedido está en camino - #' . $this->order->order_number,
+            bcc: ['pedidos@imanimagnets.com'],
         );
     }
 

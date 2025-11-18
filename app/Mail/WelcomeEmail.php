@@ -31,6 +31,7 @@ class WelcomeEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: 'hello@imanimagnets.com',
             subject: '¡Bienvenido a Imani Magnets! 🎉',
         );
     }

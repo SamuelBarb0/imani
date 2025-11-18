@@ -30,7 +30,9 @@ class WholesaleFormEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: 'hello@imanimagnets.com',
             subject: 'Hemos recibido tu mensaje',
+            bcc: ['mayorista@imanimagnets.com'],
         );
     }
 

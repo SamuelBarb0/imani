@@ -26,7 +26,9 @@ class ContactFormEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: 'hello@imanimagnets.com',
             subject: 'Hemos recibido tu mensaje',
+            bcc: ['contacto@imanimagnets.com'],
         );
     }
 

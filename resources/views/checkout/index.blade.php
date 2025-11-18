@@ -353,9 +353,9 @@
                                        class="w-4 h-4 text-dark-turquoise border-gray-300 rounded focus:ring-dark-turquoise mt-1">
                                 <span class="ml-2 text-xs text-gray-700">
                                     He leído y acepto la
-                                    <a href="{{ route('policies.show', 'privacidad') }}" target="_blank" class="text-dark-turquoise hover:underline">Política de Privacidad</a>
+                                    <a href="{{ route('policy.show', 'politica-privacidad') }}" target="_blank" class="text-dark-turquoise hover:underline">Política de Privacidad</a>
                                     y los
-                                    <a href="{{ route('policies.show', 'terminos') }}" target="_blank" class="text-dark-turquoise hover:underline">Términos del Servicio</a>
+                                    <a href="{{ route('policy.show', 'terminos-condiciones') }}" target="_blank" class="text-dark-turquoise hover:underline">Términos del Servicio</a>
                                     *
                                 </span>
                             </label>

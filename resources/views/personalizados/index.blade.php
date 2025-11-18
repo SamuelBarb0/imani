@@ -977,10 +977,23 @@
 
             // Wait for image to load before initializing cropper
             cropImage.onload = function() {
-                // Set container height for mobile responsiveness
+                // Set container height to ensure full image is visible
                 const wrapper = document.getElementById('cropper-wrapper');
+                const img = cropImage;
+
+                // Calculate dimensions to show full image
                 const wrapperWidth = wrapper.offsetWidth;
-                wrapper.style.height = wrapperWidth + 'px'; // Force square aspect ratio
+                const imgRatio = img.naturalHeight / img.naturalWidth;
+
+                // For vertical images (height > width), we need more height
+                // For horizontal or square images, keep it square
+                if (imgRatio > 1) {
+                    // Vertical image - adjust height to show full image
+                    wrapper.style.height = (wrapperWidth * imgRatio) + 'px';
+                } else {
+                    // Horizontal or square - keep square
+                    wrapper.style.height = wrapperWidth + 'px';
+                }
 
                 // Adjust minimum crop box size for mobile
                 const isMobile = window.innerWidth < 768;

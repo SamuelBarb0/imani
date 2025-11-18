@@ -299,9 +299,20 @@
             @endif
 
             <div class="mb-4">
-                <label for="create_provincia" class="block text-sm font-semibold text-gray-brown mb-2">
+                <label for="create_provincia_select" class="block text-sm font-semibold text-gray-brown mb-2">
                     Provincia *
                 </label>
+                <select
+                    id="create_provincia_select"
+                    onchange="handleProvinciaChange()"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent mb-2"
+                >
+                    <option value="">-- Seleccionar provincia existente --</option>
+                    @foreach($provincias as $prov)
+                        <option value="{{ $prov }}">{{ $prov }}</option>
+                    @endforeach
+                    <option value="__new__">+ Crear nueva provincia</option>
+                </select>
                 <input
                     type="text"
                     name="provincia"
@@ -309,16 +320,25 @@
                     required
                     value="{{ old('provincia') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent @error('provincia') border-red-500 @enderror"
-                    placeholder="Ej: Pichincha"
+                    placeholder="Escribir nueva provincia o seleccionar arriba"
                 >
                 @error('provincia')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
             <div class="mb-4">
-                <label for="create_canton" class="block text-sm font-semibold text-gray-brown mb-2">
+                <label for="create_canton_select" class="block text-sm font-semibold text-gray-brown mb-2">
                     Cantón *
                 </label>
+                <select
+                    id="create_canton_select"
+                    onchange="handleCantonChange()"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent mb-2"
+                    disabled
+                >
+                    <option value="">-- Seleccionar cantón existente --</option>
+                    <option value="__new__">+ Crear nuevo cantón</option>
+                </select>
                 <input
                     type="text"
                     name="canton"
@@ -326,16 +346,25 @@
                     required
                     value="{{ old('canton') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent @error('canton') border-red-500 @enderror"
-                    placeholder="Ej: Quito"
+                    placeholder="Escribir nuevo cantón o seleccionar arriba"
                 >
                 @error('canton')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
             <div class="mb-4">
-                <label for="create_parroquia" class="block text-sm font-semibold text-gray-brown mb-2">
+                <label for="create_parroquia_select" class="block text-sm font-semibold text-gray-brown mb-2">
                     Parroquia *
                 </label>
+                <select
+                    id="create_parroquia_select"
+                    onchange="handleParroquiaChange()"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent mb-2"
+                    disabled
+                >
+                    <option value="">-- Seleccionar parroquia existente --</option>
+                    <option value="__new__">+ Crear nueva parroquia</option>
+                </select>
                 <input
                     type="text"
                     name="parroquia"
@@ -343,7 +372,7 @@
                     required
                     value="{{ old('parroquia') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent @error('parroquia') border-red-500 @enderror"
-                    placeholder="Ej: Tumbaco"
+                    placeholder="Escribir nueva parroquia o seleccionar arriba"
                 >
                 @error('parroquia')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -467,11 +496,134 @@ function loadCantones() {
 function openCreateZoneModal() {
     document.getElementById('createZoneModal').classList.remove('hidden');
     document.getElementById('createZoneModal').classList.add('flex');
+    // Reset form
+    document.getElementById('create_provincia').value = '';
+    document.getElementById('create_canton').value = '';
+    document.getElementById('create_parroquia').value = '';
+    document.getElementById('create_provincia_select').value = '';
+    document.getElementById('create_canton_select').value = '';
+    document.getElementById('create_canton_select').disabled = true;
+    document.getElementById('create_parroquia_select').value = '';
+    document.getElementById('create_parroquia_select').disabled = true;
 }
 
 function closeCreateZoneModal() {
     document.getElementById('createZoneModal').classList.add('hidden');
     document.getElementById('createZoneModal').classList.remove('flex');
+}
+
+// Handle provincia selection in create modal
+function handleProvinciaChange() {
+    const select = document.getElementById('create_provincia_select');
+    const input = document.getElementById('create_provincia');
+    const cantonSelect = document.getElementById('create_canton_select');
+    const cantonInput = document.getElementById('create_canton');
+    const parroquiaSelect = document.getElementById('create_parroquia_select');
+    const parroquiaInput = document.getElementById('create_parroquia');
+
+    if (select.value === '__new__') {
+        // User wants to create new provincia
+        input.value = '';
+        input.focus();
+        cantonSelect.disabled = true;
+        cantonSelect.value = '';
+        cantonInput.value = '';
+        parroquiaSelect.disabled = true;
+        parroquiaSelect.value = '';
+        parroquiaInput.value = '';
+    } else if (select.value !== '') {
+        // User selected existing provincia
+        input.value = select.value;
+        cantonInput.value = '';
+        parroquiaInput.value = '';
+        parroquiaSelect.disabled = true;
+        parroquiaSelect.value = '';
+
+        // Load cantones for selected provincia
+        fetch(`/pruebas/admin/shipping/cantones?provincia=${encodeURIComponent(select.value)}`)
+            .then(response => response.json())
+            .then(cantones => {
+                cantonSelect.disabled = false;
+                cantonSelect.innerHTML = '<option value="">-- Seleccionar cantón existente --</option>';
+                cantones.forEach(canton => {
+                    const option = document.createElement('option');
+                    option.value = canton;
+                    option.textContent = canton;
+                    cantonSelect.appendChild(option);
+                });
+                cantonSelect.innerHTML += '<option value="__new__">+ Crear nuevo cantón</option>';
+            });
+    } else {
+        // No selection
+        input.value = '';
+        cantonSelect.disabled = true;
+        cantonSelect.value = '';
+        cantonInput.value = '';
+        parroquiaSelect.disabled = true;
+        parroquiaSelect.value = '';
+        parroquiaInput.value = '';
+    }
+}
+
+// Handle canton selection in create modal
+function handleCantonChange() {
+    const provinciaInput = document.getElementById('create_provincia');
+    const select = document.getElementById('create_canton_select');
+    const input = document.getElementById('create_canton');
+    const parroquiaSelect = document.getElementById('create_parroquia_select');
+    const parroquiaInput = document.getElementById('create_parroquia');
+
+    if (select.value === '__new__') {
+        // User wants to create new canton
+        input.value = '';
+        input.focus();
+        parroquiaSelect.disabled = true;
+        parroquiaSelect.value = '';
+        parroquiaInput.value = '';
+    } else if (select.value !== '') {
+        // User selected existing canton
+        input.value = select.value;
+        parroquiaInput.value = '';
+
+        // Load parroquias for selected canton
+        fetch(`/pruebas/admin/shipping/parroquias?provincia=${encodeURIComponent(provinciaInput.value)}&canton=${encodeURIComponent(select.value)}`)
+            .then(response => response.json())
+            .then(parroquias => {
+                parroquiaSelect.disabled = false;
+                parroquiaSelect.innerHTML = '<option value="">-- Seleccionar parroquia existente --</option>';
+                parroquias.forEach(parroquia => {
+                    const option = document.createElement('option');
+                    option.value = parroquia;
+                    option.textContent = parroquia;
+                    parroquiaSelect.appendChild(option);
+                });
+                parroquiaSelect.innerHTML += '<option value="__new__">+ Crear nueva parroquia</option>';
+            });
+    } else {
+        // No selection
+        input.value = '';
+        parroquiaSelect.disabled = true;
+        parroquiaSelect.value = '';
+        parroquiaInput.value = '';
+    }
+}
+
+// Handle parroquia selection in create modal
+function handleParroquiaChange() {
+    const select = document.getElementById('create_parroquia_select');
+    const input = document.getElementById('create_parroquia');
+
+    if (select.value === '__new__') {
+        // User wants to create new parroquia
+        input.value = '';
+        input.focus();
+    } else if (select.value !== '') {
+        // User selected existing parroquia
+        input.value = select.value;
+    } else {
+        // No selection
+        input.value = '';
+    }
 }
 
 // Edit zone modal

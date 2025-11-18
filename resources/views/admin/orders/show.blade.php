@@ -89,7 +89,7 @@ use Illuminate\Support\Facades\Storage;
         <!-- Order Info -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="font-spartan text-lg font-bold text-dark-turquoise mb-4">Información del Cliente</h2>
+                <h2 class="font-spartan text-lg font-bold text-dark-turquoise mb-4">Información del Cliente y Facturación</h2>
                 <div class="space-y-2">
                     <div>
                         <p class="text-xs font-semibold text-gray-brown">Nombre:</p>
@@ -110,15 +110,42 @@ use Illuminate\Support\Facades\Storage;
                             {{ $order->document_number }}
                         </p>
                     </div>
+                    @if($order->billing_address)
+                        <div class="pt-2 border-t border-gray-200">
+                            <p class="text-xs font-semibold text-gray-brown mb-1">Dirección de Facturación:</p>
+                            <p class="text-sm">{{ $order->billing_address }}</p>
+                            <p class="text-sm">{{ $order->billing_parroquia }}, {{ $order->billing_canton }}, {{ $order->billing_provincia }} {{ $order->billing_zip }}</p>
+                            <p class="text-sm">{{ $order->billing_country }}</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="font-spartan text-lg font-bold text-dark-turquoise mb-4">Dirección de Envío</h2>
+                @if($order->same_as_billing && $order->billing_address)
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+                        <p class="text-sm text-blue-800">✓ Misma dirección de facturación</p>
+                    </div>
+                @endif
+                <div class="space-y-2">
+                    @if($order->shipping_name && $order->shipping_name !== $order->customer_name)
+                        <div>
+                            <p class="text-xs font-semibold text-gray-brown">Nombre del Destinatario:</p>
+                            <p class="text-sm">{{ $order->shipping_name }}</p>
+                        </div>
+                    @endif
                     <div>
-                        <p class="text-xs font-semibold text-gray-brown">Dirección de Envío:</p>
+                        <p class="text-xs font-semibold text-gray-brown">Dirección:</p>
                         <p class="text-sm">{{ $order->shipping_address }}</p>
-                        <p class="text-sm">{{ $order->shipping_city }}, {{ $order->shipping_state }} {{ $order->shipping_zip }}</p>
+                        <p class="text-sm">{{ $order->shipping_city }}, {{ $order->shipping_canton }}, {{ $order->shipping_state }} {{ $order->shipping_zip }}</p>
                         <p class="text-sm">{{ $order->shipping_country }}</p>
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="font-spartan text-lg font-bold text-dark-turquoise mb-4">Estado del Pedido</h2>
                 <div class="space-y-3">

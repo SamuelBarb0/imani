@@ -31,16 +31,16 @@
                 <!-- Checkout Form -->
                 <div class="lg:col-span-2 space-y-6">
 
-                    <!-- Customer Information -->
+                    <!-- Billing and Shipping Information -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h2 class="font-spartan text-xl font-bold text-dark-turquoise mb-4">
-                            INFORMACIÓN DE CONTACTO Y FACTURACIÓN
+                            INFORMACIÓN DE FACTURACIÓN Y ENVÍO
                         </h2>
 
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-brown mb-2">Nombre Completo *</label>
-                                <input type="text" name="customer_name" value="{{ old('customer_name') }}" required
+                                <input type="text" name="customer_name" id="billing_name" value="{{ old('customer_name') }}" required
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
                                 @error('customer_name')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -92,19 +92,113 @@
                                     @enderror
                                 </div>
                             </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-brown mb-2">Dirección *</label>
+                                <textarea name="billing_address" id="billing_address" rows="2" required
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
+                                    placeholder="Calle principal, número, sector">{{ old('billing_address') }}</textarea>
+                                @error('billing_address')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-brown mb-2">Provincia *</label>
+                                    <select name="billing_provincia" id="billing_provincia" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
+                                        <option value="">Seleccionar provincia...</option>
+                                        @foreach($provincias as $prov)
+                                            <option value="{{ $prov }}" {{ old('billing_provincia') === $prov ? 'selected' : '' }}>
+                                                {{ $prov }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('billing_provincia')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-brown mb-2">Cantón *</label>
+                                    <select name="billing_canton" id="billing_canton" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
+                                        {{ !old('billing_provincia') ? 'disabled' : '' }}>
+                                        <option value="">Seleccionar cantón...</option>
+                                    </select>
+                                    @error('billing_canton')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-brown mb-2">Parroquia *</label>
+                                    <select name="billing_parroquia" id="billing_parroquia" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
+                                        {{ !old('billing_canton') ? 'disabled' : '' }}>
+                                        <option value="">Seleccionar parroquia...</option>
+                                    </select>
+                                    @error('billing_parroquia')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-brown mb-2">Código Postal</label>
+                                    <input type="text" name="billing_zip" id="billing_zip" value="{{ old('billing_zip') }}"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
+                                        placeholder="170150">
+                                    @error('billing_zip')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-brown mb-2">País *</label>
+                                <input type="text" name="billing_country" id="billing_country" value="{{ old('billing_country', 'Ecuador') }}" required
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
+                                    readonly>
+                                @error('billing_country')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Same as Billing Checkbox -->
+                            <div class="pt-4 border-t border-gray-200">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" id="same_as_billing" name="same_as_billing" value="1" checked
+                                        class="w-5 h-5 text-dark-turquoise border-gray-300 rounded focus:ring-dark-turquoise">
+                                    <span class="ml-3 text-sm font-semibold text-gray-800">
+                                        ENVIAR PEDIDO A LA MISMA DIRECCIÓN DE FACTURACIÓN
+                                    </span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Shipping Address -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
+                    <!-- Separate Shipping Address (Hidden by default) -->
+                    <div id="shipping_section" class="bg-white rounded-lg shadow-md p-6 hidden">
                         <h2 class="font-spartan text-xl font-bold text-dark-turquoise mb-4">
                             DIRECCIÓN DE ENVÍO
                         </h2>
 
-                        <div class="space-y-4" id="shipping-fields">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-brown mb-2">Nombre Completo *</label>
+                                <input type="text" name="shipping_name" id="shipping_name" value="{{ old('shipping_name') }}"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
+                                @error('shipping_name')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <div>
                                 <label class="block text-sm font-semibold text-gray-brown mb-2">Dirección *</label>
-                                <textarea name="shipping_address" id="shipping_address" rows="2" required
+                                <textarea name="shipping_address" id="shipping_address" rows="2"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
                                     placeholder="Calle principal, número, sector">{{ old('shipping_address') }}</textarea>
                                 @error('shipping_address')
@@ -115,7 +209,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-brown mb-2">Provincia *</label>
-                                    <select name="shipping_provincia" id="shipping_provincia" required
+                                    <select name="shipping_provincia" id="shipping_provincia"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
                                         <option value="">Seleccionar provincia...</option>
                                         @foreach($provincias as $prov)
@@ -131,17 +225,10 @@
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-brown mb-2">Cantón *</label>
-                                    <select name="shipping_canton" id="shipping_canton" required
+                                    <select name="shipping_canton" id="shipping_canton"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
-                                        {{ !old('shipping_provincia') ? 'disabled' : '' }}>
+                                        disabled>
                                         <option value="">Seleccionar cantón...</option>
-                                        @if(old('shipping_provincia'))
-                                            @foreach($cantones ?? [] as $cant)
-                                                <option value="{{ $cant }}" {{ old('shipping_canton') === $cant ? 'selected' : '' }}>
-                                                    {{ $cant }}
-                                                </option>
-                                            @endforeach
-                                        @endif
                                     </select>
                                     @error('shipping_canton')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -152,17 +239,10 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-brown mb-2">Parroquia *</label>
-                                    <select name="shipping_parroquia" id="shipping_parroquia" required
+                                    <select name="shipping_parroquia" id="shipping_parroquia"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
-                                        {{ !old('shipping_canton') ? 'disabled' : '' }}>
+                                        disabled>
                                         <option value="">Seleccionar parroquia...</option>
-                                        @if(old('shipping_canton'))
-                                            @foreach($parroquias ?? [] as $parr)
-                                                <option value="{{ $parr }}" {{ old('shipping_parroquia') === $parr ? 'selected' : '' }}>
-                                                    {{ $parr }}
-                                                </option>
-                                            @endforeach
-                                        @endif
                                     </select>
                                     @error('shipping_parroquia')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -182,7 +262,7 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-brown mb-2">País *</label>
-                                <input type="text" name="shipping_country" id="shipping_country" value="{{ old('shipping_country', 'Ecuador') }}" required
+                                <input type="text" name="shipping_country" id="shipping_country" value="{{ old('shipping_country', 'Ecuador') }}"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
                                     readonly>
                                 @error('shipping_country')
@@ -393,9 +473,16 @@
         const transferDetails = document.getElementById('transfer-details');
         const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
 
-        const provinciaSelect = document.getElementById('shipping_provincia');
-        const cantonSelect = document.getElementById('shipping_canton');
-        const parroquiaSelect = document.getElementById('shipping_parroquia');
+        const sameAsBillingCheckbox = document.getElementById('same_as_billing');
+        const shippingSection = document.getElementById('shipping_section');
+
+        const billingProvinciaSelect = document.getElementById('billing_provincia');
+        const billingCantonSelect = document.getElementById('billing_canton');
+        const billingParroquiaSelect = document.getElementById('billing_parroquia');
+
+        const shippingProvinciaSelect = document.getElementById('shipping_provincia');
+        const shippingCantonSelect = document.getElementById('shipping_canton');
+        const shippingParroquiaSelect = document.getElementById('shipping_parroquia');
 
         // Function to update shipping cost
         async function updateShippingCost(provincia, canton, parroquia) {
@@ -419,15 +506,50 @@
             }
         }
 
-        // Cascading dropdowns: Provincia -> Canton
-        provinciaSelect.addEventListener('change', async function() {
+        // Toggle shipping section when checkbox changes
+        sameAsBillingCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                shippingSection.classList.add('hidden');
+                // Clear shipping form required attributes when hidden
+                toggleShippingRequired(false);
+            } else {
+                shippingSection.classList.remove('hidden');
+                // Add required attributes when visible
+                toggleShippingRequired(true);
+            }
+        });
+
+        // Toggle required attribute for shipping fields
+        function toggleShippingRequired(required) {
+            const shippingFields = [
+                document.getElementById('shipping_name'),
+                document.getElementById('shipping_address'),
+                shippingProvinciaSelect,
+                shippingCantonSelect,
+                shippingParroquiaSelect,
+                document.getElementById('shipping_country')
+            ];
+
+            shippingFields.forEach(field => {
+                if (field) {
+                    if (required) {
+                        field.setAttribute('required', 'required');
+                    } else {
+                        field.removeAttribute('required');
+                    }
+                }
+            });
+        }
+
+        // Cascading dropdowns for BILLING: Provincia -> Canton
+        billingProvinciaSelect.addEventListener('change', async function() {
             const provincia = this.value;
 
             // Reset canton and parroquia
-            cantonSelect.innerHTML = '<option value="">Seleccionar cantón...</option>';
-            cantonSelect.disabled = !provincia;
-            parroquiaSelect.innerHTML = '<option value="">Seleccionar parroquia...</option>';
-            parroquiaSelect.disabled = true;
+            billingCantonSelect.innerHTML = '<option value="">Seleccionar cantón...</option>';
+            billingCantonSelect.disabled = !provincia;
+            billingParroquiaSelect.innerHTML = '<option value="">Seleccionar parroquia...</option>';
+            billingParroquiaSelect.disabled = true;
 
             if (!provincia) {
                 return;
@@ -441,21 +563,21 @@
                     const option = document.createElement('option');
                     option.value = canton;
                     option.textContent = canton;
-                    cantonSelect.appendChild(option);
+                    billingCantonSelect.appendChild(option);
                 });
             } catch (error) {
                 console.error('Error cargando cantones:', error);
             }
         });
 
-        // Cascading dropdowns: Canton -> Parroquia
-        cantonSelect.addEventListener('change', async function() {
-            const provincia = provinciaSelect.value;
+        // Cascading dropdowns for BILLING: Canton -> Parroquia
+        billingCantonSelect.addEventListener('change', async function() {
+            const provincia = billingProvinciaSelect.value;
             const canton = this.value;
 
             // Reset parroquia
-            parroquiaSelect.innerHTML = '<option value="">Seleccionar parroquia...</option>';
-            parroquiaSelect.disabled = !canton;
+            billingParroquiaSelect.innerHTML = '<option value="">Seleccionar parroquia...</option>';
+            billingParroquiaSelect.disabled = !canton;
 
             if (!provincia || !canton) {
                 return;
@@ -469,12 +591,11 @@
                     const option = document.createElement('option');
                     option.value = parroquia;
                     option.textContent = parroquia;
-                    parroquiaSelect.appendChild(option);
+                    billingParroquiaSelect.appendChild(option);
                 });
 
-                // Update shipping cost immediately after canton selection
-                // (use first parroquia as default if available)
-                if (parroquias.length > 0) {
+                // Update shipping cost based on billing address if same as billing is checked
+                if (sameAsBillingCheckbox.checked && parroquias.length > 0) {
                     updateShippingCost(provincia, canton, parroquias[0]);
                 }
             } catch (error) {
@@ -482,13 +603,88 @@
             }
         });
 
-        // Update shipping cost when parroquia changes
-        parroquiaSelect.addEventListener('change', function() {
-            const provincia = provinciaSelect.value;
-            const canton = cantonSelect.value;
-            const parroquia = this.value;
+        // Update shipping cost when billing parroquia changes (if same as billing)
+        billingParroquiaSelect.addEventListener('change', function() {
+            if (sameAsBillingCheckbox.checked) {
+                const provincia = billingProvinciaSelect.value;
+                const canton = billingCantonSelect.value;
+                const parroquia = this.value;
 
-            updateShippingCost(provincia, canton, parroquia);
+                updateShippingCost(provincia, canton, parroquia);
+            }
+        });
+
+        // Cascading dropdowns for SHIPPING: Provincia -> Canton
+        shippingProvinciaSelect.addEventListener('change', async function() {
+            const provincia = this.value;
+
+            // Reset canton and parroquia
+            shippingCantonSelect.innerHTML = '<option value="">Seleccionar cantón...</option>';
+            shippingCantonSelect.disabled = !provincia;
+            shippingParroquiaSelect.innerHTML = '<option value="">Seleccionar parroquia...</option>';
+            shippingParroquiaSelect.disabled = true;
+
+            if (!provincia) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/pruebas/checkout/shipping/cantones?provincia=${encodeURIComponent(provincia)}`);
+                const cantones = await response.json();
+
+                cantones.forEach(canton => {
+                    const option = document.createElement('option');
+                    option.value = canton;
+                    option.textContent = canton;
+                    shippingCantonSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error cargando cantones:', error);
+            }
+        });
+
+        // Cascading dropdowns for SHIPPING: Canton -> Parroquia
+        shippingCantonSelect.addEventListener('change', async function() {
+            const provincia = shippingProvinciaSelect.value;
+            const canton = this.value;
+
+            // Reset parroquia
+            shippingParroquiaSelect.innerHTML = '<option value="">Seleccionar parroquia...</option>';
+            shippingParroquiaSelect.disabled = !canton;
+
+            if (!provincia || !canton) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/pruebas/checkout/shipping/parroquias?provincia=${encodeURIComponent(provincia)}&canton=${encodeURIComponent(canton)}`);
+                const parroquias = await response.json();
+
+                parroquias.forEach(parroquia => {
+                    const option = document.createElement('option');
+                    option.value = parroquia;
+                    option.textContent = parroquia;
+                    shippingParroquiaSelect.appendChild(option);
+                });
+
+                // Update shipping cost based on separate shipping address
+                if (!sameAsBillingCheckbox.checked && parroquias.length > 0) {
+                    updateShippingCost(provincia, canton, parroquias[0]);
+                }
+            } catch (error) {
+                console.error('Error cargando parroquias:', error);
+            }
+        });
+
+        // Update shipping cost when shipping parroquia changes
+        shippingParroquiaSelect.addEventListener('change', function() {
+            if (!sameAsBillingCheckbox.checked) {
+                const provincia = shippingProvinciaSelect.value;
+                const canton = shippingCantonSelect.value;
+                const parroquia = this.value;
+
+                updateShippingCost(provincia, canton, parroquia);
+            }
         });
 
         // Toggle transfer details visibility

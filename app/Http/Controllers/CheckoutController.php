@@ -71,12 +71,20 @@ class CheckoutController extends Controller
             'customer_phone' => 'required|string|max:20',
             'document_type' => 'required|in:cedula,pasaporte,ruc',
             'document_number' => 'required|string|max:20',
-            'shipping_address' => 'required|string',
-            'shipping_provincia' => 'required|string|max:100',
-            'shipping_canton' => 'required|string|max:100',
-            'shipping_parroquia' => 'required|string|max:100',
+            'billing_address' => 'required|string',
+            'billing_provincia' => 'required|string|max:100',
+            'billing_canton' => 'required|string|max:100',
+            'billing_parroquia' => 'required|string|max:100',
+            'billing_zip' => 'nullable|string|max:20',
+            'billing_country' => 'required|string|max:100',
+            'same_as_billing' => 'nullable|boolean',
+            'shipping_name' => 'nullable|string|max:255',
+            'shipping_address' => 'nullable|string',
+            'shipping_provincia' => 'nullable|string|max:100',
+            'shipping_canton' => 'nullable|string|max:100',
+            'shipping_parroquia' => 'nullable|string|max:100',
             'shipping_zip' => 'nullable|string|max:20',
-            'shipping_country' => 'required|string|max:100',
+            'shipping_country' => 'nullable|string|max:100',
             'payment_method' => 'required|in:payphone,transfer',
             'notes' => 'nullable|string|max:1000',
             'newsletter_subscription' => 'nullable|boolean',
@@ -90,11 +98,17 @@ class CheckoutController extends Controller
             return back()->with('error', 'Tu carrito está vacío');
         }
 
+        // Determine shipping location based on same_as_billing checkbox
+        $sameAsBilling = $validated['same_as_billing'] ?? true;
+        $shippingProvincia = $sameAsBilling ? $validated['billing_provincia'] : $validated['shipping_provincia'];
+        $shippingCanton = $sameAsBilling ? $validated['billing_canton'] : $validated['shipping_canton'];
+        $shippingParroquia = $sameAsBilling ? $validated['billing_parroquia'] : $validated['shipping_parroquia'];
+
         // Get shipping zone
         $zone = \App\Models\ShippingZone::byLocation(
-            $validated['shipping_provincia'],
-            $validated['shipping_canton'],
-            $validated['shipping_parroquia']
+            $shippingProvincia,
+            $shippingCanton,
+            $shippingParroquia
         )->first();
 
         if (!$zone) {
@@ -143,12 +157,20 @@ class CheckoutController extends Controller
                 'customer_phone' => $validated['customer_phone'] ?? null,
                 'document_type' => $validated['document_type'],
                 'document_number' => $validated['document_number'],
-                'shipping_address' => $validated['shipping_address'],
-                'shipping_city' => $validated['shipping_parroquia'],
-                'shipping_state' => $validated['shipping_provincia'],
-                'shipping_canton' => $validated['shipping_canton'],
-                'shipping_zip' => $validated['shipping_zip'],
-                'shipping_country' => $validated['shipping_country'],
+                'billing_address' => $validated['billing_address'],
+                'billing_provincia' => $validated['billing_provincia'],
+                'billing_canton' => $validated['billing_canton'],
+                'billing_parroquia' => $validated['billing_parroquia'],
+                'billing_zip' => $validated['billing_zip'],
+                'billing_country' => $validated['billing_country'],
+                'same_as_billing' => $sameAsBilling,
+                'shipping_name' => $sameAsBilling ? $validated['customer_name'] : ($validated['shipping_name'] ?? null),
+                'shipping_address' => $sameAsBilling ? $validated['billing_address'] : ($validated['shipping_address'] ?? null),
+                'shipping_city' => $shippingParroquia,
+                'shipping_state' => $shippingProvincia,
+                'shipping_canton' => $shippingCanton,
+                'shipping_zip' => $sameAsBilling ? $validated['billing_zip'] : ($validated['shipping_zip'] ?? null),
+                'shipping_country' => $sameAsBilling ? $validated['billing_country'] : ($validated['shipping_country'] ?? 'Ecuador'),
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
                 'tax' => $tax,

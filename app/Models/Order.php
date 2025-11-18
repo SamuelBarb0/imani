@@ -17,6 +17,14 @@ class Order extends Model
         'customer_phone',
         'document_type',
         'document_number',
+        'billing_address',
+        'billing_provincia',
+        'billing_canton',
+        'billing_parroquia',
+        'billing_zip',
+        'billing_country',
+        'same_as_billing',
+        'shipping_name',
         'shipping_address',
         'shipping_city',
         'shipping_state',
@@ -51,6 +59,7 @@ class Order extends Model
         'shipped_at' => 'datetime',
         'email_order_confirmed' => 'boolean',
         'email_tracking_sent' => 'boolean',
+        'same_as_billing' => 'boolean',
     ];
 
     /**

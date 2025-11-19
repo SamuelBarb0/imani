@@ -192,6 +192,9 @@ class PayPhoneBoxController extends Controller
                 $socialMediaConsent
             );
 
+            // Get checkout data from session
+            $checkoutData = $request->session()->get('checkout', []);
+
             // Create order
             $order = Order::create([
                 'order_number' => $clientTransactionId,
@@ -200,11 +203,16 @@ class PayPhoneBoxController extends Controller
                 'customer_name' => $customerName,
                 'customer_email' => $customerEmail,
                 'customer_phone' => $customerPhone,
-                'shipping_address' => $request->session()->get('checkout.address', 'N/A'),
-                'shipping_city' => $request->session()->get('checkout.city', 'N/A'),
-                'shipping_state' => $request->session()->get('checkout.state'),
-                'shipping_zip' => $request->session()->get('checkout.zip', 'N/A'),
-                'shipping_country' => $request->session()->get('checkout.country', 'Ecuador'),
+                'document_type' => $checkoutData['document_type'] ?? null,
+                'document_number' => $checkoutData['document_number'] ?? null,
+                'shipping_address' => $checkoutData['address'] ?? 'N/A',
+                'shipping_provincia' => $checkoutData['provincia'] ?? null,
+                'shipping_canton' => $checkoutData['canton'] ?? null,
+                'shipping_parroquia' => $checkoutData['parroquia'] ?? null,
+                'shipping_city' => $checkoutData['city'] ?? $checkoutData['parroquia'] ?? 'N/A',
+                'shipping_state' => $checkoutData['state'] ?? $checkoutData['provincia'] ?? null,
+                'shipping_zip' => $checkoutData['zip'] ?? 'N/A',
+                'shipping_country' => $checkoutData['country'] ?? 'Ecuador',
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
                 'tax' => $tax,
@@ -214,7 +222,7 @@ class PayPhoneBoxController extends Controller
                 'status' => 'processing',
                 'transaction_id' => $clientTransactionId,
                 'payphone_transaction_id' => $paymentData['transactionId'] ?? null,
-                'notes' => 'Pago con ' . ($paymentData['cardBrand'] ?? 'PayPhone'),
+                'notes' => 'Pago con ' . ($paymentData['cardBrand'] ?? 'PayPhone') . ' PayPhone',
             ]);
 
             // Create order items from cart

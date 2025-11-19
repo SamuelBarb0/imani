@@ -541,6 +541,9 @@
             });
         }
 
+        // Initialize shipping fields as not required since checkbox is checked by default
+        toggleShippingRequired(false);
+
         // Cascading dropdowns for BILLING: Provincia -> Canton
         billingProvinciaSelect.addEventListener('change', async function() {
             const provincia = this.value;

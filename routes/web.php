@@ -9,31 +9,21 @@ use App\Http\Controllers\PayPhoneBoxController;
 use App\Http\Controllers\TestTemplateController;
 
 /**
- * 🌐 RUTA RAÍZ
- * Sitio en construcción temporal
+ * 🌐 RUTAS PRINCIPALES DEL SITIO
  */
+
+/** 🧪 TEST TEMPLATE */
+Route::get('/test-template', [TestTemplateController::class, 'testTemplate'])->name('test.template');
+
+/** 🏠 HOME */
 Route::get('/', function () {
-    return view('construction');
-})->name('root');
+    $content = App\Helpers\ContentHelper::getPageContent('home');
+    $seoPage = 'home';
+    return view('home.index', compact('content', 'seoPage'));
+})->name('home');
 
-/**
- * 🧪 Grupo principal en modo pruebas
- * (todas las rutas del sitio bajo /pruebas)
- */
-Route::prefix('pruebas')->group(function () {
-
-    /** 🧪 TEST TEMPLATE */
-    Route::get('/test-template', [TestTemplateController::class, 'testTemplate'])->name('test.template');
-
-    /** 🏠 HOME */
-    Route::get('/', function () {
-        $content = App\Helpers\ContentHelper::getPageContent('home');
-        $seoPage = 'home';
-        return view('home.index', compact('content', 'seoPage'));
-    })->name('home');
-
-    /** 🧲 PERSONALIZADOS */
-    Route::prefix('personalizados')->group(function () {
+/** 🧲 PERSONALIZADOS */
+Route::prefix('personalizados')->group(function () {
         // Página principal (landing)
         Route::get('/', [PersonalizadosController::class, 'index'])->name('personalizados.index');
 
@@ -53,48 +43,48 @@ Route::prefix('pruebas')->group(function () {
         Route::get('/download/{orderNumber}', [PersonalizadosController::class, 'download'])->name('personalizados.download');
     });
 
-    /** 🖼️ COLECCIONES */
-    Route::get('/colecciones', function () {
+/** 🖼️ COLECCIONES */
+Route::get('/colecciones', function () {
         $content = App\Helpers\ContentHelper::getPageContent('colecciones');
         $collections = App\Models\Collection::active()->get();
         $seoPage = 'colecciones';
         return view('colecciones.index', compact('content', 'collections', 'seoPage'));
     })->name('colecciones');
 
-    Route::get('/colecciones/{collection}', function (App\Models\Collection $collection) {
+Route::get('/colecciones/{collection}', function (App\Models\Collection $collection) {
         $content = App\Helpers\ContentHelper::getPageContent('colecciones');
         $seoPage = 'colecciones';
         return view('colecciones.show', compact('collection', 'content', 'seoPage'));
     })->name('colecciones.show');
 
-    /** 🏷️ MAYORISTAS */
-    Route::get('/mayoristas', function () {
+/** 🏷️ MAYORISTAS */
+Route::get('/mayoristas', function () {
         $content = App\Helpers\ContentHelper::getPageContent('mayoristas');
         $seoPage = 'mayoristas';
         return view('mayoristas.index', compact('content', 'seoPage'));
     })->name('mayoristas');
-    Route::post('/mayoristas', [App\Http\Controllers\WholesaleController::class, 'submit'])->name('mayoristas.submit');
+Route::post('/mayoristas', [App\Http\Controllers\WholesaleController::class, 'submit'])->name('mayoristas.submit');
 
-    /** 🎁 GIFT CARD */
-    Route::get('/gift-card', function () {
+/** 🎁 GIFT CARD */
+Route::get('/gift-card', function () {
         $seoPage = 'gift-card';
         return view('gift-card.index', compact('seoPage'));
     })->name('gift-card');
 
-    /** 📞 CONTACTO */
-    Route::get('/contacto', function () {
+/** 📞 CONTACTO */
+Route::get('/contacto', function () {
         $content = App\Helpers\ContentHelper::getPageContent('contacto');
         $seoPage = 'contacto';
         return view('contacto.index', compact('content', 'seoPage'));
     })->name('contacto');
-    Route::post('/contacto', [App\Http\Controllers\ContactController::class, 'submit'])->name('contacto.submit');
+Route::post('/contacto', [App\Http\Controllers\ContactController::class, 'submit'])->name('contacto.submit');
 
-    /** 📦 TRACKING DE PEDIDOS */
-    Route::get('/rastrear-pedido', [App\Http\Controllers\OrderTrackingController::class, 'index'])->name('tracking.index');
-    Route::post('/rastrear-pedido', [App\Http\Controllers\OrderTrackingController::class, 'track'])->name('tracking.track');
+/** 📦 TRACKING DE PEDIDOS */
+Route::get('/rastrear-pedido', [App\Http\Controllers\OrderTrackingController::class, 'index'])->name('tracking.index');
+Route::post('/rastrear-pedido', [App\Http\Controllers\OrderTrackingController::class, 'track'])->name('tracking.track');
 
-    /** 🛒 CARRITO */
-    Route::prefix('carrito')->group(function () {
+/** 🛒 CARRITO */
+Route::prefix('carrito')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('carrito.index');
         Route::post('/agregar', [CartController::class, 'store'])->name('carrito.store');
         Route::patch('/items/{item}', [CartController::class, 'update'])->name('carrito.update');
@@ -102,8 +92,8 @@ Route::prefix('pruebas')->group(function () {
         Route::post('/vaciar', [CartController::class, 'clear'])->name('carrito.clear');
     });
 
-    /** 💳 CHECKOUT */
-    Route::prefix('checkout')->group(function () {
+/** 💳 CHECKOUT */
+Route::prefix('checkout')->group(function () {
         Route::get('/', [CheckoutController::class, 'index'])->name('checkout.index');
         Route::post('/procesar', [CheckoutController::class, 'process'])->name('checkout.process');
         Route::post('/save-data', [CheckoutController::class, 'saveData'])->name('checkout.save-data');
@@ -121,16 +111,16 @@ Route::prefix('pruebas')->group(function () {
         Route::get('/shipping/cost-by-zone', [CheckoutController::class, 'getShippingCostByZone'])->name('checkout.shipping-cost-zone');
     });
 
-    /** 👤 AUTENTICACIÓN */
-    Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
-    Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+/** 👤 AUTENTICACIÓN */
+Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
-    Route::get('/registro', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/registro', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
+Route::get('/registro', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/registro', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 
-    /** 👤 PERFIL DE USUARIO */
-    Route::middleware('auth')->prefix('cuenta')->group(function () {
+/** 👤 PERFIL DE USUARIO */
+Route::middleware('auth')->prefix('cuenta')->group(function () {
         Route::get('/', [App\Http\Controllers\UserController::class, 'profile'])->name('user.profile');
         Route::get('/editar', [App\Http\Controllers\UserController::class, 'edit'])->name('user.edit');
         Route::put('/actualizar', [App\Http\Controllers\UserController::class, 'update'])->name('user.update');
@@ -142,8 +132,8 @@ Route::prefix('pruebas')->group(function () {
         Route::get('/pedidos/{orderNumber}', [App\Http\Controllers\UserController::class, 'showOrder'])->name('user.order.show');
     });
 
-    /** 🔐 PANEL DE ADMINISTRACIÓN */
-    Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+/** 🔐 PANEL DE ADMINISTRACIÓN */
+Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\AdminController::class, 'dashboard'])->name('dashboard');
 
         // Orders management
@@ -217,29 +207,28 @@ Route::prefix('pruebas')->group(function () {
         Route::get('/politicas', [App\Http\Controllers\Admin\PolicyPageController::class, 'index'])->name('policies.index');
         Route::get('/politicas/{page}/editar', [App\Http\Controllers\Admin\PolicyPageController::class, 'edit'])->name('policies.edit');
         Route::put('/politicas/{page}', [App\Http\Controllers\Admin\PolicyPageController::class, 'update'])->name('policies.update');
-    });
-
-    /**
-     * 📜 POLÍTICAS Y TÉRMINOS (Editable desde admin)
-     */
-    Route::get('/{slug}', [App\Http\Controllers\PolicyController::class, 'show'])
-        ->where('slug', 'politica-envios|politica-cookies|politica-privacidad|terminos-condiciones')
-        ->name('policy.show');
 });
+
+/**
+ * 📜 POLÍTICAS Y TÉRMINOS (Editable desde admin)
+ */
+Route::get('/{slug}', [App\Http\Controllers\PolicyController::class, 'show'])
+    ->where('slug', 'politica-envios|politica-cookies|politica-privacidad|terminos-condiciones')
+    ->name('policy.show');
 
 /**
  * 📧 EMAIL PREVIEWS (Solo para desarrollo)
  * Rutas temporales para previsualizar los templates de emails
  */
-Route::prefix('pruebas/email-preview')->group(function () {
+Route::prefix('email-preview')->group(function () {
     // Order Pending Transfer
-    Route::get('/order-pending', function () {
+Route::get('/order-pending', function () {
         $order = new stdClass();
         $order->customer_name = 'María González';
         $order->order_number = 'IM-12345678';
         $order->subtotal = 26.99;
         $order->shipping_cost = 3.50;
-        $order->total = 35.02;
+        $order->total = 35.06; // $26.99 + $3.50 + (($26.99 + $3.50) * 0.15)
 
         $item = new stdClass();
         $item->product_name = 'Imanes Personalizados x9';
@@ -253,13 +242,13 @@ Route::prefix('pruebas/email-preview')->group(function () {
     });
 
     // Order Confirmed
-    Route::get('/order-confirmed', function () {
+Route::get('/order-confirmed', function () {
         $order = new stdClass();
         $order->customer_name = 'María González';
         $order->order_number = 'IM-12345678';
         $order->subtotal = 26.99;
         $order->shipping_cost = 3.50;
-        $order->total = 35.02;
+        $order->total = 35.06; // $26.99 + $3.50 + (($26.99 + $3.50) * 0.15)
         $order->payment_method = 'transferencia';
         $order->shipping_address = 'Av. Principal 123';
         $order->shipping_city = 'Quito';
@@ -279,7 +268,7 @@ Route::prefix('pruebas/email-preview')->group(function () {
     });
 
     // Tracking Added
-    Route::get('/tracking-added', function () {
+Route::get('/tracking-added', function () {
         $order = new stdClass();
         $order->customer_name = 'María González';
         $order->order_number = 'IM-12345678';
@@ -289,7 +278,7 @@ Route::prefix('pruebas/email-preview')->group(function () {
     });
 
     // Contact Form
-    Route::get('/contact-form', function () {
+Route::get('/contact-form', function () {
         return view('emails.contact-form', [
             'name' => 'María González',
             'userMessage' => 'Hola, me gustaría saber más información sobre los imanes personalizados. ¿Tienen descuentos por cantidad?'
@@ -297,7 +286,7 @@ Route::prefix('pruebas/email-preview')->group(function () {
     });
 
     // Wholesale Form
-    Route::get('/wholesale-form', function () {
+Route::get('/wholesale-form', function () {
         return view('emails.wholesale-form', [
             'name' => 'Carlos Ramírez',
             'email' => 'carlos@example.com',
@@ -309,7 +298,7 @@ Route::prefix('pruebas/email-preview')->group(function () {
     });
 
     // Welcome Email
-    Route::get('/welcome', function () {
+Route::get('/welcome', function () {
         $user = new stdClass();
         $user->name = 'María González';
         $user->email = 'maria@example.com';

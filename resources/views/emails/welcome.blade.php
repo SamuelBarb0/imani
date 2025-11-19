@@ -33,7 +33,7 @@
     <table style="width: 100%; margin: 20px 0;" cellpadding="0" cellspacing="0">
         <tr>
             <td style="text-align: center;">
-                <a href="{{ url('/pruebas/cuenta') }}" style="display: inline-block; background-color: #00352b; color: white; padding: 14px 40px; text-decoration: none; border-radius: 6px; font-weight: 600; text-align: center;">Acceder a Mi Cuenta</a>
+                <a href="{{ route('user.profile') }}" style="display: inline-block; background-color: #00352b; color: white; padding: 14px 40px; text-decoration: none; border-radius: 6px; font-weight: 600; text-align: center;">Acceder a Mi Cuenta</a>
             </td>
         </tr>
     </table>

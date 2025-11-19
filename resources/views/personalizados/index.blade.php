@@ -650,6 +650,8 @@
                     const emptyIndex = uploadedImages.findIndex(img => img === null);
                     if (emptyIndex !== -1 && emptyIndex < 9) {
                         uploadedImages[emptyIndex] = e.target.result;
+                        // Render grid immediately after each image is loaded
+                        renderGrid();
                     }
 
                     loaded++;
@@ -690,8 +692,30 @@
                 imgContainer.className = 'relative w-full h-full group';
 
                 const img = document.createElement('img');
-                img.src = imgSrc;
                 img.className = 'w-full h-full object-cover rounded-lg';
+
+                // Pre-load image to ensure it displays immediately
+                img.style.opacity = '0';
+
+                // Use both onload and decode() for better compatibility
+                const showImage = () => {
+                    img.style.opacity = '1';
+                    img.style.transition = 'opacity 0.2s ease-in-out';
+                };
+
+                img.onload = showImage;
+                img.onerror = () => {
+                    console.error('Error loading image at index', index);
+                    img.style.opacity = '1'; // Show anyway
+                };
+
+                // Set src BEFORE appending to DOM for better loading
+                img.src = imgSrc;
+
+                // Use decode() if available for smoother rendering
+                if (img.decode) {
+                    img.decode().then(showImage).catch(() => showImage());
+                }
 
                 // Add green checkmark if image is edited
                 if (isEdited) {

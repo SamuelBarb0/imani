@@ -170,7 +170,7 @@
         }
 
         try {
-            const response = await fetch(`{{ url('/pruebas/carrito/items') }}/${itemId}`, {
+            const response = await fetch(`{{ url('/carrito/items') }}/${itemId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -200,7 +200,7 @@
         }
 
         try {
-            const response = await fetch(`{{ url('/pruebas/carrito/items') }}/${itemId}`, {
+            const response = await fetch(`{{ url('/carrito/items') }}/${itemId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'

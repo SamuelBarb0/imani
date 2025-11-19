@@ -118,7 +118,7 @@
             tip: 0,
             currency: "USD",
             reference: "Pedido Imani Magnets",
-            responseUrl: '{{ url("/pruebas/checkout/payphone/confirm") }}',
+            responseUrl: '{{ route('checkout.payphone.confirm') }}',
             btnHorizontal: true
         }).render('pp-button');
 
@@ -128,7 +128,7 @@
             service: shippingCents,
             total: totalCents,
             validation: subtotalCents + shippingCents === totalCents,
-            responseUrl: '{{ url("/pruebas/checkout/payphone/confirm") }}',
+            responseUrl: '{{ route('checkout.payphone.confirm') }}',
             clientTransactionId: '{{ $clientTransactionId }}'
         });
     });

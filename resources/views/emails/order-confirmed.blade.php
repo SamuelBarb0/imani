@@ -75,14 +75,14 @@
         </tr>
         <tr>
             <td style="text-align: right; padding: 8px 0;">
-                <span style="margin-right: 20px; font-weight: 600;">IVA:</span>
-                <span>${{ number_format($order->subtotal * 0.15, 2) }}</span>
+                <span style="margin-right: 20px; font-weight: 600;">Envío:</span>
+                <span>${{ number_format($order->shipping_cost, 2) }}</span>
             </td>
         </tr>
         <tr>
             <td style="text-align: right; padding: 8px 0;">
-                <span style="margin-right: 20px; font-weight: 600;">Envío:</span>
-                <span>${{ number_format($order->shipping_cost, 2) }}</span>
+                <span style="margin-right: 20px; font-weight: 600;">IVA (15%):</span>
+                <span>${{ number_format(($order->subtotal + $order->shipping_cost) * 0.15, 2) }}</span>
             </td>
         </tr>
         <tr>

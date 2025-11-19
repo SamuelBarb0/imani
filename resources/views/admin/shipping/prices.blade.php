@@ -280,7 +280,7 @@ function editPrice(button) {
     const courier_name = button.getAttribute('data-courier-name');
     const description = button.getAttribute('data-description');
 
-    document.getElementById('editForm').action = `/pruebas/admin/shipping/prices/${id}`;
+    document.getElementById('editForm').action = `{{ url('/admin/shipping/prices') }}/${id}`;
     document.getElementById('edit_code_name').value = code_name;
     document.getElementById('edit_price').value = price;
     document.getElementById('edit_courier_name').value = courier_name || '';

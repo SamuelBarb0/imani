@@ -487,7 +487,7 @@ function loadCantones() {
         return;
     }
 
-    fetch(`/pruebas/admin/shipping/cantones?provincia=${encodeURIComponent(provincia)}`)
+    fetch(`{{ route('admin.shipping.cantones') }}?provincia=${encodeURIComponent(provincia)}`)
         .then(response => response.json())
         .then(cantones => {
             cantonSelect.disabled = false;
@@ -549,7 +549,7 @@ function handleProvinciaChange() {
         parroquiaSelect.value = '';
 
         // Load cantones for selected provincia
-        fetch(`/pruebas/admin/shipping/cantones?provincia=${encodeURIComponent(select.value)}`)
+        fetch(`{{ route('admin.shipping.cantones') }}?provincia=${encodeURIComponent(select.value)}`)
             .then(response => response.json())
             .then(cantones => {
                 cantonSelect.disabled = false;
@@ -595,7 +595,7 @@ function handleCantonChange() {
         parroquiaInput.value = '';
 
         // Load parroquias for selected canton
-        fetch(`/pruebas/admin/shipping/parroquias?provincia=${encodeURIComponent(provinciaInput.value)}&canton=${encodeURIComponent(select.value)}`)
+        fetch(`{{ route('admin.shipping.parroquias') }}?provincia=${encodeURIComponent(provinciaInput.value)}&canton=${encodeURIComponent(select.value)}`)
             .then(response => response.json())
             .then(parroquias => {
                 parroquiaSelect.disabled = false;
@@ -637,7 +637,7 @@ function handleParroquiaChange() {
 
 // Edit zone modal
 function editZone(id, currentPriceCode) {
-    document.getElementById('editZoneForm').action = `/pruebas/admin/shipping/zones/${id}`;
+    document.getElementById('editZoneForm').action = `{{ url('/admin/shipping/zones') }}/${id}`;
     document.getElementById('edit_price_code').value = currentPriceCode || '';
     document.getElementById('editZoneModal').classList.remove('hidden');
     document.getElementById('editZoneModal').classList.add('flex');

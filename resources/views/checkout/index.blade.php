@@ -491,7 +491,7 @@
             }
 
             try {
-                const response = await fetch(`/pruebas/checkout/shipping/cost-by-zone?provincia=${encodeURIComponent(provincia)}&canton=${encodeURIComponent(canton)}&parroquia=${encodeURIComponent(parroquia)}`);
+                const response = await fetch(`{{ route('checkout.shipping-cost-zone') }}?provincia=${encodeURIComponent(provincia)}&canton=${encodeURIComponent(canton)}&parroquia=${encodeURIComponent(parroquia)}`);
                 const data = await response.json();
 
                 if (data.success) {
@@ -559,7 +559,7 @@
             }
 
             try {
-                const response = await fetch(`/pruebas/checkout/shipping/cantones?provincia=${encodeURIComponent(provincia)}`);
+                const response = await fetch(`{{ route('checkout.cantones') }}?provincia=${encodeURIComponent(provincia)}`);
                 const cantones = await response.json();
 
                 cantones.forEach(canton => {
@@ -587,7 +587,7 @@
             }
 
             try {
-                const response = await fetch(`/pruebas/checkout/shipping/parroquias?provincia=${encodeURIComponent(provincia)}&canton=${encodeURIComponent(canton)}`);
+                const response = await fetch(`{{ route('checkout.parroquias') }}?provincia=${encodeURIComponent(provincia)}&canton=${encodeURIComponent(canton)}`);
                 const parroquias = await response.json();
 
                 parroquias.forEach(parroquia => {
@@ -632,7 +632,7 @@
             }
 
             try {
-                const response = await fetch(`/pruebas/checkout/shipping/cantones?provincia=${encodeURIComponent(provincia)}`);
+                const response = await fetch(`{{ route('checkout.cantones') }}?provincia=${encodeURIComponent(provincia)}`);
                 const cantones = await response.json();
 
                 cantones.forEach(canton => {
@@ -660,7 +660,7 @@
             }
 
             try {
-                const response = await fetch(`/pruebas/checkout/shipping/parroquias?provincia=${encodeURIComponent(provincia)}&canton=${encodeURIComponent(canton)}`);
+                const response = await fetch(`{{ route('checkout.parroquias') }}?provincia=${encodeURIComponent(provincia)}&canton=${encodeURIComponent(canton)}`);
                 const parroquias = await response.json();
 
                 parroquias.forEach(parroquia => {

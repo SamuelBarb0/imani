@@ -319,7 +319,7 @@
                                     </div>
                                     <div class="flex">
                                         <span class="font-semibold w-32">CI:</span>
-                                        <span>1761553830</span>
+                                        <span>1761553880</span>
                                     </div>
                                     <div class="flex">
                                         <span class="font-semibold w-32">Tipo de cuenta:</span>

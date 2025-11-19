@@ -200,7 +200,7 @@
                                 <label class="block text-sm font-semibold text-gray-brown mb-2">Dirección *</label>
                                 <textarea name="shipping_address" id="shipping_address" rows="2"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
-                                    placeholder="Calle principal, número, sector">{{ old('shipping_address') }}</textarea>
+                                    placeholder="Calle principal, número, sector" required>{{ old('shipping_address') }}</textarea>
                                 @error('shipping_address')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
@@ -210,7 +210,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-brown mb-2">Provincia *</label>
                                     <select name="shipping_provincia" id="shipping_provincia"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent">
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent" required>
                                         <option value="">Seleccionar provincia...</option>
                                         @foreach($provincias as $prov)
                                             <option value="{{ $prov }}" {{ old('shipping_provincia') === $prov ? 'selected' : '' }}>
@@ -227,7 +227,7 @@
                                     <label class="block text-sm font-semibold text-gray-brown mb-2">Cantón *</label>
                                     <select name="shipping_canton" id="shipping_canton"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
-                                        disabled>
+                                        disabled required>
                                         <option value="">Seleccionar cantón...</option>
                                     </select>
                                     @error('shipping_canton')
@@ -241,7 +241,7 @@
                                     <label class="block text-sm font-semibold text-gray-brown mb-2">Parroquia *</label>
                                     <select name="shipping_parroquia" id="shipping_parroquia"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
-                                        disabled>
+                                        disabled required>
                                         <option value="">Seleccionar parroquia...</option>
                                     </select>
                                     @error('shipping_parroquia')

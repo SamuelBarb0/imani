@@ -451,9 +451,8 @@ class AdminController extends Controller
                 return back()->with('error', 'Se requieren exactamente 9 imágenes para generar el template.');
             }
 
-            // Generate template with unique identifier
-            $uniqueId = "{$order->order_number}_item_{$itemId}";
-            $templatePath = $templateService->generateTemplate($uniqueId, $imagePaths);
+            // Generate template
+            $templatePath = $templateService->generateTemplate($order->order_number, $imagePaths);
 
             // Save template path to order item
             $item->update(['template_path' => $templatePath]);

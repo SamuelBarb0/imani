@@ -95,9 +95,17 @@ class TemplateGeneratorService
     {
         $x = 20;
         $y = 20;
+        $fontSize = 18;
 
-        // Using built-in GD font (font 5 is largest/most visible)
-        imagestring($canvas, 5, $x, $y, $orderNumber, $color);
+        // Use Open Sans Variable Font
+        $fontPath = public_path('Demo_Fonts/OpenSans-VariableFont_wdth,wght.ttf');
+
+        if (file_exists($fontPath)) {
+            imagettftext($canvas, $fontSize, 0, $x, $y, $color, $fontPath, $orderNumber);
+        } else {
+            // Fallback to built-in GD font
+            imagestring($canvas, 5, $x, $y, $orderNumber, $color);
+        }
     }
 
     /**
@@ -108,10 +116,19 @@ class TemplateGeneratorService
     private function renderMagnet($canvas, string $imagePath, int $x, int $y, int $index, $color, string $orderNumber): void
     {
         // Add the order number to the left of the image - vertically
+        $fontSize = 14;
+        $fontPath = public_path('Demo_Fonts/OpenSans-VariableFont_wdth,wght.ttf');
+
         $orderX = $x - 20; // 20px to the left of the image
         $orderY = $y + (self::IMAGE_SIZE / 2) + (strlen($orderNumber) * 5); // Centered vertically
 
-        imagestringup($canvas, 5, $orderX, $orderY, $orderNumber, $color);
+        if (file_exists($fontPath)) {
+            // Use TrueType font rotated 90 degrees (vertical text)
+            imagettftext($canvas, $fontSize, 90, $orderX, $orderY, $color, $fontPath, $orderNumber);
+        } else {
+            // Fallback to built-in GD font
+            imagestringup($canvas, 5, $orderX, $orderY, $orderNumber, $color);
+        }
 
         // Add the image at the specified position (644x644px)
         $this->addImage($canvas, $imagePath, $x, $y, self::IMAGE_SIZE);

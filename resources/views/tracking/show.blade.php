@@ -153,7 +153,14 @@
                                     $collectionId = str_replace('collection-', '', $item->product_id);
                                     $collection = \App\Models\Collection::find($collectionId);
                                     if ($collection && $collection->image) {
-                                        $imageUrl = asset('storage/' . $collection->image);
+                                        // Check if image path already includes 'storage/' or 'images/'
+                                        if (str_starts_with($collection->image, 'storage/')) {
+                                            $imageUrl = asset($collection->image);
+                                        } elseif (str_starts_with($collection->image, 'images/')) {
+                                            $imageUrl = asset($collection->image);
+                                        } else {
+                                            $imageUrl = asset('images/' . $collection->image);
+                                        }
                                     }
                                 }
                             @endphp

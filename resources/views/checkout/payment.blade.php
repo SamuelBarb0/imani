@@ -101,8 +101,10 @@
 @endsection
 
 @php
+    // Calculate cents from the actual total to avoid rounding errors
+    $totalCents = round($total * 100);
     $subtotalCents = round($subtotalWithIVA * 100);
-    $shippingCents = round($shippingWithIVA * 100);
+    $shippingCents = $totalCents - $subtotalCents; // Use difference to match exact total
 @endphp
 
 @push('scripts')
@@ -113,7 +115,7 @@
         // Amount = AmountWithTax + AmountWithoutTax + Tax + Service + Tip
         const subtotalCents = {{ $subtotalCents }};
         const shippingCents = {{ $shippingCents }};
-        const totalCents = subtotalCents + shippingCents;
+        const totalCents = {{ $totalCents }};
 
         const ppb = new PPaymentButtonBox({
             token: '{{ config("payphone.token") }}',

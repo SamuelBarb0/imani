@@ -862,9 +862,27 @@
                 editBtn.dataset.index = index;
                 editBtn.onclick = (e) => {
                     e.stopPropagation();
-                    // On mobile, only execute if overlay is visible
-                    if (window.innerWidth >= 1024 || overlay.classList.contains('opacity-100')) {
+
+                    if (window.innerWidth >= 1024) {
+                        // Desktop: execute immediately
                         openEditor(index);
+                    } else {
+                        // Mobile: check if overlay is visible
+                        const isVisible = overlay.classList.contains('opacity-100');
+
+                        if (isVisible) {
+                            // Overlay is visible, execute action
+                            openEditor(index);
+                        } else {
+                            // Overlay not visible, show it first
+                            document.querySelectorAll('.image-overlay').forEach(o => {
+                                o.classList.remove('opacity-100');
+                                o.classList.add('opacity-0');
+                            });
+                            overlay.classList.add('opacity-100');
+                            overlay.classList.remove('opacity-0');
+                            showMobileImageHint('Selecciona una acción');
+                        }
                     }
                 };
 
@@ -880,9 +898,27 @@
                 duplicateBtn.dataset.index = index;
                 duplicateBtn.onclick = (e) => {
                     e.stopPropagation();
-                    // On mobile, only execute if overlay is visible
-                    if (window.innerWidth >= 1024 || overlay.classList.contains('opacity-100')) {
+
+                    if (window.innerWidth >= 1024) {
+                        // Desktop: execute immediately
                         duplicateImage(index);
+                    } else {
+                        // Mobile: check if overlay is visible
+                        const isVisible = overlay.classList.contains('opacity-100');
+
+                        if (isVisible) {
+                            // Overlay is visible, execute action
+                            duplicateImage(index);
+                        } else {
+                            // Overlay not visible, show it first
+                            document.querySelectorAll('.image-overlay').forEach(o => {
+                                o.classList.remove('opacity-100');
+                                o.classList.add('opacity-0');
+                            });
+                            overlay.classList.add('opacity-100');
+                            overlay.classList.remove('opacity-0');
+                            showMobileImageHint('Selecciona una acción');
+                        }
                     }
                 };
 
@@ -898,9 +934,27 @@
                 deleteBtn.dataset.index = index;
                 deleteBtn.onclick = (e) => {
                     e.stopPropagation();
-                    // On mobile, only execute if overlay is visible
-                    if (window.innerWidth >= 1024 || overlay.classList.contains('opacity-100')) {
+
+                    if (window.innerWidth >= 1024) {
+                        // Desktop: execute immediately
                         deleteImage(index);
+                    } else {
+                        // Mobile: check if overlay is visible
+                        const isVisible = overlay.classList.contains('opacity-100');
+
+                        if (isVisible) {
+                            // Overlay is visible, execute action
+                            deleteImage(index);
+                        } else {
+                            // Overlay not visible, show it first
+                            document.querySelectorAll('.image-overlay').forEach(o => {
+                                o.classList.remove('opacity-100');
+                                o.classList.add('opacity-0');
+                            });
+                            overlay.classList.add('opacity-100');
+                            overlay.classList.remove('opacity-0');
+                            showMobileImageHint('Selecciona una acción');
+                        }
                     }
                 };
 

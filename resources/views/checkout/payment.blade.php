@@ -39,15 +39,15 @@
                 <div class="space-y-3">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-brown">Subtotal:</span>
-                        <span class="font-semibold">${{ number_format($subtotal, 2) }}</span>
+                        <span class="font-semibold">${{ number_format($subtotal / 1.15, 2) }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-brown">Envío:</span>
-                        <span class="font-semibold">${{ number_format($shippingCost, 2) }}</span>
+                        <span class="font-semibold">${{ number_format($shippingCost / 1.15, 2) }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-brown">IVA (15%):</span>
-                        <span class="font-semibold">${{ number_format(($subtotal + $shippingCost) * 0.15, 2) }}</span>
+                        <span class="font-semibold">${{ number_format((($subtotal / 1.15) + ($shippingCost / 1.15)) * 0.15, 2) }}</span>
                     </div>
                     <div class="border-t border-gray-300 pt-3 flex justify-between">
                         <span class="font-spartan font-bold text-dark-turquoise text-lg">Total a Pagar:</span>

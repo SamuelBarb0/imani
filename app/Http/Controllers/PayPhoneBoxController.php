@@ -163,7 +163,10 @@ class PayPhoneBoxController extends Controller
 
             // Prices include 15% IVA, so we need to extract it
             $subtotalWithIVA = $cart->getTotal();
-            $shippingCostWithIVA = $this->calculateShipping($cart);
+
+            // Get shipping cost from checkout data in session (already calculated based on zone)
+            $checkoutData = $request->session()->get('checkout', []);
+            $shippingCostWithIVA = $checkoutData['shipping_cost'] ?? $this->calculateShipping($cart);
 
             // Calculate base amounts without IVA
             $subtotal = round($subtotalWithIVA / 1.15, 2);

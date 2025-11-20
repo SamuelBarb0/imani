@@ -271,6 +271,7 @@ class CheckoutController extends Controller
             'newsletter_subscription' => 'nullable|boolean',
             'social_media_consent' => 'nullable|boolean',
             'client_transaction_id' => 'required|string',
+            'shipping_cost' => 'nullable|numeric',
         ]);
 
         // Store in session

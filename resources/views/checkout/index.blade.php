@@ -708,6 +708,11 @@
             // Check if using billing address for shipping
             const useBillingForShipping = sameAsBillingCheckbox.checked;
 
+            // Get shipping cost from summary (with IVA included)
+            const shippingText = document.getElementById('summary-shipping').textContent;
+            const shippingCostWithoutIVA = parseFloat(shippingText.replace('$', ''));
+            const shippingCostWithIVA = shippingCostWithoutIVA * 1.15;
+
             try {
                 const response = await fetch('{{ route("checkout.save-data") }}', {
                     method: 'POST',
@@ -733,7 +738,8 @@
                         notes: formData.get('notes'),
                         newsletter_subscription: formData.get('newsletter_subscription') ? true : false,
                         social_media_consent: formData.get('social_media_consent') ? true : false,
-                        client_transaction_id: clientTransactionId
+                        client_transaction_id: clientTransactionId,
+                        shipping_cost: shippingCostWithIVA
                     })
                 });
                 return await response.json();

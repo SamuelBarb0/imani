@@ -705,6 +705,9 @@
         async function saveCheckoutData() {
             const formData = new FormData(form);
 
+            // Check if using billing address for shipping
+            const useBillingForShipping = sameAsBillingCheckbox.checked;
+
             try {
                 const response = await fetch('{{ route("checkout.save-data") }}', {
                     method: 'POST',
@@ -718,14 +721,15 @@
                         phone: formData.get('customer_phone'),
                         document_type: formData.get('document_type'),
                         document_number: formData.get('document_number'),
-                        address: formData.get('shipping_address'),
-                        provincia: formData.get('shipping_provincia'),
-                        canton: formData.get('shipping_canton'),
-                        parroquia: formData.get('shipping_parroquia'),
-                        city: formData.get('shipping_parroquia'),
-                        state: formData.get('shipping_provincia'),
-                        zip: formData.get('shipping_zip'),
-                        country: formData.get('shipping_country'),
+                        // Use billing address if checkbox is checked, otherwise use shipping fields
+                        address: useBillingForShipping ? formData.get('billing_address') : formData.get('shipping_address'),
+                        provincia: useBillingForShipping ? formData.get('billing_provincia') : formData.get('shipping_provincia'),
+                        canton: useBillingForShipping ? formData.get('billing_canton') : formData.get('shipping_canton'),
+                        parroquia: useBillingForShipping ? formData.get('billing_parroquia') : formData.get('shipping_parroquia'),
+                        city: useBillingForShipping ? formData.get('billing_parroquia') : formData.get('shipping_parroquia'),
+                        state: useBillingForShipping ? formData.get('billing_provincia') : formData.get('shipping_provincia'),
+                        zip: formData.get('shipping_zip') || 'N/A',
+                        country: formData.get('shipping_country') || 'Ecuador',
                         notes: formData.get('notes'),
                         newsletter_subscription: formData.get('newsletter_subscription') ? true : false,
                         social_media_consent: formData.get('social_media_consent') ? true : false,

@@ -198,7 +198,7 @@
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-brown">IVA (15%):</span>
-                        <span class="font-semibold">${{ number_format($order->tax, 2) }}</span>
+                        <span class="font-semibold">${{ number_format(($order->subtotal + $order->shipping_cost) * 0.15, 2) }}</span>
                     </div>
                     <div class="flex justify-between text-lg pt-2 border-t border-gray-200">
                         <span class="font-spartan font-bold text-dark-turquoise">Total:</span>

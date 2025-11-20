@@ -200,7 +200,7 @@ class PayPhoneBoxController extends Controller
 
             // Create order
             $order = Order::create([
-                'order_number' => $clientTransactionId,
+                'order_number' => Order::generateOrderNumber(),
                 'user_id' => $user ? $user->id : Auth::id(),
                 'session_id' => session()->getId(),
                 'customer_name' => $customerName,

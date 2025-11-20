@@ -543,25 +543,52 @@
         }
     }
 
-    /* Mobile button activation state */
+    /* Mobile overlay locked/unlocked states */
     @media (max-width: 1023px) {
-        .image-overlay button.mobile-activated {
-            transform: translate(-50%, -50%) scale(1.2) !important;
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.4) !important;
-            animation: pulseButton 1s ease-in-out infinite !important;
+        /* Locked state - buttons visible but not clickable */
+        .image-overlay:not(.overlay-unlocked) .overlay-button {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(0.3);
         }
 
-        .image-overlay button.mobile-activated.absolute.bottom-2 {
-            transform: scale(1.2) !important;
+        /* Unlocked state - buttons fully interactive */
+        .image-overlay.overlay-unlocked .overlay-button {
+            opacity: 1;
+            pointer-events: auto;
+            animation: buttonPulse 0.5s ease-out;
+        }
+
+        /* Visual feedback when overlay is locked */
+        .image-overlay:not(.overlay-unlocked)::after {
+            content: 'Toca para activar';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, calc(-50% + 50px));
+            background: rgba(18, 70, 60, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 10;
         }
     }
 
-    @keyframes pulseButton {
-        0%, 100% {
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.4);
+    @keyframes buttonPulse {
+        0% {
+            transform: scale(0.9);
+            opacity: 0.5;
         }
         50% {
-            box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
         }
     }
 
@@ -606,57 +633,10 @@
         grayscale: 0
     };
     let targetSlotIndex = null; // Track which slot should receive the uploaded image
-    let activatedMobileButton = null; // Track which button is activated on mobile
-    let mobileButtonTimeout = null; // Timeout for resetting mobile button state
 
     // ============================================
     // MOBILE INTERACTION HELPERS
     // ============================================
-
-    /**
-     * Handle mobile button tap - requires confirmation before executing action
-     * First tap: highlights button and shows message
-     * Second tap: executes the action
-     */
-    function handleMobileButtonTap(button, action) {
-        // If this button is already activated, execute the action
-        if (button.classList.contains('mobile-activated')) {
-            // Clear the activated state
-            button.classList.remove('mobile-activated');
-            clearTimeout(mobileButtonTimeout);
-            activatedMobileButton = null;
-
-            // Execute the action
-            action();
-            return;
-        }
-
-        // First tap: activate the button
-        // Remove activation from any other button
-        if (activatedMobileButton && activatedMobileButton !== button) {
-            activatedMobileButton.classList.remove('mobile-activated');
-        }
-
-        // Activate this button
-        button.classList.add('mobile-activated');
-        activatedMobileButton = button;
-
-        // Show hint based on button action
-        const actionName = button.dataset.action;
-        let hintText = 'Toca nuevamente para confirmar';
-        if (actionName === 'edit') hintText = 'Toca nuevamente para editar';
-        else if (actionName === 'duplicate') hintText = 'Toca nuevamente para duplicar';
-        else if (actionName === 'delete') hintText = 'Toca nuevamente para eliminar';
-
-        showMobileImageHint(hintText);
-
-        // Auto-deactivate after 3 seconds
-        clearTimeout(mobileButtonTimeout);
-        mobileButtonTimeout = setTimeout(() => {
-            button.classList.remove('mobile-activated');
-            activatedMobileButton = null;
-        }, 3000);
-    }
 
     /**
      * Show hint message for mobile image interactions
@@ -712,15 +692,9 @@
                 const clickedInsideImage = e.target.closest('.relative.group.cursor-pointer');
                 if (!clickedInsideImage) {
                     document.querySelectorAll('.image-overlay').forEach(overlay => {
-                        overlay.classList.remove('opacity-100');
+                        overlay.classList.remove('opacity-100', 'overlay-unlocked');
                         overlay.classList.add('opacity-0');
                     });
-                    // Clear any activated buttons
-                    if (activatedMobileButton) {
-                        activatedMobileButton.classList.remove('mobile-activated');
-                        activatedMobileButton = null;
-                        clearTimeout(mobileButtonTimeout);
-                    }
                 }
             }
         });
@@ -931,7 +905,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                 </svg>
             `;
-                editBtn.className = 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-2 lg:p-1.5 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-all shadow-lg';
+                editBtn.className = 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-2 lg:p-1.5 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-all shadow-lg overlay-button';
                 editBtn.dataset.action = 'edit';
                 editBtn.dataset.index = index;
                 editBtn.onclick = (e) => {
@@ -940,8 +914,10 @@
                         // Desktop: execute immediately
                         openEditor(index);
                     } else {
-                        // Mobile: require confirmation tap
-                        handleMobileButtonTap(editBtn, () => openEditor(index));
+                        // Mobile: check if overlay is unlocked
+                        if (overlay.classList.contains('overlay-unlocked')) {
+                            openEditor(index);
+                        }
                     }
                 };
 
@@ -952,7 +928,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                 </svg>
             `;
-                duplicateBtn.className = 'absolute bottom-2 left-2 p-2 lg:p-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all shadow-lg';
+                duplicateBtn.className = 'absolute bottom-2 left-2 p-2 lg:p-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all shadow-lg overlay-button';
                 duplicateBtn.dataset.action = 'duplicate';
                 duplicateBtn.dataset.index = index;
                 duplicateBtn.onclick = (e) => {
@@ -961,8 +937,10 @@
                         // Desktop: execute immediately
                         duplicateImage(index);
                     } else {
-                        // Mobile: require confirmation tap
-                        handleMobileButtonTap(duplicateBtn, () => duplicateImage(index));
+                        // Mobile: check if overlay is unlocked
+                        if (overlay.classList.contains('overlay-unlocked')) {
+                            duplicateImage(index);
+                        }
                     }
                 };
 
@@ -973,7 +951,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>
             `;
-                deleteBtn.className = 'absolute bottom-2 right-2 p-2 lg:p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg';
+                deleteBtn.className = 'absolute bottom-2 right-2 p-2 lg:p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg overlay-button';
                 deleteBtn.dataset.action = 'delete';
                 deleteBtn.dataset.index = index;
                 deleteBtn.onclick = (e) => {
@@ -982,8 +960,10 @@
                         // Desktop: execute immediately
                         deleteImage(index);
                     } else {
-                        // Mobile: require confirmation tap
-                        handleMobileButtonTap(deleteBtn, () => deleteImage(index));
+                        // Mobile: check if overlay is unlocked
+                        if (overlay.classList.contains('overlay-unlocked')) {
+                            deleteImage(index);
+                        }
                     }
                 };
 
@@ -998,24 +978,31 @@
                     }
                 };
 
-                // Mobile: toggle overlay on click, DON'T open editor automatically
+                // Mobile: Two-tap system for overlay
                 imgContainer.onclick = (e) => {
                     if (window.innerWidth < 1024) { // Mobile/tablet
                         e.stopPropagation();
 
                         const isCurrentlyVisible = overlay.classList.contains('opacity-100');
+                        const isUnlocked = overlay.classList.contains('overlay-unlocked');
 
-                        // Hide all other overlays
+                        // Hide all other overlays and remove their unlock state
                         document.querySelectorAll('.image-overlay').forEach(o => {
-                            o.classList.remove('opacity-100');
+                            o.classList.remove('opacity-100', 'overlay-unlocked');
                             o.classList.add('opacity-0');
                         });
 
-                        // Toggle this overlay (show if hidden, hide if visible)
                         if (!isCurrentlyVisible) {
+                            // First tap: Show overlay (locked state)
                             overlay.classList.add('opacity-100');
                             overlay.classList.remove('opacity-0');
+                            showMobileImageHint('Toca nuevamente para activar las opciones');
+                        } else if (!isUnlocked) {
+                            // Second tap: Unlock the overlay (enable buttons)
+                            overlay.classList.add('overlay-unlocked');
+                            showMobileImageHint('Opciones activadas - selecciona una acción');
                         }
+                        // Third tap would hide it (handled by the hide all above)
                     }
                 };
                 imgContainer.appendChild(img);

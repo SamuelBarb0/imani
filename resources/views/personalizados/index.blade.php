@@ -436,6 +436,58 @@
         background-color: #12463c !important;
     }
 
+    /* Mobile touch controls - larger hit areas and visual feedback */
+    @media (max-width: 768px) {
+        .cropper-point {
+            width: 20px !important;
+            height: 20px !important;
+            opacity: 0.8 !important;
+        }
+
+        .cropper-point.point-nw,
+        .cropper-point.point-ne,
+        .cropper-point.point-sw,
+        .cropper-point.point-se {
+            width: 24px !important;
+            height: 24px !important;
+        }
+
+        .cropper-line {
+            height: 4px !important;
+        }
+
+        .cropper-line.line-w,
+        .cropper-line.line-e {
+            width: 4px !important;
+            height: auto !important;
+        }
+
+        /* Highlighted state for controls */
+        .cropper-controls-highlighted .cropper-point {
+            background-color: #c2b59b !important;
+            opacity: 1 !important;
+            width: 28px !important;
+            height: 28px !important;
+            box-shadow: 0 0 0 3px rgba(194, 181, 155, 0.3) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .cropper-controls-highlighted .cropper-line {
+            background-color: #c2b59b !important;
+            opacity: 1 !important;
+        }
+
+        .cropper-controls-highlighted .cropper-line {
+            height: 6px !important;
+        }
+
+        .cropper-controls-highlighted .cropper-line.line-w,
+        .cropper-controls-highlighted .cropper-line.line-e {
+            width: 6px !important;
+            height: auto !important;
+        }
+    }
+
     .cropper-bg {
         background-image: none !important;
     }
@@ -469,6 +521,26 @@
     /* Prevent body scroll when modal is open */
     body.modal-open {
         overflow: hidden;
+    }
+
+    /* Animation for mobile crop hint */
+    @keyframes fadeInOut {
+        0% {
+            opacity: 0;
+            transform: translateX(-50%) translateY(10px);
+        }
+        15% {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        85% {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        100% {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-10px);
+        }
     }
 
     /* Touch-friendly controls on mobile */
@@ -1045,6 +1117,11 @@
                             cropperContainer.removeEventListener('wheel', handleCropBoxZoom);
                             // Agregar nuevo listener
                             cropperContainer.addEventListener('wheel', handleCropBoxZoom, { passive: false });
+
+                            // Mobile double-tap for crop controls
+                            if (window.innerWidth < 768) {
+                                setupMobileDoubleTap(cropperContainer);
+                            }
                         }
                     }, 50);
                 }
@@ -1100,6 +1177,112 @@
             width: newWidth,
             height: newHeight
         });
+    }
+
+    /**
+     * Setup mobile double-tap interaction for crop controls
+     */
+    function setupMobileDoubleTap(cropperContainer) {
+        let touchTimeout = null;
+        let isControlsHighlighted = false;
+        let controlInteractionEnabled = false;
+
+        // Find the crop box element
+        const cropBox = cropperContainer.querySelector('.cropper-crop-box');
+        if (!cropBox) return;
+
+        // Handler for first touch - highlight controls
+        const handleFirstTouch = (e) => {
+            // If controls are already highlighted, allow normal interaction
+            if (controlInteractionEnabled) {
+                return;
+            }
+
+            // Check if user touched a control element
+            const isCropControl = e.target.classList.contains('cropper-point') ||
+                                  e.target.classList.contains('cropper-line');
+
+            if (isCropControl) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Highlight the controls
+                cropperContainer.classList.add('cropper-controls-highlighted');
+                isControlsHighlighted = true;
+
+                // Show a brief message
+                showMobileCropHint('Toca nuevamente para ajustar');
+
+                // Enable control interaction after highlighting
+                setTimeout(() => {
+                    controlInteractionEnabled = true;
+                }, 300);
+
+                // Auto-hide highlight after 3 seconds
+                clearTimeout(touchTimeout);
+                touchTimeout = setTimeout(() => {
+                    cropperContainer.classList.remove('cropper-controls-highlighted');
+                    isControlsHighlighted = false;
+                    controlInteractionEnabled = false;
+                }, 3000);
+            }
+        };
+
+        // Handler for touches on the crop box (not controls)
+        const handleCropBoxTouch = (e) => {
+            // If user touches the crop box (not controls), remove highlight
+            const isCropControl = e.target.classList.contains('cropper-point') ||
+                                  e.target.classList.contains('cropper-line');
+
+            if (!isCropControl && isControlsHighlighted) {
+                cropperContainer.classList.remove('cropper-controls-highlighted');
+                isControlsHighlighted = false;
+                controlInteractionEnabled = false;
+                clearTimeout(touchTimeout);
+            }
+        };
+
+        // Attach touch event listeners
+        cropBox.addEventListener('touchstart', handleFirstTouch, { passive: false });
+        cropperContainer.addEventListener('touchstart', handleCropBoxTouch);
+    }
+
+    /**
+     * Show a brief hint message for mobile crop interaction
+     */
+    function showMobileCropHint(message) {
+        // Remove any existing hint
+        const existingHint = document.querySelector('.mobile-crop-hint');
+        if (existingHint) {
+            existingHint.remove();
+        }
+
+        // Create hint element
+        const hint = document.createElement('div');
+        hint.className = 'mobile-crop-hint';
+        hint.textContent = message;
+        hint.style.cssText = `
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(18, 70, 60, 0.95);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 10000;
+            animation: fadeInOut 2s ease-in-out;
+            pointer-events: none;
+        `;
+
+        document.body.appendChild(hint);
+
+        // Remove after animation
+        setTimeout(() => {
+            hint.remove();
+        }, 2000);
     }
 
     function closeEditor() {

@@ -304,6 +304,10 @@ use Illuminate\Support\Facades\Storage;
                     <span class="text-gray-brown">Envío:</span>
                     <span>${{ number_format($order->shipping_cost, 2) }}</span>
                 </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-brown">IVA (15%):</span>
+                    <span>${{ number_format($order->tax, 2) }}</span>
+                </div>
                 <div class="border-t border-gray-200 pt-3 flex justify-between">
                     <span class="font-spartan font-bold text-dark-turquoise text-lg">Total:</span>
                     <span class="font-spartan text-xl font-bold text-dark-turquoise">${{ number_format($order->total, 2) }}</span>

@@ -161,22 +161,28 @@ class PayPhoneBoxController extends Controller
                 throw new \Exception('Cart is empty');
             }
 
-            // Prices include 15% IVA, so we need to extract it
-            $subtotalWithIVA = $cart->getTotal();
-
-            // Get shipping cost from checkout data in session (already calculated based on zone)
+            // Get checkout data from session
             $checkoutData = $request->session()->get('checkout', []);
-            $shippingCostWithIVA = $checkoutData['shipping_cost'] ?? $this->calculateShipping($cart);
 
-            // Calculate base amounts without IVA
-            $subtotal = round($subtotalWithIVA / 1.15, 2);
-            $shippingCost = round($shippingCostWithIVA / 1.15, 2);
+            // Use calculated values from session if available, otherwise calculate them
+            if (isset($checkoutData['subtotal_base']) && isset($checkoutData['shipping_base']) &&
+                isset($checkoutData['tax']) && isset($checkoutData['total'])) {
+                // Use values from session (already calculated in checkout)
+                $subtotal = $checkoutData['subtotal_base'];
+                $shippingCost = $checkoutData['shipping_base'];
+                $tax = $checkoutData['tax'];
+                $total = $checkoutData['total'];
+            } else {
+                // Fallback: calculate if not in session
+                $subtotalWithIVA = $cart->getTotal();
+                $shippingCostWithIVA = $checkoutData['shipping_cost'] ?? $this->calculateShipping($cart);
 
-            // Calculate IVA (15%)
-            $tax = round(($subtotal + $shippingCost) * 0.15, 2);
-
-            // Calculate total
-            $total = $subtotal + $shippingCost + $tax;
+                // Calculate base amounts without IVA
+                $subtotal = round($subtotalWithIVA / 1.15, 2);
+                $shippingCost = round($shippingCostWithIVA / 1.15, 2);
+                $tax = round(($subtotal + $shippingCost) * 0.15, 2);
+                $total = $subtotal + $shippingCost + $tax;
+            }
 
             // Extract customer data from PayPhone response
             $customerEmail = $paymentData['email'] ?? $request->session()->get('checkout.email', 'no-email@example.com');
@@ -194,9 +200,6 @@ class PayPhoneBoxController extends Controller
                 $newsletterSubscription,
                 $socialMediaConsent
             );
-
-            // Get checkout data from session
-            $checkoutData = $request->session()->get('checkout', []);
 
             // Create order
             $order = Order::create([

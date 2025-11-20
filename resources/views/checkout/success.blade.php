@@ -161,11 +161,6 @@
                             <div class="flex-grow">
                                 <p class="font-semibold text-gray-800">{!! preg_replace('/<span[^>]*>.*?<\/span>/i', '', nl2br($item->product_name)) !!}</p>
                                 <p class="text-xs text-gray-brown">Cantidad: {{ $item->quantity }}</p>
-                                @if($item->product_id === 'custom-magnets-9')
-                                    <p class="text-xs text-green-600 mt-1">
-                                        ✓ Template de impresión en proceso
-                                    </p>
-                                @endif
                             </div>
                             <div class="text-right">
                                 <p class="font-semibold text-dark-turquoise">${{ number_format($item->subtotal, 2) }}</p>

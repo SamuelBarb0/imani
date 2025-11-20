@@ -24,6 +24,15 @@
 
     <p style="margin: 0 0 15px 0; color: #0f3d35; line-height: 1.6; font-weight: bold;">Número del pedido: {{ $order->order_number }}</p>
 
+    <!-- Datos Bancarios -->
+    <div style="background-color: #f8f8f8; padding: 15px; border-radius: 8px; margin: 20px 0;">
+        <p style="margin: 0 0 10px 0; color: #0f3d35; font-weight: bold; font-size: 16px;">Datos Bancarios:</p>
+        <p style="margin: 0 0 5px 0; color: #333; line-height: 1.6;"><strong>Banco de Guayaquil S.A.</strong></p>
+        <p style="margin: 0 0 5px 0; color: #333; line-height: 1.6;">Nombre: Julia Schulz</p>
+        <p style="margin: 0 0 5px 0; color: #333; line-height: 1.6;">Cédula: 1761553880</p>
+        <p style="margin: 0; color: #333; line-height: 1.6;">Cuenta de ahorros: 50599480</p>
+    </div>
+
     <!-- Product Table -->
     <table style="width: 100%; border-collapse: collapse; margin: 20px 0;" cellpadding="0" cellspacing="0">
         <thead>

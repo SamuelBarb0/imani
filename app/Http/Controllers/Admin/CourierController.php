@@ -32,6 +32,7 @@ class CourierController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'tracking_url' => 'nullable|url|max:500',
             'is_active' => 'boolean',
         ]);
 
@@ -64,6 +65,7 @@ class CourierController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'tracking_url' => 'nullable|url|max:500',
             'is_active' => 'boolean',
         ]);
 

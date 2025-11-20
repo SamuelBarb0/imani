@@ -272,6 +272,10 @@ class CheckoutController extends Controller
             'social_media_consent' => 'nullable|boolean',
             'client_transaction_id' => 'required|string',
             'shipping_cost' => 'nullable|numeric',
+            'subtotal_base' => 'nullable|numeric',
+            'shipping_base' => 'nullable|numeric',
+            'tax' => 'nullable|numeric',
+            'total' => 'nullable|numeric',
         ]);
 
         // Store in session
@@ -299,24 +303,45 @@ class CheckoutController extends Controller
                 ->with('error', 'Datos de checkout no encontrados. Por favor completa el formulario nuevamente.');
         }
 
-        // Get city to calculate correct shipping cost
-        $city = null;
-        if (isset($checkoutData['city'])) {
-            $city = City::with(['courierPrices.courier', 'province'])->find($checkoutData['city']);
-        }
+        // Use calculated values from session if available, otherwise calculate them
+        if (isset($checkoutData['subtotal_base']) && isset($checkoutData['shipping_base']) && isset($checkoutData['tax']) && isset($checkoutData['total'])) {
+            // Use values from session (already calculated in checkout)
+            $subtotalBase = $checkoutData['subtotal_base'];
+            $shippingBase = $checkoutData['shipping_base'];
+            $tax = $checkoutData['tax'];
+            $total = $checkoutData['total'];
 
-        $subtotal = $cart->getTotal();
-        $shippingCost = $this->calculateShipping($cart, $city);
-        $total = $subtotal + $shippingCost;
+            // Also keep the original values with IVA for PayPhone API
+            $subtotalWithIVA = $subtotalBase * 1.15;
+            $shippingWithIVA = $shippingBase * 1.15;
+        } else {
+            // Fallback: calculate if not in session
+            $city = null;
+            if (isset($checkoutData['city'])) {
+                $city = City::with(['courierPrices.courier', 'province'])->find($checkoutData['city']);
+            }
+
+            $subtotalWithIVA = $cart->getTotal();
+            $shippingWithIVA = $this->calculateShipping($cart, $city);
+
+            // Calculate base amounts without IVA
+            $subtotalBase = round($subtotalWithIVA / 1.15, 2);
+            $shippingBase = round($shippingWithIVA / 1.15, 2);
+            $tax = round(($subtotalBase + $shippingBase) * 0.15, 2);
+            $total = $subtotalBase + $shippingBase + $tax;
+        }
 
         // Generate a fresh unique client transaction ID for each payment attempt
         // This prevents duplicate transaction errors when user reloads the page
         $clientTransactionId = 'IM-' . time() . '-' . uniqid() . '-' . substr(md5(session()->getId()), 0, 8);
 
         return view('checkout.payment', [
-            'subtotal' => $subtotal,
-            'shippingCost' => $shippingCost,
+            'subtotalBase' => $subtotalBase,
+            'shippingBase' => $shippingBase,
+            'tax' => $tax,
             'total' => $total,
+            'subtotalWithIVA' => $subtotalWithIVA,
+            'shippingWithIVA' => $shippingWithIVA,
             'customerData' => $checkoutData,
             'clientTransactionId' => $clientTransactionId,
         ]);

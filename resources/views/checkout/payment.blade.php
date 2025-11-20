@@ -36,13 +36,6 @@
                     Resumen de tu Pedido
                 </h2>
 
-                @php
-                    // Calculate base amounts without IVA (values already include IVA, so divide by 1.15)
-                    $subtotalBase = $subtotal / 1.15;
-                    $shippingBase = $shippingCost / 1.15;
-                    $ivaAmount = ($subtotalBase + $shippingBase) * 0.15;
-                @endphp
-
                 <div class="space-y-3">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-brown">Subtotal:</span>
@@ -54,7 +47,7 @@
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-brown">IVA (15%):</span>
-                        <span class="font-semibold">${{ number_format($ivaAmount, 2) }}</span>
+                        <span class="font-semibold">${{ number_format($tax, 2) }}</span>
                     </div>
                     <div class="border-t border-gray-300 pt-3 flex justify-between">
                         <span class="font-spartan font-bold text-dark-turquoise text-lg">Total a Pagar:</span>
@@ -107,14 +100,19 @@
 
 @endsection
 
+@php
+    $subtotalCents = round($subtotalWithIVA * 100);
+    $shippingCents = round($shippingWithIVA * 100);
+@endphp
+
 @push('scripts')
 <script type="module" src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js"></script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
         // Initialize PayPhone Payment Box
         // Amount = AmountWithTax + AmountWithoutTax + Tax + Service + Tip
-        const subtotalCents = {{ round($subtotal * 100) }};
-        const shippingCents = {{ round($shippingCost * 100) }};
+        const subtotalCents = {{ $subtotalCents }};
+        const shippingCents = {{ $shippingCents }};
         const totalCents = subtotalCents + shippingCents;
 
         const ppb = new PPaymentButtonBox({

@@ -93,8 +93,8 @@ class TemplateGeneratorService
      */
     private function addGlobalOrderNumber($canvas, string $orderNumber, $color): void
     {
-        $x = 20;
-        $y = 20;
+        $x = 50;
+        $y = 50;
         $fontSize = 18;
 
         // Use Open Sans Variable Font
@@ -119,7 +119,7 @@ class TemplateGeneratorService
         $fontSize = 14;
         $fontPath = public_path('Demo_Fonts/OpenSans-VariableFont_wdth,wght.ttf');
 
-        $orderX = $x - 20; // 20px to the left of the image
+        $orderX = $x - 5; // 5px to the left of the image (close to the border)
         $orderY = $y + (self::IMAGE_SIZE / 2) + (strlen($orderNumber) * 5); // Centered vertically
 
         if (file_exists($fontPath)) {

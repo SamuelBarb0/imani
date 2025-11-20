@@ -86,7 +86,7 @@
                     <div>
                         <p class="text-sm text-gray-600 mb-1">Método de Pago:</p>
                         <span class="text-gray-900 font-semibold">
-                            {{ $order->payment_method === 'payphone' ? 'PayPhone (Tarjeta/Transferencia)' : 'Transferencia Bancaria' }}
+                            {{ in_array($order->payment_method, ['payphone', 'payphone_box']) ? 'PayPhone (Tarjeta/Transferencia)' : 'Transferencia Bancaria' }}
                         </span>
                     </div>
                 </div>

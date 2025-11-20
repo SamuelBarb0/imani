@@ -153,7 +153,7 @@
                             @endif
 
                             <div class="flex-1">
-                                <h4 class="font-semibold text-gray-900">{{ $item->product_name }}</h4>
+                                <h4 class="font-semibold text-gray-900">{{ strip_tags($item->product_name) }}</h4>
                                 @if($item->product_type === 'personalized')
                                     <p class="text-xs text-gray-600 mt-1">Producto Personalizado</p>
                                 @endif

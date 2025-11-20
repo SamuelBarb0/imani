@@ -399,7 +399,7 @@
                             @foreach($items as $item)
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-brown">
-                                        {!! preg_replace('/<span[^>]*>.*?<\/span>/i', '', nl2br($item->getProductName())) !!} (x{{ $item->quantity }})
+                                        {{ strip_tags($item->getProductName()) }} (x{{ $item->quantity }})
                                     </span>
                                     <span class="font-semibold">${{ number_format($item->getSubtotal(), 2) }}</span>
                                 </div>

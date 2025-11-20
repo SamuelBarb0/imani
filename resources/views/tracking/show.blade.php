@@ -26,61 +26,27 @@
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex-1">
                         @php
-                            $statusConfig = [
-                                'pending' => [
-                                    'label' => 'Pendiente',
-                                    'color' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
-                                    'icon' => '⏳'
-                                ],
-                                'payment_received' => [
-                                    'label' => 'Pago Recibido',
-                                    'color' => 'bg-green-100 text-green-800 border-green-300',
-                                    'icon' => '💰'
-                                ],
-                                'processing' => [
-                                    'label' => 'En Proceso',
-                                    'color' => 'bg-blue-100 text-blue-800 border-blue-300',
-                                    'icon' => '⚙️'
-                                ],
-                                'shipped' => [
-                                    'label' => 'Enviado',
-                                    'color' => 'bg-purple-100 text-purple-800 border-purple-300',
-                                    'icon' => '📦'
-                                ],
-                                'completed' => [
-                                    'label' => 'Completado',
-                                    'color' => 'bg-green-100 text-green-800 border-green-300',
-                                    'icon' => '✅'
-                                ],
-                                'cancelled' => [
-                                    'label' => 'Cancelado',
-                                    'color' => 'bg-red-100 text-red-800 border-red-300',
-                                    'icon' => '❌'
-                                ]
+                            $statusIcons = [
+                                'pending' => '⏳',
+                                'payment_received' => '💰',
+                                'processing' => '⚙️',
+                                'shipped' => '📦',
+                                'completed' => '✅',
+                                'cancelled' => '❌'
                             ];
-
-                            $paymentStatusConfig = [
-                                'pending' => [
-                                    'label' => 'Pago Pendiente',
-                                    'color' => 'bg-yellow-100 text-yellow-800 border-yellow-300'
-                                ],
-                                'completed' => [
-                                    'label' => 'Pagado',
-                                    'color' => 'bg-green-100 text-green-800 border-green-300'
-                                ],
-                                'failed' => [
-                                    'label' => 'Pago Fallido',
-                                    'color' => 'bg-red-100 text-red-800 border-red-300'
-                                ]
-                            ];
-
-                            $currentStatus = $statusConfig[$order->status] ?? $statusConfig['pending'];
-                            $currentPaymentStatus = $paymentStatusConfig[$order->payment_status] ?? $paymentStatusConfig['pending'];
+                            $statusIcon = $statusIcons[$order->status] ?? '📋';
                         @endphp
 
-                        <div class="inline-flex items-center px-4 py-2 rounded-lg border-2 {{ $currentStatus['color'] }} font-semibold text-lg">
-                            <span class="mr-2">{{ $currentStatus['icon'] }}</span>
-                            {{ $currentStatus['label'] }}
+                        <div class="inline-flex items-center px-4 py-2 rounded-lg border-2 font-semibold text-lg
+                            @if($order->status === 'completed') bg-green-100 text-green-800 border-green-300
+                            @elseif($order->status === 'shipped') bg-purple-100 text-purple-800 border-purple-300
+                            @elseif($order->status === 'processing') bg-blue-100 text-blue-800 border-blue-300
+                            @elseif($order->status === 'payment_received') bg-green-100 text-green-800 border-green-300
+                            @elseif($order->status === 'pending') bg-yellow-100 text-yellow-800 border-yellow-300
+                            @elseif($order->status === 'cancelled') bg-red-100 text-red-800 border-red-300
+                            @endif">
+                            <span class="mr-2">{{ $statusIcon }}</span>
+                            {{ $order->status_name }}
                         </div>
                     </div>
                 </div>
@@ -89,8 +55,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div>
                         <p class="text-sm text-gray-600 mb-1">Estado de Pago:</p>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm border {{ $currentPaymentStatus['color'] }} font-semibold">
-                            {{ $currentPaymentStatus['label'] }}
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm border font-semibold
+                            @if($order->payment_status === 'completed') bg-green-100 text-green-800 border-green-300
+                            @elseif($order->payment_status === 'pending') bg-yellow-100 text-yellow-800 border-yellow-300
+                            @else bg-gray-100 text-gray-800 border-gray-300
+                            @endif">
+                            {{ $order->payment_status === 'completed' ? 'Pagado' : ucfirst($order->payment_status) }}
                         </span>
                     </div>
                     <div>

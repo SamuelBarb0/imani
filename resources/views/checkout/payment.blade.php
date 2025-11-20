@@ -36,18 +36,25 @@
                     Resumen de tu Pedido
                 </h2>
 
+                @php
+                    // Calculate base amounts without IVA (values already include IVA, so divide by 1.15)
+                    $subtotalBase = $subtotal / 1.15;
+                    $shippingBase = $shippingCost / 1.15;
+                    $ivaAmount = ($subtotalBase + $shippingBase) * 0.15;
+                @endphp
+
                 <div class="space-y-3">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-brown">Subtotal:</span>
-                        <span class="font-semibold">${{ number_format($subtotal, 2) }}</span>
+                        <span class="font-semibold">${{ number_format($subtotalBase, 2) }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-brown">Envío:</span>
-                        <span class="font-semibold">${{ number_format($shippingCost, 2) }}</span>
+                        <span class="font-semibold">${{ number_format($shippingBase, 2) }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-brown">IVA (15%):</span>
-                        <span class="font-semibold">${{ number_format((($subtotal) + ($shippingCost)) * 0.15, 2) }}</span>
+                        <span class="font-semibold">${{ number_format($ivaAmount, 2) }}</span>
                     </div>
                     <div class="border-t border-gray-300 pt-3 flex justify-between">
                         <span class="font-spartan font-bold text-dark-turquoise text-lg">Total a Pagar:</span>

@@ -88,8 +88,8 @@ use Illuminate\Support\Facades\Storage;
         <!-- Order Info -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="font-spartan text-lg font-bold text-dark-turquoise mb-4">Información del Cliente y Facturación</h2>
-                <div class="space-y-2">
+                <h2 class="font-spartan text-lg font-bold text-dark-turquoise mb-4">Información del Cliente</h2>
+                <div class="space-y-3">
                     <div>
                         <p class="text-xs font-semibold text-gray-brown">Nombre:</p>
                         <p class="text-sm">{{ $order->customer_name }}</p>
@@ -102,19 +102,22 @@ use Illuminate\Support\Facades\Storage;
                         <p class="text-xs font-semibold text-gray-brown">Teléfono:</p>
                         <p class="text-sm">{{ $order->customer_phone ?? 'N/A' }}</p>
                     </div>
-                    <div>
-                        <p class="text-xs font-semibold text-gray-brown">Documento de Identificación:</p>
+                    <div class="pt-3 border-t border-gray-200">
+                        <p class="text-xs font-semibold text-gray-brown mb-1">Documento de Identificación:</p>
                         <p class="text-sm">
-                            <span class="font-semibold">{{ strtoupper($order->document_type) }}:</span>
-                            {{ $order->document_number }}
+                            <span class="font-semibold uppercase">{{ $order->document_type ?? 'N/A' }}:</span>
+                            {{ $order->document_number ?? 'N/A' }}
                         </p>
                     </div>
-                    @if($order->billing_address)
-                        <div class="pt-2 border-t border-gray-200">
-                            <p class="text-xs font-semibold text-gray-brown mb-1">Dirección de Facturación:</p>
-                            <p class="text-sm">{{ $order->billing_address }}</p>
-                            <p class="text-sm">{{ $order->billing_parroquia }}, {{ $order->billing_canton }}, {{ $order->billing_provincia }} {{ $order->billing_zip }}</p>
-                            <p class="text-sm">{{ $order->billing_country }}</p>
+                    @if($order->newsletter_subscription || $order->social_media_consent)
+                        <div class="pt-3 border-t border-gray-200">
+                            <p class="text-xs font-semibold text-gray-brown mb-1">Preferencias:</p>
+                            @if($order->newsletter_subscription)
+                                <p class="text-xs text-green-600">✓ Suscrito al newsletter</p>
+                            @endif
+                            @if($order->social_media_consent)
+                                <p class="text-xs text-green-600">✓ Consentimiento para redes sociales</p>
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -122,12 +125,7 @@ use Illuminate\Support\Facades\Storage;
 
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="font-spartan text-lg font-bold text-dark-turquoise mb-4">Dirección de Envío</h2>
-                @if($order->same_as_billing && $order->billing_address)
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
-                        <p class="text-sm text-blue-800">✓ Misma dirección de facturación</p>
-                    </div>
-                @endif
-                <div class="space-y-2">
+                <div class="space-y-3">
                     @if($order->shipping_name && $order->shipping_name !== $order->customer_name)
                         <div>
                             <p class="text-xs font-semibold text-gray-brown">Nombre del Destinatario:</p>
@@ -136,9 +134,33 @@ use Illuminate\Support\Facades\Storage;
                     @endif
                     <div>
                         <p class="text-xs font-semibold text-gray-brown">Dirección:</p>
-                        <p class="text-sm">{{ $order->shipping_address }}</p>
-                        <p class="text-sm">{{ $order->shipping_city }}, {{ $order->shipping_canton }}, {{ $order->shipping_state }} {{ $order->shipping_zip }}</p>
-                        <p class="text-sm">{{ $order->shipping_country }}</p>
+                        <p class="text-sm">{{ $order->shipping_address ?? 'N/A' }}</p>
+                    </div>
+                    @if($order->shipping_provincia || $order->shipping_canton || $order->shipping_parroquia)
+                        <div>
+                            <p class="text-xs font-semibold text-gray-brown">Ubicación:</p>
+                            <p class="text-sm">
+                                @if($order->shipping_parroquia)
+                                    {{ $order->shipping_parroquia }},
+                                @endif
+                                @if($order->shipping_canton)
+                                    {{ $order->shipping_canton }},
+                                @endif
+                                @if($order->shipping_provincia)
+                                    {{ $order->shipping_provincia }}
+                                @endif
+                            </p>
+                        </div>
+                    @endif
+                    @if($order->shipping_zip && $order->shipping_zip !== 'N/A')
+                        <div>
+                            <p class="text-xs font-semibold text-gray-brown">Código Postal:</p>
+                            <p class="text-sm">{{ $order->shipping_zip }}</p>
+                        </div>
+                    @endif
+                    <div>
+                        <p class="text-xs font-semibold text-gray-brown">País:</p>
+                        <p class="text-sm">{{ $order->shipping_country ?? 'Ecuador' }}</p>
                     </div>
                 </div>
             </div>

@@ -862,7 +862,10 @@
                 editBtn.dataset.index = index;
                 editBtn.onclick = (e) => {
                     e.stopPropagation();
-                    openEditor(index);
+                    // On mobile, only execute if overlay is visible
+                    if (window.innerWidth >= 1024 || overlay.classList.contains('opacity-100')) {
+                        openEditor(index);
+                    }
                 };
 
                 // Duplicate button (bottom left)
@@ -877,7 +880,10 @@
                 duplicateBtn.dataset.index = index;
                 duplicateBtn.onclick = (e) => {
                     e.stopPropagation();
-                    duplicateImage(index);
+                    // On mobile, only execute if overlay is visible
+                    if (window.innerWidth >= 1024 || overlay.classList.contains('opacity-100')) {
+                        duplicateImage(index);
+                    }
                 };
 
                 // Delete button (bottom right)
@@ -892,7 +898,10 @@
                 deleteBtn.dataset.index = index;
                 deleteBtn.onclick = (e) => {
                     e.stopPropagation();
-                    deleteImage(index);
+                    // On mobile, only execute if overlay is visible
+                    if (window.innerWidth >= 1024 || overlay.classList.contains('opacity-100')) {
+                        deleteImage(index);
+                    }
                 };
 
                 overlay.appendChild(editBtn);

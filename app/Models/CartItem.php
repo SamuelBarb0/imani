@@ -43,7 +43,9 @@ class CartItem extends Model
     {
         // Check if it's a collection
         if (str_starts_with($this->product_id, 'collection-')) {
-            return $this->custom_data['name'] ?? 'Colección';
+            $name = $this->custom_data['name'] ?? 'Colección';
+            // Remove any HTML tags (like <br>, <span>, etc.)
+            return strip_tags($name);
         }
 
         return match ($this->product_id) {

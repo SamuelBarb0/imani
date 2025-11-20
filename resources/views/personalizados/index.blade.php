@@ -543,54 +543,6 @@
         }
     }
 
-    /* Mobile overlay locked/unlocked states */
-    @media (max-width: 1023px) {
-        /* Locked state - buttons visible but not clickable */
-        .image-overlay:not(.overlay-unlocked) .overlay-button {
-            opacity: 0.5;
-            pointer-events: none;
-            filter: grayscale(0.3);
-        }
-
-        /* Unlocked state - buttons fully interactive */
-        .image-overlay.overlay-unlocked .overlay-button {
-            opacity: 1;
-            pointer-events: auto;
-            animation: buttonPulse 0.5s ease-out;
-        }
-
-        /* Visual feedback when overlay is locked */
-        .image-overlay:not(.overlay-unlocked)::after {
-            content: 'Toca para activar';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, calc(-50% + 50px));
-            background: rgba(18, 70, 60, 0.9);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: 10;
-        }
-    }
-
-    @keyframes buttonPulse {
-        0% {
-            transform: scale(0.9);
-            opacity: 0.5;
-        }
-        50% {
-            transform: scale(1.05);
-        }
-        100% {
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
 
     /* Touch-friendly controls on mobile */
     @media (max-width: 1024px) {
@@ -692,7 +644,7 @@
                 const clickedInsideImage = e.target.closest('.relative.group.cursor-pointer');
                 if (!clickedInsideImage) {
                     document.querySelectorAll('.image-overlay').forEach(overlay => {
-                        overlay.classList.remove('opacity-100', 'overlay-unlocked');
+                        overlay.classList.remove('opacity-100');
                         overlay.classList.add('opacity-0');
                     });
                 }
@@ -910,15 +862,7 @@
                 editBtn.dataset.index = index;
                 editBtn.onclick = (e) => {
                     e.stopPropagation();
-                    if (window.innerWidth >= 1024) {
-                        // Desktop: execute immediately
-                        openEditor(index);
-                    } else {
-                        // Mobile: check if overlay is unlocked
-                        if (overlay.classList.contains('overlay-unlocked')) {
-                            openEditor(index);
-                        }
-                    }
+                    openEditor(index);
                 };
 
                 // Duplicate button (bottom left)
@@ -933,15 +877,7 @@
                 duplicateBtn.dataset.index = index;
                 duplicateBtn.onclick = (e) => {
                     e.stopPropagation();
-                    if (window.innerWidth >= 1024) {
-                        // Desktop: execute immediately
-                        duplicateImage(index);
-                    } else {
-                        // Mobile: check if overlay is unlocked
-                        if (overlay.classList.contains('overlay-unlocked')) {
-                            duplicateImage(index);
-                        }
-                    }
+                    duplicateImage(index);
                 };
 
                 // Delete button (bottom right)
@@ -956,15 +892,7 @@
                 deleteBtn.dataset.index = index;
                 deleteBtn.onclick = (e) => {
                     e.stopPropagation();
-                    if (window.innerWidth >= 1024) {
-                        // Desktop: execute immediately
-                        deleteImage(index);
-                    } else {
-                        // Mobile: check if overlay is unlocked
-                        if (overlay.classList.contains('overlay-unlocked')) {
-                            deleteImage(index);
-                        }
-                    }
+                    deleteImage(index);
                 };
 
                 overlay.appendChild(editBtn);
@@ -978,31 +906,25 @@
                     }
                 };
 
-                // Mobile: Two-tap system for overlay
+                // Mobile: Single tap to show overlay with options
                 imgContainer.onclick = (e) => {
                     if (window.innerWidth < 1024) { // Mobile/tablet
                         e.stopPropagation();
 
                         const isCurrentlyVisible = overlay.classList.contains('opacity-100');
-                        const isUnlocked = overlay.classList.contains('overlay-unlocked');
 
-                        // Hide all other overlays and remove their unlock state
+                        // Hide all other overlays
                         document.querySelectorAll('.image-overlay').forEach(o => {
-                            o.classList.remove('opacity-100', 'overlay-unlocked');
+                            o.classList.remove('opacity-100');
                             o.classList.add('opacity-0');
                         });
 
+                        // Toggle this overlay (show if hidden, hide if visible)
                         if (!isCurrentlyVisible) {
-                            // First tap: Show overlay (locked state)
                             overlay.classList.add('opacity-100');
                             overlay.classList.remove('opacity-0');
-                            showMobileImageHint('Toca nuevamente para activar las opciones');
-                        } else if (!isUnlocked) {
-                            // Second tap: Unlock the overlay (enable buttons)
-                            overlay.classList.add('overlay-unlocked');
-                            showMobileImageHint('Opciones activadas - selecciona una acción');
+                            showMobileImageHint('Selecciona una acción');
                         }
-                        // Third tap would hide it (handled by the hide all above)
                     }
                 };
                 imgContainer.appendChild(img);

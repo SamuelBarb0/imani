@@ -144,7 +144,7 @@
                         <div class="flex items-start border-b border-gray-200 pb-4 last:border-0 last:pb-0">
                             @if($item->template_path)
                                 <div class="flex-shrink-0 w-20 h-20 bg-gray-100 rounded overflow-hidden mr-4">
-                                    <img src="{{ asset($item->template_path) }}" alt="Producto" class="w-full h-full object-cover">
+                                    <img src="{{ asset('storage/' . str_replace('storage/', '', $item->template_path)) }}" alt="Producto" class="w-full h-full object-cover">
                                 </div>
                             @else
                                 <div class="flex-shrink-0 w-20 h-20 bg-gray-200 rounded flex items-center justify-center mr-4">

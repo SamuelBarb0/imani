@@ -51,7 +51,7 @@ class WholesaleController extends Controller
                     "Fecha necesaria: ".\Carbon\Carbon::parse($validated['fecha'])->format('d/m/Y')."\n".
                     ($validated['comentarios'] ? "Comentarios: {$validated['comentarios']}" : ''),
             ], function ($message) use ($fullName, $validated) {
-                $message->to(config('mail.admin_email', 'mayoristas@imanimagnets.com'))
+                $message->to(config('mail.admin_email', 'mayorista@imanimagnets.com'))
                     ->replyTo($validated['correo'], $fullName)
                     ->subject('Nueva Solicitud de Por Mayor - '.$fullName);
             });

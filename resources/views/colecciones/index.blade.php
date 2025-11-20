@@ -9,7 +9,7 @@
                 <h1 class="text-3xl md:text-4xl lg:text-5xl font-spartan font-bold text-dark-turquoise leading-none">
                     {{ $content->get('header.title') }}
                 </h1>
-                <p class="text-xl md:text-xl font-spartan font-semibold text-dark-turquoise mb-4">
+                <p class="text-lg md:text-lg font-spartan font-semibold text-dark-turquoise mb-4">
                     {{ $content->get('header.subtitle') }}
                 </p>
                 <p class="text-gray-brown mb-4 ">

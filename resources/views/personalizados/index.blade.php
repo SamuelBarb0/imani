@@ -543,6 +543,28 @@
         }
     }
 
+    /* Mobile button activation state */
+    @media (max-width: 1023px) {
+        .image-overlay button.mobile-activated {
+            transform: translate(-50%, -50%) scale(1.2) !important;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.4) !important;
+            animation: pulseButton 1s ease-in-out infinite !important;
+        }
+
+        .image-overlay button.mobile-activated.absolute.bottom-2 {
+            transform: scale(1.2) !important;
+        }
+    }
+
+    @keyframes pulseButton {
+        0%, 100% {
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.4);
+        }
+        50% {
+            box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+    }
+
     /* Touch-friendly controls on mobile */
     @media (max-width: 1024px) {
         .mode-controls input[type="range"] {
@@ -584,6 +606,97 @@
         grayscale: 0
     };
     let targetSlotIndex = null; // Track which slot should receive the uploaded image
+    let activatedMobileButton = null; // Track which button is activated on mobile
+    let mobileButtonTimeout = null; // Timeout for resetting mobile button state
+
+    // ============================================
+    // MOBILE INTERACTION HELPERS
+    // ============================================
+
+    /**
+     * Handle mobile button tap - requires confirmation before executing action
+     * First tap: highlights button and shows message
+     * Second tap: executes the action
+     */
+    function handleMobileButtonTap(button, action) {
+        // If this button is already activated, execute the action
+        if (button.classList.contains('mobile-activated')) {
+            // Clear the activated state
+            button.classList.remove('mobile-activated');
+            clearTimeout(mobileButtonTimeout);
+            activatedMobileButton = null;
+
+            // Execute the action
+            action();
+            return;
+        }
+
+        // First tap: activate the button
+        // Remove activation from any other button
+        if (activatedMobileButton && activatedMobileButton !== button) {
+            activatedMobileButton.classList.remove('mobile-activated');
+        }
+
+        // Activate this button
+        button.classList.add('mobile-activated');
+        activatedMobileButton = button;
+
+        // Show hint based on button action
+        const actionName = button.dataset.action;
+        let hintText = 'Toca nuevamente para confirmar';
+        if (actionName === 'edit') hintText = 'Toca nuevamente para editar';
+        else if (actionName === 'duplicate') hintText = 'Toca nuevamente para duplicar';
+        else if (actionName === 'delete') hintText = 'Toca nuevamente para eliminar';
+
+        showMobileImageHint(hintText);
+
+        // Auto-deactivate after 3 seconds
+        clearTimeout(mobileButtonTimeout);
+        mobileButtonTimeout = setTimeout(() => {
+            button.classList.remove('mobile-activated');
+            activatedMobileButton = null;
+        }, 3000);
+    }
+
+    /**
+     * Show hint message for mobile image interactions
+     */
+    function showMobileImageHint(message) {
+        // Remove any existing hint
+        const existingHint = document.querySelector('.mobile-image-hint');
+        if (existingHint) {
+            existingHint.remove();
+        }
+
+        // Create hint element
+        const hint = document.createElement('div');
+        hint.className = 'mobile-image-hint';
+        hint.textContent = message;
+        hint.style.cssText = `
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(18, 70, 60, 0.95);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 10000;
+            animation: fadeInOut 2s ease-in-out;
+            pointer-events: none;
+            max-width: 90%;
+            text-align: center;
+        `;
+
+        document.body.appendChild(hint);
+
+        // Remove after animation
+        setTimeout(() => {
+            hint.remove();
+        }, 2000);
+    }
 
     // ============================================
     // UPLOAD FUNCTIONALITY
@@ -602,6 +715,12 @@
                         overlay.classList.remove('opacity-100');
                         overlay.classList.add('opacity-0');
                     });
+                    // Clear any activated buttons
+                    if (activatedMobileButton) {
+                        activatedMobileButton.classList.remove('mobile-activated');
+                        activatedMobileButton = null;
+                        clearTimeout(mobileButtonTimeout);
+                    }
                 }
             }
         });
@@ -813,9 +932,17 @@
                 </svg>
             `;
                 editBtn.className = 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-2 lg:p-1.5 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-all shadow-lg';
+                editBtn.dataset.action = 'edit';
+                editBtn.dataset.index = index;
                 editBtn.onclick = (e) => {
                     e.stopPropagation();
-                    openEditor(index);
+                    if (window.innerWidth >= 1024) {
+                        // Desktop: execute immediately
+                        openEditor(index);
+                    } else {
+                        // Mobile: require confirmation tap
+                        handleMobileButtonTap(editBtn, () => openEditor(index));
+                    }
                 };
 
                 // Duplicate button (bottom left)
@@ -826,9 +953,17 @@
                 </svg>
             `;
                 duplicateBtn.className = 'absolute bottom-2 left-2 p-2 lg:p-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all shadow-lg';
+                duplicateBtn.dataset.action = 'duplicate';
+                duplicateBtn.dataset.index = index;
                 duplicateBtn.onclick = (e) => {
                     e.stopPropagation();
-                    duplicateImage(index);
+                    if (window.innerWidth >= 1024) {
+                        // Desktop: execute immediately
+                        duplicateImage(index);
+                    } else {
+                        // Mobile: require confirmation tap
+                        handleMobileButtonTap(duplicateBtn, () => duplicateImage(index));
+                    }
                 };
 
                 // Delete button (bottom right)
@@ -839,9 +974,17 @@
                 </svg>
             `;
                 deleteBtn.className = 'absolute bottom-2 right-2 p-2 lg:p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg';
+                deleteBtn.dataset.action = 'delete';
+                deleteBtn.dataset.index = index;
                 deleteBtn.onclick = (e) => {
                     e.stopPropagation();
-                    deleteImage(index);
+                    if (window.innerWidth >= 1024) {
+                        // Desktop: execute immediately
+                        deleteImage(index);
+                    } else {
+                        // Mobile: require confirmation tap
+                        handleMobileButtonTap(deleteBtn, () => deleteImage(index));
+                    }
                 };
 
                 overlay.appendChild(editBtn);

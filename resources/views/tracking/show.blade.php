@@ -142,9 +142,25 @@
                 <div class="space-y-4">
                     @foreach($order->items as $item)
                         <div class="flex items-start border-b border-gray-200 pb-4 last:border-0 last:pb-0">
-                            @if($item->template_path)
+                            @php
+                                $imageUrl = null;
+                                // Check if it has a template (personalized product)
+                                if ($item->template_path) {
+                                    $imageUrl = asset('storage/' . str_replace('storage/', '', $item->template_path));
+                                }
+                                // Check if it's a collection product
+                                elseif (str_starts_with($item->product_id, 'collection-')) {
+                                    $collectionId = str_replace('collection-', '', $item->product_id);
+                                    $collection = \App\Models\Collection::find($collectionId);
+                                    if ($collection && $collection->image) {
+                                        $imageUrl = asset('storage/' . $collection->image);
+                                    }
+                                }
+                            @endphp
+
+                            @if($imageUrl)
                                 <div class="flex-shrink-0 w-20 h-20 bg-gray-100 rounded overflow-hidden mr-4">
-                                    <img src="{{ asset('storage/' . str_replace('storage/', '', $item->template_path)) }}" alt="Producto" class="w-full h-full object-cover">
+                                    <img src="{{ $imageUrl }}" alt="Producto" class="w-full h-full object-cover">
                                 </div>
                             @else
                                 <div class="flex-shrink-0 w-20 h-20 bg-gray-200 rounded flex items-center justify-center mr-4">

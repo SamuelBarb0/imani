@@ -202,25 +202,18 @@
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <h3 class="font-spartan text-lg font-bold text-dark-turquoise mb-4">Resumen del Pedido</h3>
 
-                @php
-                    // Calculate base amounts without IVA (divide by 1.15)
-                    $subtotalBase = $order->subtotal / 1.15;
-                    $shippingBase = $order->shipping_cost / 1.15;
-                    $ivaAmount = ($subtotalBase + $shippingBase) * 0.15;
-                @endphp
-
                 <div class="space-y-3">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600">Subtotal:</span>
-                        <span class="font-semibold">${{ number_format($subtotalBase, 2) }}</span>
+                        <span class="font-semibold">${{ number_format($order->subtotal, 2) }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600">Envío:</span>
-                        <span class="font-semibold">${{ number_format($shippingBase, 2) }}</span>
+                        <span class="font-semibold">${{ number_format($order->shipping_cost, 2) }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600">IVA (15%):</span>
-                        <span class="font-semibold">${{ number_format($ivaAmount, 2) }}</span>
+                        <span class="font-semibold">${{ number_format($order->tax, 2) }}</span>
                     </div>
                     <div class="border-t border-gray-200 pt-3 flex justify-between">
                         <span class="font-spartan font-bold text-dark-turquoise text-lg">Total:</span>

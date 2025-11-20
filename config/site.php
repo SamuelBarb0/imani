@@ -16,7 +16,7 @@ return [
         'message' => 'Hola Julia, te escribo desde la página web de Imani Magnets. Quisiera más información sobre sus productos.',
     ],
 
-    'email' => 'info@imanimagnets.com',
+    'email' => 'hello@imanimagnets.com',
 
     'social' => [
         'instagram' => 'https://instagram.com/imanimagnets',

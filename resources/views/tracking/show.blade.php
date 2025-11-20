@@ -32,10 +32,20 @@
                                     'color' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
                                     'icon' => '⏳'
                                 ],
+                                'payment_received' => [
+                                    'label' => 'Pago Recibido',
+                                    'color' => 'bg-green-100 text-green-800 border-green-300',
+                                    'icon' => '💰'
+                                ],
                                 'processing' => [
                                     'label' => 'En Proceso',
                                     'color' => 'bg-blue-100 text-blue-800 border-blue-300',
                                     'icon' => '⚙️'
+                                ],
+                                'shipped' => [
+                                    'label' => 'Enviado',
+                                    'color' => 'bg-purple-100 text-purple-800 border-purple-300',
+                                    'icon' => '📦'
                                 ],
                                 'completed' => [
                                     'label' => 'Completado',
@@ -54,7 +64,7 @@
                                     'label' => 'Pago Pendiente',
                                     'color' => 'bg-yellow-100 text-yellow-800 border-yellow-300'
                                 ],
-                                'paid' => [
+                                'completed' => [
                                     'label' => 'Pagado',
                                     'color' => 'bg-green-100 text-green-800 border-green-300'
                                 ],
@@ -64,7 +74,7 @@
                                 ]
                             ];
 
-                            $currentStatus = $statusConfig[$order->order_status] ?? $statusConfig['pending'];
+                            $currentStatus = $statusConfig[$order->status] ?? $statusConfig['pending'];
                             $currentPaymentStatus = $paymentStatusConfig[$order->payment_status] ?? $paymentStatusConfig['pending'];
                         @endphp
 

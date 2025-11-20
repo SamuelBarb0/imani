@@ -136,20 +136,34 @@ use Illuminate\Support\Facades\Storage;
                         <p class="text-xs font-semibold text-gray-brown">Dirección:</p>
                         <p class="text-sm">{{ $order->shipping_address ?? 'N/A' }}</p>
                     </div>
-                    @if($order->shipping_provincia || $order->shipping_canton || $order->shipping_parroquia)
+                    @if($order->shipping_city && $order->shipping_city !== 'N/A')
                         <div>
-                            <p class="text-xs font-semibold text-gray-brown">Ubicación:</p>
-                            <p class="text-sm">
-                                @if($order->shipping_parroquia)
-                                    {{ $order->shipping_parroquia }},
-                                @endif
-                                @if($order->shipping_canton)
-                                    {{ $order->shipping_canton }},
-                                @endif
-                                @if($order->shipping_provincia)
-                                    {{ $order->shipping_provincia }}
-                                @endif
-                            </p>
+                            <p class="text-xs font-semibold text-gray-brown">Ciudad:</p>
+                            <p class="text-sm">{{ $order->shipping_city }}</p>
+                        </div>
+                    @endif
+                    @if($order->shipping_parroquia && $order->shipping_parroquia !== 'N/A')
+                        <div>
+                            <p class="text-xs font-semibold text-gray-brown">Parroquia:</p>
+                            <p class="text-sm">{{ $order->shipping_parroquia }}</p>
+                        </div>
+                    @endif
+                    @if($order->shipping_canton && $order->shipping_canton !== 'N/A')
+                        <div>
+                            <p class="text-xs font-semibold text-gray-brown">Cantón:</p>
+                            <p class="text-sm">{{ $order->shipping_canton }}</p>
+                        </div>
+                    @endif
+                    @if($order->shipping_state && $order->shipping_state !== 'N/A')
+                        <div>
+                            <p class="text-xs font-semibold text-gray-brown">Provincia (State):</p>
+                            <p class="text-sm">{{ $order->shipping_state }}</p>
+                        </div>
+                    @endif
+                    @if($order->shipping_provincia && $order->shipping_provincia !== 'N/A')
+                        <div>
+                            <p class="text-xs font-semibold text-gray-brown">Provincia:</p>
+                            <p class="text-sm">{{ $order->shipping_provincia }}</p>
                         </div>
                     @endif
                     @if($order->shipping_zip && $order->shipping_zip !== 'N/A')

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactFormEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -21,26 +22,17 @@ class ContactController extends Controller
 
         try {
             // Send confirmation email to customer
-            Mail::send('emails.contact-form', [
-                'name' => $fullName,
-                'userMessage' => $validated['comentarios'],
-            ], function ($message) use ($validated, $fullName) {
-                $message->to($validated['correo'], $fullName)
-                    ->subject('Hemos recibido tu mensaje - Imani Magnets');
-            });
+            Mail::to($validated['correo'])
+                ->send(new ContactFormEmail(
+                    name: $fullName,
+                    email: $validated['correo'],
+                    userMessage: $validated['comentarios']
+                ));
 
-            // Send notification to admin
-            Mail::send('emails.contact-form', [
-                'name' => 'Admin',
-                'userMessage' => "Nueva consulta de contacto:\n\n".
-                    "Nombre: {$fullName}\n".
-                    "Email: {$validated['correo']}\n".
-                    "Mensaje: {$validated['comentarios']}",
-            ], function ($message) use ($fullName, $validated) {
-                $message->to(config('mail.admin_email', 'contacto@imanimagnets.com'))
-                    ->replyTo($validated['correo'], $fullName)
-                    ->subject('Nueva Consulta de Contacto - '.$fullName);
-            });
+            Log::info('Contact form email sent', [
+                'name' => $fullName,
+                'email' => $validated['correo']
+            ]);
 
             return back()->with('success', '¡Gracias por tu mensaje! Te responderemos pronto.');
         } catch (\Exception $e) {

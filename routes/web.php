@@ -207,6 +207,13 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/politicas', [App\Http\Controllers\Admin\PolicyPageController::class, 'index'])->name('policies.index');
         Route::get('/politicas/{page}/editar', [App\Http\Controllers\Admin\PolicyPageController::class, 'edit'])->name('policies.edit');
         Route::put('/politicas/{page}', [App\Http\Controllers\Admin\PolicyPageController::class, 'update'])->name('policies.update');
+
+        // Checkout Messages Management
+        Route::get('/checkout-messages', [App\Http\Controllers\Admin\CheckoutMessageController::class, 'index'])->name('checkout-messages.index');
+        Route::get('/checkout-messages/{id}/editar', [App\Http\Controllers\Admin\CheckoutMessageController::class, 'edit'])->name('checkout-messages.edit');
+        Route::put('/checkout-messages/{id}', [App\Http\Controllers\Admin\CheckoutMessageController::class, 'update'])->name('checkout-messages.update');
+        Route::post('/checkout-messages', [App\Http\Controllers\Admin\CheckoutMessageController::class, 'store'])->name('checkout-messages.store');
+        Route::delete('/checkout-messages/{id}', [App\Http\Controllers\Admin\CheckoutMessageController::class, 'destroy'])->name('checkout-messages.destroy');
 });
 
 /**

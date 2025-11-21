@@ -12,6 +12,25 @@
 <section class="bg-gray-50 py-12 min-h-screen flex items-center justify-center">
     <div class="container mx-auto px-6 max-w-2xl">
 
+        <!-- Checkout Message (if active) -->
+        @php
+            $checkoutMessage = \App\Models\CheckoutMessage::getActiveMessage();
+        @endphp
+
+        @if($checkoutMessage)
+            <div class="mb-6 rounded-lg p-4 border-l-4
+                @if($checkoutMessage->type === 'info') bg-blue-50 border-blue-500
+                @elseif($checkoutMessage->type === 'warning') bg-yellow-50 border-yellow-500
+                @elseif($checkoutMessage->type === 'vacation') bg-orange-50 border-orange-500
+                @endif">
+                <div class="text-sm whitespace-pre-line
+                    @if($checkoutMessage->type === 'info') text-blue-900
+                    @elseif($checkoutMessage->type === 'warning') text-yellow-900
+                    @elseif($checkoutMessage->type === 'vacation') text-orange-900
+                    @endif">{{ $checkoutMessage->content }}</div>
+            </div>
+        @endif
+
         <!-- Payment Card -->
         <div class="bg-white rounded-lg shadow-xl p-8">
 

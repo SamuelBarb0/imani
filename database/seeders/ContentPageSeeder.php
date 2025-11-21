@@ -195,7 +195,7 @@ class ContentPageSeeder extends Seeder
                 'slug' => 'terminos-condiciones',
                 'title' => 'Términos y Condiciones de Uso',
                 'content' => '<h2>Titularidad del sitio web</h2>
-<p>El presente sitio web, accesible a través de la dirección <a href="https://www.imanimagnets.com">www.imanimagnets.com</a>, es operado bajo el nombre comercial <strong>Imani Magnets</strong>, cuyo titular legal es <strong>Julia Schulz</strong>, con domicilio en Cumbayá, Quito, Ecuador, y correo electrónico de contacto <a href="mailto:hello@imanimagnets.com">info@imanimagnets.com</a>.</p>
+<p>El presente sitio web, accesible a través de la dirección <a href="https://www.imanimagnets.com">www.imanimagnets.com</a>, es operado bajo el nombre comercial <strong>Imani Magnets</strong>, cuyo titular legal es <strong>Julia Schulz</strong>, con domicilio en Cumbayá, Quito, Ecuador, y correo electrónico de contacto <a href="mailto:hello@imanimagnets.com">hello@imanimagnets.com</a>.</p>
 <p>El uso de este sitio web implica la aceptación expresa de los presentes Términos y Condiciones. Recomendamos a nuestros clientes y visitantes leerlos detenidamente antes de realizar cualquier compra o utilizar los servicios disponibles.</p>
 
 <h2>1. Objeto</h2>

@@ -14,7 +14,7 @@
 
         <!-- Descripción del producto -->
         <div>
-            <h1 class="text-2xl md:text-3xl font-spartan font-bold text-dark-turquoise mb-4 leading-none whitespace-pre-line">
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-spartan font-bold text-dark-turquoise mb-4 leading-none whitespace-pre-line">
                 {!! $content->get('hero.title') !!}
             </h1>
             <p class="text-gray-700 mb-4 leading-relaxed">

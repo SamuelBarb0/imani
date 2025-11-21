@@ -5,6 +5,7 @@ namespace App\Mail;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -26,7 +27,7 @@ class OrderConfirmedEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: 'hello@imanimagnets.com',
+            from: new Address('hello@imanimagnets.com', 'Imani Magnets'),
             subject: '✅ Pago Confirmado - Pedido #' . $this->order->order_number,
             bcc: ['pedidos@imanimagnets.com'],
         );

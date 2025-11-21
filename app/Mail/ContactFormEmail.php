@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -26,7 +27,7 @@ class ContactFormEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: 'hello@imanimagnets.com',
+            from: new Address('hello@imanimagnets.com', 'Imani Magnets'),
             subject: 'Hemos recibido tu mensaje',
             bcc: ['contacto@imanimagnets.com'],
         );

@@ -335,7 +335,7 @@
                                     <p class="font-semibold text-sm text-gray-800 mb-2">🏦 Instrucciones importantes:</p>
                                     <ul class="text-xs text-gray-brown space-y-1 list-disc list-inside">
                                         <li>Realiza tu transferencia por el monto total del pedido</li>
-                                        <li>Envía el comprobante a: <strong class="text-dark-turquoise">comprobantes@imanimagnets.com</strong></li>
+                                        <li>Envía el comprobante a: <strong class="text-dark-turquoise">comprobantes@imanimagnets.com</strong>o vía WhatsApp al <strong class="text-dark-turquoise">+593985959303</strong></li>
                                         <li>Incluye tu número de orden o email en el asunto</li>
                                         <li>Tu pedido quedará como <strong>"Pendiente"</strong> hasta que verifiquemos el pago</li>
                                         <li>Procesaremos tu pedido una vez confirmada la transferencia</li>

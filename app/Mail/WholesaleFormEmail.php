@@ -31,7 +31,7 @@ class WholesaleFormEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('hello@imanimagnets.com', 'Imani Magnets'),
+            from: new Address(config('mail.from.address'), config('mail.from.name')),
             subject: 'Hemos recibido tu mensaje',
             bcc: ['mayorista@imanimagnets.com'],
         );

@@ -32,7 +32,7 @@ class WelcomeEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('hello@imanimagnets.com', 'Imani Magnets'),
+            from: new Address(config('mail.from.address'), config('mail.from.name')),
             subject: '¡Bienvenido a Imani Magnets! 🎉',
         );
     }
@@ -43,7 +43,7 @@ class WelcomeEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.welcome',
+            view: 'emails.welcome',
         );
     }
 

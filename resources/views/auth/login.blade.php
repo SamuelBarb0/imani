@@ -54,7 +54,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="w-full px-6 py-3 bg-gray-orange text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown transition-all duration-300 mb-4">
+                <button type="submit" class="btn-primary w-full px-6 py-3 bg-gray-orange text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown mb-4">
                     INICIAR SESIÓN
                 </button>
 

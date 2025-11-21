@@ -46,7 +46,7 @@
                             PNG, JPG o JPEG (máximo 10MB)
                         </p>
                         <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg" multiple class="hidden">
-                        <button id="select-photos-btn" class="px-3 py-1.5 bg-gray-orange text-white rounded-full font-spartan font-semibold text-xs tracking-wider uppercase hover:bg-gray-brown transition-all duration-300">
+                        <button id="select-photos-btn" class="btn-primary inline-block px-3 py-1.5 bg-gray-orange hover:bg-gray-brown text-white rounded-full font-spartan font-semibold text-xs tracking-wider uppercase">
                             SELECCIONAR FOTOS
                         </button>
                     </div>
@@ -143,7 +143,7 @@
 
                     <!-- Action Button (below grid) -->
                     <div class="text-center mt-2">
-                        <button id="add-to-cart-btn" disabled class="w-full px-4 py-2 bg-gray-300 text-gray-500 rounded-full font-spartan font-semibold text-xs tracking-wider uppercase cursor-not-allowed transition-all duration-300">
+                        <button id="add-to-cart-btn" disabled class="btn-animate w-full px-4 py-2 bg-gray-300 text-gray-500 rounded-full font-spartan font-semibold text-xs tracking-wider uppercase cursor-not-allowed transition-all duration-300">
                             AGREGAR AL CARRITO
                         </button>
                         <p class="text-xs text-gray-brown mt-1">
@@ -222,7 +222,7 @@
                         <div class="space-y-4">
                             <h3 class="font-spartan font-bold text-dark-turquoise mb-4">Herramientas de Recorte</h3>
 
-                            <button onclick="rotateImage()" class="w-full px-4 py-3 bg-gray-orange text-white rounded-lg font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown transition-all flex items-center justify-center gap-2">
+                            <button onclick="rotateImage()" class="btn-primary inline-block w-full px-4 py-3 bg-gray-orange hover:bg-gray-brown text-white rounded-lg font-spartan font-semibold text-sm tracking-wider uppercase flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                 </svg>
@@ -358,7 +358,7 @@
             <button onclick="closeEditor()" class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-brown rounded-lg font-spartan font-semibold text-xs sm:text-sm tracking-wider uppercase hover:bg-gray-300 transition-all order-2 sm:order-1">
                 CANCELAR
             </button>
-            <button onclick="saveImage()" class="px-6 sm:px-8 py-2 sm:py-3 bg-dark-turquoise text-white rounded-lg font-spartan font-semibold text-xs sm:text-sm tracking-wider uppercase hover:bg-gray-brown transition-all order-1 sm:order-2">
+            <button onclick="saveImage()" class="btn-animate px-6 sm:px-8 py-2 sm:py-3 bg-dark-turquoise text-white rounded-lg font-spartan font-semibold text-xs sm:text-sm tracking-wider uppercase hover:bg-gray-brown transition-all order-1 sm:order-2">
                 GUARDAR CAMBIOS
             </button>
         </div>

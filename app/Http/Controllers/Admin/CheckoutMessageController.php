@@ -25,13 +25,16 @@ class CheckoutMessageController extends Controller
         $validated = $request->validate([
             'content' => 'required|string',
             'type' => 'required|in:info,warning,vacation',
-            'is_active' => 'boolean',
         ]);
 
         $message = CheckoutMessage::findOrFail($id);
 
+        // Handle checkbox: if not present in request, it means it's unchecked
+        $isActive = $request->has('is_active') && $request->is_active == '1';
+        $validated['is_active'] = $isActive;
+
         // If activating this message, deactivate all others
-        if ($request->has('is_active') && $request->is_active) {
+        if ($isActive) {
             CheckoutMessage::where('id', '!=', $id)->update(['is_active' => false]);
         }
 

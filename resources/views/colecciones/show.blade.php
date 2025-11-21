@@ -195,7 +195,7 @@ function addToCart() {
             price: {{ $collection->price }},
             custom_data: {
                 type: 'collection',
-                name: '{{ $collection->name }}'
+                name: {!! json_encode(strip_tags($collection->name)) !!}
             }
         })
     })

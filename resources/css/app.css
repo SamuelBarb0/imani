@@ -74,3 +74,18 @@
 .font-sans {
   font-family: 'Open Sans', sans-serif;
 }
+
+/* Button animations */
+.btn-animate {
+  transition: all 0.3s ease;
+}
+
+.btn-animate:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-animate:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}

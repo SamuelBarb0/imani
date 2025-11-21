@@ -389,6 +389,25 @@
 
                 <!-- Order Summary Sidebar -->
                 <div class="lg:col-span-1">
+                    <!-- Checkout Message (if active) -->
+                    @php
+                        $checkoutMessage = \App\Models\CheckoutMessage::getActiveMessage();
+                    @endphp
+
+                    @if($checkoutMessage)
+                        <div class="mb-4 rounded-lg p-4 border-l-4
+                            @if($checkoutMessage->type === 'info') bg-blue-50 border-blue-500
+                            @elseif($checkoutMessage->type === 'warning') bg-yellow-50 border-yellow-500
+                            @elseif($checkoutMessage->type === 'vacation') bg-orange-50 border-orange-500
+                            @endif">
+                            <div class="text-sm whitespace-pre-line
+                                @if($checkoutMessage->type === 'info') text-blue-900
+                                @elseif($checkoutMessage->type === 'warning') text-yellow-900
+                                @elseif($checkoutMessage->type === 'vacation') text-orange-900
+                                @endif">{{ $checkoutMessage->content }}</div>
+                        </div>
+                    @endif
+
                     <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
                         <h2 class="font-spartan text-xl font-bold text-dark-turquoise mb-4">
                             RESUMEN DEL PEDIDO
@@ -444,7 +463,7 @@
                             @enderror
                         </div>
 
-                        <button type="submit" class="w-full px-6 py-3 bg-gray-orange text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown transition-all duration-300 mb-3">
+                        <button type="submit" class="btn-primary inline-block w-full px-6 py-3 bg-gray-orange hover:bg-gray-brown text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase mb-3">
                             CONFIRMAR PEDIDO
                         </button>
 

@@ -118,7 +118,7 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('checkout.index') }}" class="block w-full px-6 py-3 bg-gray-orange text-white text-center rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown transition-all duration-300 mb-3">
+                        <a href="{{ route('checkout.index') }}" class="btn-primary inline-block w-full px-6 py-3 bg-gray-orange hover:bg-gray-brown text-white text-center rounded-full font-spartan font-semibold text-sm tracking-wider uppercase mb-3">
                             PROCEDER AL PAGO
                         </a>
 

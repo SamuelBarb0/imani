@@ -52,7 +52,7 @@
                         <!-- Submit Button -->
                         <button
                             type="submit"
-                            class="w-full bg-gray-orange hover:bg-gray-brown text-white font-spartan font-semibold py-3 px-6 rounded-full transition-all duration-300 uppercase tracking-wider"
+                            class="btn-primary inline-block w-full font-spartan font-semibold py-3 px-6 bg-gray-orange hover:bg-gray-brown text-white rounded-full uppercase tracking-wider"
                         >
                             Rastrear Pedido
                         </button>

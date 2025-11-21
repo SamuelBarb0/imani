@@ -7,7 +7,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start mb-12">
             <div>
                 <h1 class="text-2xl md:text-3xl lg:text-4xl font-spartan font-bold text-dark-turquoise leading-none">
-                    {{ $content->get('header.title') }}
+                    {!! $content->get('header.title') !!}
                 </h1>
                 <p class="text-xl md:text-xl font-spartan font-semibold text-dark-turquoise mb-4">
                     {{ $content->get('header.subtitle') }}

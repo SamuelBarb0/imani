@@ -12,13 +12,13 @@
                 <p class="text-xl md:text-xl font-spartan font-semibold text-dark-turquoise mb-4">
                     {{ $content->get('header.subtitle') }}
                 </p>
-                <p class="text-sm text-gray-brown mb-4">
+                <p class="text-gray-brown mb-4">
                     {{ $content->get('header.intro_1') }}
                 </p>
-                <p class="text-sm text-gray-brown mb-4">
+                <p class="text-gray-brown mb-4">
                     {{ $content->get('header.intro_2') }}
                 </p>
-                <p class="text-sm text-gray-brown">
+                <p class="text-gray-brown">
                     {!! $content->get('header.size_info') !!}
                 </p>
             </div>

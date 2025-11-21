@@ -33,7 +33,7 @@
 
       <!-- Right Column: Logo -->
       <div class="flex justify-center items-center order-3">
-        <a href="{{ url('/pruebas') }}">
+        <a href="{{ route('home') }}">
           <img src="{{ asset('images/IMG-20251016-WA0034.png') }}" alt="Imani Magnets" class="h-32 md:h-40 w-auto hover:opacity-80 transition-opacity cursor-pointer">
         </a>
       </div>

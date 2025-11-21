@@ -104,10 +104,10 @@
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="hidden lg:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
             <ul class="space-y-3 text-base">
-                <li><a href="{{ url('pruebas/personalizados') }}" class="block text-gray-700 hover:text-dark-turquoise transition uppercase">Personalizados</a></li>
-                <li><a href="{{ url('pruebas/colecciones') }}" class="block text-gray-700 hover:text-dark-turquoise transition uppercase">Colecciones</a></li>
-                <li><a href="{{ url('pruebas/mayoristas') }}" class="block text-gray-700 hover:text-dark-turquoise transition uppercase">Mayoristas</a></li>
-                <li><a href="{{ url('pruebas/contacto') }}" class="block text-gray-700 hover:text-dark-turquoise transition uppercase">Contacto</a></li>
+                <li><a href="{{ route('personalizados.index') }}" class="block text-gray-700 hover:text-dark-turquoise transition uppercase">Personalizados</a></li>
+                <li><a href="{{ route('colecciones') }}" class="block text-gray-700 hover:text-dark-turquoise transition uppercase">Colecciones</a></li>
+                <li><a href="{{ route('mayoristas') }}" class="block text-gray-700 hover:text-dark-turquoise transition uppercase">Mayoristas</a></li>
+                <li><a href="{{ route('contacto') }}" class="block text-gray-700 hover:text-dark-turquoise transition uppercase">Contacto</a></li>
                 <li><a href="{{ route('tracking.index') }}" class="block text-gray-700 hover:text-dark-turquoise transition uppercase">Rastrear Pedido</a></li>
             </ul>
         </div>

@@ -75,6 +75,7 @@
                                 <th class="text-left py-3 px-4 text-xs font-semibold text-gray-brown uppercase">Total</th>
                                 <th class="text-left py-3 px-4 text-xs font-semibold text-gray-brown uppercase">Estado</th>
                                 <th class="text-left py-3 px-4 text-xs font-semibold text-gray-brown uppercase">Pago</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-brown uppercase">Factura</th>
                                 <th class="text-left py-3 px-4 text-xs font-semibold text-gray-brown uppercase">Acciones</th>
                             </tr>
                         </thead>
@@ -110,6 +111,18 @@
                                             @endif">
                                             {{ ucfirst($order->payment_status) }}
                                         </span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        @if($order->status === 'shipped' || $order->status === 'completed')
+                                            <span class="text-sm font-semibold text-green-600">Enviada</span>
+                                        @else
+                                            <form action="{{ route('admin.orders.mark-shipped', $order->id) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="submit" class="px-3 py-1.5 bg-dark-turquoise text-white text-xs font-semibold rounded hover:bg-dark-turquoise-alt transition-colors">
+                                                    Marcar Enviada
+                                                </button>
+                                            </form>
+                                        @endif
                                     </td>
                                     <td class="py-3 px-4">
                                         <div class="flex gap-2">

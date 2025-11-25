@@ -22,23 +22,41 @@ class AdminController extends Controller
     /**
      * Show admin dashboard
      */
-    public function dashboard()
+    public function dashboard(Request $request)
     {
+        // Get date filters (comes as YYYY-MM-DD from input type="date")
+        $startDateInput = $request->input('start_date');
+        $endDateInput = $request->input('end_date');
+
+        // Build query with date filters
+        $ordersQuery = Order::query();
+
+        if ($startDateInput && $endDateInput) {
+            // Both dates provided - filter by range
+            $ordersQuery->whereBetween(DB::raw('DATE(created_at)'), [$startDateInput, $endDateInput]);
+        } elseif ($startDateInput) {
+            // Only start date - from start date onwards
+            $ordersQuery->where(DB::raw('DATE(created_at)'), '>=', $startDateInput);
+        } elseif ($endDateInput) {
+            // Only end date - up to end date
+            $ordersQuery->where(DB::raw('DATE(created_at)'), '<=', $endDateInput);
+        }
+
         $stats = [
-            'total_orders' => Order::count(),
-            'pending_orders' => Order::where('status', 'pending')->count(),
-            'processing_orders' => Order::where('status', 'processing')->count(),
-            'completed_orders' => Order::where('status', 'completed')->count(),
-            'total_revenue' => Order::where('payment_status', 'completed')->sum('total'),
+            'total_orders' => (clone $ordersQuery)->count(),
+            'pending_orders' => (clone $ordersQuery)->where('status', 'pending')->count(),
+            'processing_orders' => (clone $ordersQuery)->where('status', 'processing')->count(),
+            'completed_orders' => (clone $ordersQuery)->where('status', 'completed')->count(),
+            'total_revenue' => (clone $ordersQuery)->where('payment_status', 'completed')->sum('total'),
             'total_users' => User::count(),
         ];
 
-        $recentOrders = Order::with('items')
+        $recentOrders = (clone $ordersQuery)->with('items')
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentOrders'));
+        return view('admin.dashboard', compact('stats', 'recentOrders', 'startDateInput', 'endDateInput'));
     }
 
     /**
@@ -331,6 +349,23 @@ class AdminController extends Controller
 
         return redirect()->route('admin.orders.show', $id)
             ->with('success', 'Pago confirmado. Email enviado al cliente.');
+    }
+
+    /**
+     * Mark order as shipped (invoice generated)
+     */
+    public function markAsShipped($id)
+    {
+        $order = Order::findOrFail($id);
+
+        $order->update([
+            'status' => 'shipped',
+        ]);
+
+        Log::info('Order marked as shipped (invoice generated)', ['order_id' => $order->id]);
+
+        return redirect()->route('admin.orders.show', $id)
+            ->with('success', 'Pedido marcado como Enviado.');
     }
 
     /**

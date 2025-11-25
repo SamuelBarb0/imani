@@ -20,6 +20,30 @@
 <section class="bg-gray-50 py-12">
     <div class="container mx-auto px-6 max-w-7xl">
 
+        <!-- Date Filters -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <form method="GET" action="{{ route('admin.dashboard') }}" class="flex flex-wrap items-end gap-4">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-semibold text-gray-brown mb-2">Fecha Inicio</label>
+                    <input type="date" name="start_date" value="{{ $startDateInput ?? '' }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise">
+                </div>
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-semibold text-gray-brown mb-2">Fecha Fin</label>
+                    <input type="date" name="end_date" value="{{ $endDateInput ?? '' }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="px-6 py-2 bg-dark-turquoise text-white rounded-lg font-semibold hover:bg-dark-turquoise-alt">
+                        Filtrar
+                    </button>
+                    <a href="{{ route('admin.dashboard') }}" class="px-6 py-2 bg-gray-200 text-gray-brown rounded-lg font-semibold hover:bg-gray-300">
+                        Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 

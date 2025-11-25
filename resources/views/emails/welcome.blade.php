@@ -51,7 +51,7 @@
     <p style="margin: 0 0 15px 0; color: #333; line-height: 1.6;">Síguenos en Instagram <strong>@ImaniMagnets</strong> para inspirarte con ideas creativas y ver cómo otros clientes disfrutan de sus imanes personalizados.</p>
 
     <div style="margin-top: 30px; color: #333;">
-        <p style="margin: 0; color: #333; line-height: 1.6;">Con cariño,<br><strong>Julia y el equipo de Imani Magnets</strong></p>
+        <p style="margin: 0; color: #333; line-height: 1.6;">Con cariño,<br><strong>Julia.</strong></p>
     </div>
 </div>
 @endsection

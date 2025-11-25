@@ -222,7 +222,7 @@
                         <div class="space-y-4">
                             <h3 class="font-spartan font-bold text-dark-turquoise mb-4">Herramientas de Recorte</h3>
 
-                            <button onclick="rotateImage()" class="btn-primary inline-block w-full px-4 py-3 bg-gray-orange hover:bg-gray-brown text-white rounded-lg font-spartan font-semibold text-sm tracking-wider uppercase flex items-center justify-center gap-2">
+                            <button onclick="rotateImage()" class="btn-primary  w-full px-4 py-3 bg-gray-orange hover:bg-gray-brown text-white rounded-lg font-spartan font-semibold text-sm tracking-wider uppercase flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                 </svg>
@@ -431,9 +431,20 @@
         z-index: 3;
     }
 
-    .cropper-line,
     .cropper-point {
         background-color: #12463c !important;
+    }
+
+    .cropper-line {
+        background-color: #12463c !important;
+    }
+
+    /* Hide side points - only show corner points */
+    .cropper-point.point-n,
+    .cropper-point.point-s,
+    .cropper-point.point-e,
+    .cropper-point.point-w {
+        display: none !important;
     }
 
     /* Mobile touch controls - larger hit areas and visual feedback */
@@ -452,16 +463,6 @@
             height: 24px !important;
         }
 
-        .cropper-line {
-            height: 4px !important;
-        }
-
-        .cropper-line.line-w,
-        .cropper-line.line-e {
-            width: 4px !important;
-            height: auto !important;
-        }
-
         /* Highlighted state for controls */
         .cropper-controls-highlighted .cropper-point {
             background-color: #c2b59b !important;
@@ -470,21 +471,6 @@
             height: 28px !important;
             box-shadow: 0 0 0 3px rgba(194, 181, 155, 0.3) !important;
             transition: all 0.2s ease !important;
-        }
-
-        .cropper-controls-highlighted .cropper-line {
-            background-color: #c2b59b !important;
-            opacity: 1 !important;
-        }
-
-        .cropper-controls-highlighted .cropper-line {
-            height: 6px !important;
-        }
-
-        .cropper-controls-highlighted .cropper-line.line-w,
-        .cropper-controls-highlighted .cropper-line.line-e {
-            width: 6px !important;
-            height: auto !important;
         }
     }
 
@@ -1156,6 +1142,12 @@
         document.getElementById('editor-modal').classList.remove('hidden');
         document.body.classList.add('modal-open');
 
+        // Hide WhatsApp button while editing
+        const whatsappButton = document.getElementById('whatsapp-float-button');
+        if (whatsappButton) {
+            whatsappButton.style.display = 'none';
+        }
+
         // Load saved state if exists, otherwise reset
         if (editStates[index]) {
             currentFilters = {
@@ -1195,7 +1187,7 @@
 
                 // Adjust minimum crop box size for mobile
                 const isMobile = window.innerWidth < 768;
-                const minCropBoxSize = isMobile ? 150 : 200;
+                const minCropBoxSize = isMobile ? 100 : 200;
 
                 const cropperOptions = {
                 aspectRatio: 1, // Square crop (1:1)
@@ -1275,7 +1267,7 @@
 
         // Set minimum size (same as minCropBoxSize)
         const isMobile = window.innerWidth < 768;
-        const minSize = isMobile ? 150 : 200;
+        const minSize = isMobile ? 100 : 200;
 
         // Apply limits
         newWidth = Math.max(minSize, Math.min(newWidth, maxSize));
@@ -1405,6 +1397,12 @@
             document.getElementById('editor-modal').classList.add('hidden');
             document.body.classList.remove('modal-open');
 
+            // Show WhatsApp button again
+            const whatsappButton = document.getElementById('whatsapp-float-button');
+            if (whatsappButton) {
+                whatsappButton.style.display = 'flex';
+            }
+
             // Remove wheel event listener
             const cropperContainer = document.querySelector('.cropper-container');
             if (cropperContainer) {
@@ -1457,6 +1455,12 @@
         // Close editor
         document.getElementById('editor-modal').classList.add('hidden');
         document.body.classList.remove('modal-open');
+
+        // Show WhatsApp button again
+        const whatsappButton = document.getElementById('whatsapp-float-button');
+        if (whatsappButton) {
+            whatsappButton.style.display = 'flex';
+        }
 
         // Remove wheel event listener before destroying cropper
         const cropperContainer = document.querySelector('.cropper-container');

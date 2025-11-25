@@ -147,6 +147,7 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::post('/pedidos/{id}/comprobante', [App\Http\Controllers\Admin\AdminController::class, 'uploadPaymentProof'])->name('orders.upload-proof');
         Route::post('/pedidos/{id}/tracking', [App\Http\Controllers\Admin\AdminController::class, 'addTracking'])->name('orders.add-tracking');
         Route::post('/pedidos/{id}/confirmar-pago', [App\Http\Controllers\Admin\AdminController::class, 'confirmPayment'])->name('orders.confirm-payment');
+        Route::post('/pedidos/{id}/marcar-enviada', [App\Http\Controllers\Admin\AdminController::class, 'markAsShipped'])->name('orders.mark-shipped');
         Route::get('/pedidos/{id}/pdf', [App\Http\Controllers\Admin\AdminController::class, 'downloadOrderPDF'])->name('orders.pdf');
         Route::get('/pedidos/{id}/template', [App\Http\Controllers\Admin\AdminController::class, 'downloadOrderTemplate'])->name('orders.template');
         Route::get('/pedidos/{orderId}/item/{itemId}/template', [App\Http\Controllers\Admin\AdminController::class, 'downloadItemTemplate'])->name('orders.download-item-template');

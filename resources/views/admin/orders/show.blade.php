@@ -63,6 +63,20 @@ use Illuminate\Support\Facades\Storage;
                 </div>
             @endif
 
+            <!-- Mark as Shipped (Invoice Generated) -->
+            @if($order->status === 'pending' || $order->status === 'payment_received' || $order->status === 'processing')
+                <div class="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
+                    <h3 class="font-semibold text-purple-800 mb-2">📄 Factura Generada</h3>
+                    <p class="text-xs text-purple-700 mb-3">Marcar pedido como enviado cuando se genere la factura</p>
+                    <form action="{{ route('admin.orders.mark-shipped', $order->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full px-4 py-2 bg-purple-600 text-white rounded font-semibold hover:bg-purple-700">
+                            Marcar como Enviado
+                        </button>
+                    </form>
+                </div>
+            @endif
+
             <!-- Add Tracking Number -->
             @if($order->payment_status === 'completed' && !$order->tracking_number)
                 <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">

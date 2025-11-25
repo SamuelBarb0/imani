@@ -147,8 +147,8 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-brown mb-2">Código Postal</label>
-                                    <input type="text" name="billing_zip" id="billing_zip" value="{{ old('billing_zip') }}"
+                                    <label class="block text-sm font-semibold text-gray-brown mb-2">Código Postal <span class="text-red-500">*</span></label>
+                                    <input type="text" name="billing_zip" id="billing_zip" value="{{ old('billing_zip') }}" required
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
                                         placeholder="170150">
                                     @error('billing_zip')
@@ -250,8 +250,8 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-brown mb-2">Código Postal</label>
-                                    <input type="text" name="shipping_zip" id="shipping_zip" value="{{ old('shipping_zip') }}"
+                                    <label class="block text-sm font-semibold text-gray-brown mb-2">Código Postal <span class="text-red-500">*</span></label>
+                                    <input type="text" name="shipping_zip" id="shipping_zip" value="{{ old('shipping_zip') }}" required
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-turquoise focus:border-transparent"
                                         placeholder="170150">
                                     @error('shipping_zip')

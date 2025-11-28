@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Collection;
 use Illuminate\Http\Request;
+use Intervention\Image\Laravel\Facades\Image;
 
 class CollectionController extends Controller
 {
@@ -33,41 +34,37 @@ class CollectionController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:25480',
-            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:25480',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:51200',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:51200',
             'price' => 'required|numeric|min:0',
             'items' => 'nullable|string',
             'is_active' => 'boolean',
             'order' => 'required|integer|min:0',
         ]);
 
-        // Handle main image upload
+        // Handle main image upload - convert to WebP
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('images'), $imageName);
-            $validated['image'] = 'images/' . $imageName;
+            $validated['image'] = $this->convertToWebP(
+                $request->file('image'),
+                'images',
+                'collection_'
+            );
         }
 
-        // Handle gallery images upload
+        // Handle gallery images upload - convert to WebP
         $galleryPaths = [];
         if ($request->hasFile('gallery')) {
-            $galleryDir = public_path('images/collections/gallery');
-
-            // Create directory if it doesn't exist
-            if (!file_exists($galleryDir)) {
-                mkdir($galleryDir, 0755, true);
-            }
-
             foreach ($request->file('gallery') as $index => $galleryImage) {
                 // Limit to 7 images
                 if ($index >= 7) {
                     break;
                 }
 
-                $galleryImageName = time() . '_' . $index . '_' . $galleryImage->getClientOriginalName();
-                $galleryImage->move($galleryDir, $galleryImageName);
-                $galleryPaths[] = 'images/collections/gallery/' . $galleryImageName;
+                $galleryPaths[] = $this->convertToWebP(
+                    $galleryImage,
+                    'images/collections/gallery',
+                    'gallery_' . $index . '_'
+                );
             }
         }
         $validated['gallery'] = $galleryPaths;
@@ -102,8 +99,8 @@ class CollectionController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:25480',
-            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:25480',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:51200',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:51200',
             'deleted_gallery.*' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'items' => 'nullable|string',
@@ -111,17 +108,18 @@ class CollectionController extends Controller
             'order' => 'required|integer|min:0',
         ]);
 
-        // Handle main image upload if new image provided
+        // Handle main image upload if new image provided - convert to WebP
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($collection->image && file_exists(public_path($collection->image))) {
                 unlink(public_path($collection->image));
             }
 
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('images'), $imageName);
-            $validated['image'] = 'images/' . $imageName;
+            $validated['image'] = $this->convertToWebP(
+                $request->file('image'),
+                'images',
+                'collection_'
+            );
         }
 
         // Handle gallery images
@@ -142,15 +140,8 @@ class CollectionController extends Controller
             }
         }
 
-        // Add new gallery images
+        // Add new gallery images - convert to WebP
         if ($request->hasFile('gallery')) {
-            $galleryDir = public_path('images/collections/gallery');
-
-            // Create directory if it doesn't exist
-            if (!file_exists($galleryDir)) {
-                mkdir($galleryDir, 0755, true);
-            }
-
             $totalImages = count($currentGallery);
 
             foreach ($request->file('gallery') as $index => $galleryImage) {
@@ -159,9 +150,11 @@ class CollectionController extends Controller
                     break;
                 }
 
-                $galleryImageName = time() . '_' . $index . '_' . $galleryImage->getClientOriginalName();
-                $galleryImage->move($galleryDir, $galleryImageName);
-                $currentGallery[] = 'images/collections/gallery/' . $galleryImageName;
+                $currentGallery[] = $this->convertToWebP(
+                    $galleryImage,
+                    'images/collections/gallery',
+                    'gallery_' . $index . '_'
+                );
                 $totalImages++;
             }
         }
@@ -208,5 +201,31 @@ class CollectionController extends Controller
 
         return redirect()->route('admin.collections.index')
             ->with('success', 'Colección eliminada exitosamente.');
+    }
+
+    /**
+     * Convert and optimize image to WebP format
+     */
+    private function convertToWebP($uploadedFile, $directory, $prefix = '')
+    {
+        // Generate unique filename
+        $filename = $prefix . time() . '_' . uniqid() . '.webp';
+        $fullPath = public_path($directory);
+
+        // Create directory if it doesn't exist
+        if (!file_exists($fullPath)) {
+            mkdir($fullPath, 0755, true);
+        }
+
+        // Load and convert image to WebP
+        $image = Image::read($uploadedFile->getPathname());
+
+        // Resize if image is too large (max 1920px on longest side)
+        $image->scaleDown(width: 1920, height: 1920);
+
+        // Save as WebP with 85% quality for good balance between size and quality
+        $image->toWebp(85)->save($fullPath . '/' . $filename);
+
+        return $directory . '/' . $filename;
     }
 }

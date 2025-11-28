@@ -546,6 +546,7 @@
                 shippingProvinciaSelect,
                 shippingCantonSelect,
                 shippingParroquiaSelect,
+                document.getElementById('shipping_zip'),
                 document.getElementById('shipping_country')
             ];
 

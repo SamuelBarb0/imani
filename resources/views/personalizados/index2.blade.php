@@ -2,9 +2,9 @@
 
 @section('content')
 <section class="bg-white py-4 md:py-4">
-    <div class="container mx-auto px-6 max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+    <div class="container mx-auto px-6 max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
         <!-- Imagen principal -->
-        <div class="flex justify-center h-[580px] overflow-hidden rounded-lg shadow-lg">
+        <div class="flex justify-center h-[520px] overflow-hidden rounded-lg shadow-lg">
             <img
                 src="{{ asset($content->get('hero.image')) }}"
                 alt="Imanes personalizados Imani Magnets"
@@ -13,11 +13,11 @@
 
 
         <!-- Descripción del producto -->
-        <div>
-            <h1 class="text-2xl md:text-3xl lg:text-4xl font-spartan font-bold text-dark-turquoise mb-4 leading-none whitespace-pre-line">
+        <div class="-mt-7">
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-spartan font-bold text-dark-turquoise mb-2 leading-none whitespace-pre-line">
                 {!! $content->get('hero.title') !!}
             </h1>
-            <p class="text-gray-700 mb-4 leading-relaxed">
+            <p class="text-gray-700 mb-6 leading-relaxed">
                 {{ $content->get('hero.subtitle') }}
             </p>
             <p class="text-gray-700 mb-4">{{ $content->get('landing.description_1') }}</p>

@@ -225,11 +225,11 @@
         @endif
 
         <!-- Action Buttons -->
-        <div class="text-center space-x-4">
-            <a href="{{ route('home') }}" class="inline-block px-8 py-3 bg-gray-orange text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown transition-all duration-300">
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <a href="{{ route('home') }}" class="w-full sm:w-auto text-center px-8 py-3 bg-gray-orange text-white rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-brown transition-all duration-300">
                 VOLVER AL INICIO
             </a>
-            <a href="{{ route('personalizados.index') }}" class="inline-block px-8 py-3 bg-white border-2 border-gray-orange text-gray-orange rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-orange hover:text-white transition-all duration-300">
+            <a href="{{ route('personalizados.index') }}" class="w-full sm:w-auto text-center px-8 py-3 bg-white border-2 border-gray-orange text-gray-orange rounded-full font-spartan font-semibold text-sm tracking-wider uppercase hover:bg-gray-orange hover:text-white transition-all duration-300">
                 CREAR OTRO SET
             </a>
         </div>

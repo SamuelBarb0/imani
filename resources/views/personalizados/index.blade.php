@@ -638,7 +638,8 @@
         });
 
         // Button click handler - only open if there are empty slots
-        selectPhotosBtn.addEventListener('click', () => {
+        selectPhotosBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event from bubbling to dropzone
             const hasEmptySlot = uploadedImages.some(img => img === null);
             if (hasEmptySlot) {
                 fileInput.click();

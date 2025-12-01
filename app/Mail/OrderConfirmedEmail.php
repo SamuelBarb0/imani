@@ -28,7 +28,7 @@ class OrderConfirmedEmail extends Mailable
     {
         return new Envelope(
             from: new Address(config('mail.from.address'), config('mail.from.name')),
-            subject: '✅ Pago Confirmado - Pedido #' . $this->order->order_number,
+            subject: 'Pago Confirmado - Pedido #' . $this->order->order_number,
             bcc: ['pedidos@imanimagnets.com'],
         );
     }

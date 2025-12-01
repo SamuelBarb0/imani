@@ -33,7 +33,7 @@ class WelcomeEmail extends Mailable
     {
         return new Envelope(
             from: new Address(config('mail.from.address'), config('mail.from.name')),
-            subject: '¡Bienvenido a Imani Magnets! 🎉',
+            subject: '¡Bienvenido a Imani Magnets!',
         );
     }
 

@@ -28,7 +28,7 @@ class TrackingAddedEmail extends Mailable
     {
         return new Envelope(
             from: new Address(config('mail.from.address'), config('mail.from.name')),
-            subject: '📦 Tu pedido está en camino - #' . $this->order->order_number,
+            subject: 'Tu pedido está en camino - #' . $this->order->order_number,
             bcc: ['pedidos@imanimagnets.com'],
         );
     }

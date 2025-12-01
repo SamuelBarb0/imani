@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewOrderNotification;
 use App\Mail\OrderConfirmedEmail;
 use App\Mail\OrderPendingTransferEmail;
 use App\Mail\WelcomeEmail;
@@ -228,6 +229,21 @@ class CheckoutController extends Controller
                         Log::error('Failed to send order pending transfer email', [
                             'order' => $order->order_number,
                             'email' => $order->customer_email,
+                            'error' => $mailError->getMessage(),
+                        ]);
+                    }
+
+                    // Send new order notification to admin
+                    try {
+                        Mail::to('pedidos@imanimagnets.com')
+                            ->cc('5o8abrkdt3@pomail.net')
+                            ->send(new NewOrderNotification($order));
+                        Log::info('New order notification sent to admin', [
+                            'order' => $order->order_number
+                        ]);
+                    } catch (\Exception $mailError) {
+                        Log::error('Failed to send new order notification', [
+                            'order' => $order->order_number,
                             'error' => $mailError->getMessage(),
                         ]);
                     }
@@ -473,6 +489,21 @@ class CheckoutController extends Controller
                 Log::error('Failed to send order confirmation email', [
                     'order' => $order->order_number,
                     'email' => $order->customer_email,
+                    'error' => $mailError->getMessage(),
+                ]);
+            }
+
+            // Send new order notification to admin
+            try {
+                Mail::to('pedidos@imanimagnets.com')
+                    ->cc('5o8abrkdt3@pomail.net')
+                    ->send(new NewOrderNotification($order));
+                Log::info('New order notification sent to admin', [
+                    'order' => $order->order_number
+                ]);
+            } catch (\Exception $mailError) {
+                Log::error('Failed to send new order notification', [
+                    'order' => $order->order_number,
                     'error' => $mailError->getMessage(),
                 ]);
             }

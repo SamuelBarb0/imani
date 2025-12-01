@@ -450,8 +450,8 @@
     /* Mobile touch controls - larger hit areas and visual feedback */
     @media (max-width: 768px) {
         .cropper-point {
-            width: 20px !important;
-            height: 20px !important;
+            width: 15px !important;
+            height: 15px !important;
             opacity: 0.8 !important;
         }
 
@@ -459,17 +459,17 @@
         .cropper-point.point-ne,
         .cropper-point.point-sw,
         .cropper-point.point-se {
-            width: 24px !important;
-            height: 24px !important;
+            width: 10px !important;
+            height: 10px !important;
         }
 
         /* Highlighted state for controls */
         .cropper-controls-highlighted .cropper-point {
             background-color: #c2b59b !important;
             opacity: 1 !important;
-            width: 28px !important;
-            height: 28px !important;
-            box-shadow: 0 0 0 3px rgba(194, 181, 155, 0.3) !important;
+            width: 15px !important;
+            height: 15px !important;
+            box-shadow: 0 0 0 2px rgba(194, 181, 155, 0.4) !important;
             transition: all 0.2s ease !important;
         }
     }
@@ -1511,10 +1511,30 @@
     // ADJUSTMENT CONTROLS
     // ============================================
     document.addEventListener('DOMContentLoaded', function() {
+        // Helper function to prevent scroll on mobile when using sliders
+        function preventScrollOnSlider(slider) {
+            if (slider) {
+                // Prevent document scroll when touching the slider
+                slider.addEventListener('touchstart', function(e) {
+                    e.stopPropagation();
+                    document.body.style.overflow = 'hidden';
+                }, { passive: true });
+
+                slider.addEventListener('touchend', function(e) {
+                    document.body.style.overflow = '';
+                }, { passive: true });
+
+                slider.addEventListener('touchcancel', function(e) {
+                    document.body.style.overflow = '';
+                }, { passive: true });
+            }
+        }
+
         // Brightness
         const brightnessSlider = document.getElementById('brightness');
         const brightnessValue = document.getElementById('brightness-value');
         if (brightnessSlider) {
+            preventScrollOnSlider(brightnessSlider);
             brightnessSlider.addEventListener('input', function() {
                 currentFilters.brightness = this.value;
                 brightnessValue.textContent = this.value + '%';
@@ -1526,6 +1546,7 @@
         const contrastSlider = document.getElementById('contrast');
         const contrastValue = document.getElementById('contrast-value');
         if (contrastSlider) {
+            preventScrollOnSlider(contrastSlider);
             contrastSlider.addEventListener('input', function() {
                 currentFilters.contrast = this.value;
                 contrastValue.textContent = this.value + '%';
@@ -1537,6 +1558,7 @@
         const saturationSlider = document.getElementById('saturation');
         const saturationValue = document.getElementById('saturation-value');
         if (saturationSlider) {
+            preventScrollOnSlider(saturationSlider);
             saturationSlider.addEventListener('input', function() {
                 currentFilters.saturation = this.value;
                 saturationValue.textContent = this.value + '%';
@@ -1548,6 +1570,7 @@
         const exposureSlider = document.getElementById('exposure');
         const exposureValue = document.getElementById('exposure-value');
         if (exposureSlider) {
+            preventScrollOnSlider(exposureSlider);
             exposureSlider.addEventListener('input', function() {
                 currentFilters.exposure = this.value;
                 exposureValue.textContent = this.value + '%';
@@ -1559,6 +1582,7 @@
         const warmthSlider = document.getElementById('warmth');
         const warmthValue = document.getElementById('warmth-value');
         if (warmthSlider) {
+            preventScrollOnSlider(warmthSlider);
             warmthSlider.addEventListener('input', function() {
                 currentFilters.warmth = this.value;
                 warmthValue.textContent = this.value;
@@ -1570,6 +1594,7 @@
         const blurSlider = document.getElementById('blur');
         const blurValue = document.getElementById('blur-value');
         if (blurSlider) {
+            preventScrollOnSlider(blurSlider);
             blurSlider.addEventListener('input', function() {
                 currentFilters.blur = this.value;
                 blurValue.textContent = this.value + 'px';
@@ -1581,6 +1606,7 @@
         const sepiaSlider = document.getElementById('sepia');
         const sepiaValue = document.getElementById('sepia-value');
         if (sepiaSlider) {
+            preventScrollOnSlider(sepiaSlider);
             sepiaSlider.addEventListener('input', function() {
                 currentFilters.sepia = this.value;
                 sepiaValue.textContent = this.value + '%';
@@ -1592,6 +1618,7 @@
         const grayscaleSlider = document.getElementById('grayscale');
         const grayscaleValue = document.getElementById('grayscale-value');
         if (grayscaleSlider) {
+            preventScrollOnSlider(grayscaleSlider);
             grayscaleSlider.addEventListener('input', function() {
                 currentFilters.grayscale = this.value;
                 grayscaleValue.textContent = this.value + '%';

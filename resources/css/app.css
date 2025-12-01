@@ -89,3 +89,15 @@
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
+
+/* Reset inline font sizes in HTML content to use relative units */
+.text-content span,
+.text-content p,
+.text-content div {
+  font-size: inherit !important;
+}
+
+/* Allow only em/rem units or percentages for proper scaling */
+.text-content [style*="font-size"] {
+  font-size: inherit !important;
+}

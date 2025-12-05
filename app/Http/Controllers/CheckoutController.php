@@ -200,7 +200,24 @@ class CheckoutController extends Controller
                 }
             }
 
-            // Clear cart
+            // For PayPhone Box (card payment), don't create order yet - redirect to payment page
+            if ($validated['payment_method'] === 'payphone') {
+                // Rollback - we'll create the order after successful payment
+                DB::rollBack();
+
+                // Store data in session for payment page
+                $request->session()->put('checkout', array_merge($validated, [
+                    'subtotal_base' => $subtotal,
+                    'shipping_base' => $shippingCost,
+                    'tax' => $tax,
+                    'total' => $total,
+                ]));
+
+                // Redirect to PayPhone Box payment page
+                return redirect()->route('checkout.payment');
+            }
+
+            // For bank transfer, clear cart after creating order
             $cart->items()->delete();
 
             // Process payment
@@ -209,7 +226,7 @@ class CheckoutController extends Controller
             if ($paymentResult['success']) {
                 // Update order with transaction details
                 $order->update([
-                    'payment_status' => $validated['payment_method'] === 'payphone' ? 'pending' : 'pending',
+                    'payment_status' => 'pending',
                     'status' => 'pending',
                     'transaction_id' => $paymentResult['transaction_id'] ?? null,
                     'payphone_transaction_id' => $paymentResult['transactionId'] ?? null,
@@ -217,10 +234,7 @@ class CheckoutController extends Controller
 
                 DB::commit();
 
-                if ($validated['payment_method'] === 'payphone') {
-                    return redirect()->route('checkout.pending', $order->order_number)
-                        ->with('success', 'Solicitud de pago enviada. Por favor confirma el pago en tu app PayPhone.');
-                } else {
+                if ($validated['payment_method'] === 'transfer') {
                     // Send order pending transfer email for bank transfer
                     try {
                         Mail::to($order->customer_email)->send(new OrderPendingTransferEmail($order));

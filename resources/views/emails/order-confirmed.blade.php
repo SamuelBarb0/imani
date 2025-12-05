@@ -6,7 +6,7 @@
 <table style="width: 100%; margin-bottom: 30px;" cellpadding="0" cellspacing="0">
     <tr>
         <td style="text-align: center;">
-            <img src="{{ asset('images/emails/thanks-for-purchase.png') }}" alt="Indicadores de proceso" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+            <img src="{{ config('app.url') }}/images/emails/thanks-for-purchase.png" alt="Indicadores de proceso" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
         </td>
     </tr>
 </table>

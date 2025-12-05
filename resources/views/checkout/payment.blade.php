@@ -85,6 +85,24 @@
                 </div>
             </div>
 
+            <!-- Instagram In-App Browser Warning -->
+            <div id="instagram-warning" class="mb-6 bg-orange-50 border border-orange-200 rounded-lg p-4 hidden">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-orange-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-semibold text-orange-900 mb-1">Navegador de Instagram detectado</p>
+                        <p class="text-xs text-orange-800 mb-3">
+                            Para completar tu pago de forma segura, por favor abre esta página en tu navegador (Safari, Chrome, etc.)
+                        </p>
+                        <button onclick="openInExternalBrowser()" class="text-xs bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                            Abrir en navegador externo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- PayPhone Button Container -->
             <div class="mb-6">
                 <div id="pp-button" class="flex justify-center"></div>
@@ -127,40 +145,100 @@
 @endphp
 
 @push('scripts')
-<script type="module" src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js"></script>
+<script src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js"></script>
 <script>
-    window.addEventListener('DOMContentLoaded', () => {
-        // Initialize PayPhone Payment Box
-        // Amount = AmountWithTax + AmountWithoutTax + Tax + Service + Tip
-        const subtotalCents = {{ $subtotalCents }};
-        const shippingCents = {{ $shippingCents }};
-        const totalCents = {{ $totalCents }};
+    // Detect Instagram in-app browser
+    function isInstagramBrowser() {
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+        return (ua.indexOf('Instagram') > -1);
+    }
 
-        const ppb = new PPaymentButtonBox({
-            token: '{{ config("payphone.token") }}',
-            storeId: '{{ config("payphone.store_id") }}',
-            clientTransactionId: '{{ $clientTransactionId }}',
-            amount: totalCents,
-            amountWithoutTax: subtotalCents,
-            amountWithTax: 0,
-            tax: 0,
-            service: shippingCents,
-            tip: 0,
-            currency: "USD",
-            reference: "Pedido Imani Magnets",
-            responseUrl: '{{ route('checkout.payphone.confirm') }}',
-            btnHorizontal: true
-        }).render('pp-button');
+    // Open current page in external browser
+    function openInExternalBrowser() {
+        const currentUrl = window.location.href;
 
-        console.log('PayPhone initialized with:', {
-            amount: totalCents,
-            amountWithoutTax: subtotalCents,
-            service: shippingCents,
-            total: totalCents,
-            validation: subtotalCents + shippingCents === totalCents,
-            responseUrl: '{{ route('checkout.payphone.confirm') }}',
-            clientTransactionId: '{{ $clientTransactionId }}'
-        });
+        // Try to open in external browser
+        // For iOS: This will prompt to open in Safari
+        // For Android: This will prompt to open in Chrome/default browser
+        window.location.href = currentUrl;
+
+        // Also copy URL to clipboard as fallback
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(currentUrl).then(function() {
+                alert('URL copiada al portapapeles. Pégala en tu navegador (Safari, Chrome, etc.)');
+            }).catch(function() {
+                alert('Por favor copia esta URL y ábrela en tu navegador:\n\n' + currentUrl);
+            });
+        } else {
+            alert('Por favor copia esta URL y ábrela en tu navegador:\n\n' + currentUrl);
+        }
+    }
+
+    // Show warning if in Instagram browser
+    if (isInstagramBrowser()) {
+        document.getElementById('instagram-warning').classList.remove('hidden');
+        console.warn('Instagram in-app browser detected. Payment may not work correctly.');
+    }
+
+    // Multiple initialization strategies for better compatibility with in-app browsers
+    function initializePayPhone() {
+        // Check if PayPhone is loaded
+        if (typeof PPaymentButtonBox === 'undefined') {
+            console.log('PayPhone not loaded yet, retrying...');
+            setTimeout(initializePayPhone, 100);
+            return;
+        }
+
+        try {
+            // Initialize PayPhone Payment Box
+            // Amount = AmountWithTax + AmountWithoutTax + Tax + Service + Tip
+            const subtotalCents = {{ $subtotalCents }};
+            const shippingCents = {{ $shippingCents }};
+            const totalCents = {{ $totalCents }};
+
+            const ppb = new PPaymentButtonBox({
+                token: '{{ config("payphone.token") }}',
+                storeId: '{{ config("payphone.store_id") }}',
+                clientTransactionId: '{{ $clientTransactionId }}',
+                amount: totalCents,
+                amountWithoutTax: subtotalCents,
+                amountWithTax: 0,
+                tax: 0,
+                service: shippingCents,
+                tip: 0,
+                currency: "USD",
+                reference: "Pedido Imani Magnets",
+                responseUrl: '{{ route('checkout.payphone.confirm') }}',
+                btnHorizontal: true
+            }).render('pp-button');
+
+            console.log('PayPhone initialized successfully with:', {
+                amount: totalCents,
+                amountWithoutTax: subtotalCents,
+                service: shippingCents,
+                total: totalCents,
+                validation: subtotalCents + shippingCents === totalCents,
+                responseUrl: '{{ route('checkout.payphone.confirm') }}',
+                clientTransactionId: '{{ $clientTransactionId }}'
+            });
+        } catch (error) {
+            console.error('Error initializing PayPhone:', error);
+        }
+    }
+
+    // Try multiple initialization events for better compatibility
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializePayPhone);
+    } else {
+        // DOM is already loaded
+        initializePayPhone();
+    }
+
+    // Fallback for in-app browsers that might not fire DOMContentLoaded
+    window.addEventListener('load', function() {
+        if (typeof PPaymentButtonBox !== 'undefined' && !document.querySelector('#pp-button iframe')) {
+            initializePayPhone();
+        }
     });
 </script>
 @endpush

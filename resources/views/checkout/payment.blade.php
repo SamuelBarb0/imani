@@ -85,27 +85,20 @@
                 </div>
             </div>
 
-            <!-- Instagram In-App Browser Warning -->
-            <div id="instagram-warning" class="mb-6 bg-orange-50 border border-orange-200 rounded-lg p-4 hidden">
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-orange-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                    </svg>
-                    <div>
-                        <p class="text-sm font-semibold text-orange-900 mb-1">Navegador de Instagram detectado</p>
-                        <p class="text-xs text-orange-800 mb-3">
-                            Para completar tu pago de forma segura, por favor abre esta página en tu navegador (Safari, Chrome, etc.)
-                        </p>
-                        <button onclick="openInExternalBrowser()" class="text-xs bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
-                            Abrir en navegador externo
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <!-- PayPhone Button Container -->
             <div class="mb-6">
                 <div id="pp-button" class="flex justify-center"></div>
+            </div>
+
+            <!-- Loading indicator -->
+            <div id="payment-loading" class="mb-6 text-center">
+                <div class="inline-flex items-center px-4 py-2 text-sm text-gray-700">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Cargando método de pago...
+                </div>
             </div>
 
             <!-- Security Info -->
@@ -153,39 +146,58 @@
         return (ua.indexOf('Instagram') > -1);
     }
 
-    // Open current page in external browser
-    function openInExternalBrowser() {
-        const currentUrl = window.location.href;
-
-        // Try to open in external browser
-        // For iOS: This will prompt to open in Safari
-        // For Android: This will prompt to open in Chrome/default browser
-        window.location.href = currentUrl;
-
-        // Also copy URL to clipboard as fallback
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(currentUrl).then(function() {
-                alert('URL copiada al portapapeles. Pégala en tu navegador (Safari, Chrome, etc.)');
-            }).catch(function() {
-                alert('Por favor copia esta URL y ábrela en tu navegador:\n\n' + currentUrl);
-            });
-        } else {
-            alert('Por favor copia esta URL y ábrela en tu navegador:\n\n' + currentUrl);
-        }
-    }
-
-    // Show warning if in Instagram browser
+    // Fix for Instagram webview - prevent body scroll interfering with iframe
     if (isInstagramBrowser()) {
-        document.getElementById('instagram-warning').classList.remove('hidden');
-        console.warn('Instagram in-app browser detected. Payment may not work correctly.');
+        console.log('Instagram browser detected - applying fixes');
+
+        // Prevent touch events from interfering with iframe
+        document.addEventListener('touchstart', function(e) {
+            // Allow touch events on the payment button and iframe
+            if (e.target.closest('#pp-button') || e.target.tagName === 'IFRAME') {
+                return;
+            }
+        }, { passive: true });
+
+        // Add CSS to improve iframe rendering in Instagram
+        const style = document.createElement('style');
+        style.textContent = `
+            #pp-button iframe {
+                width: 100% !important;
+                min-height: 400px !important;
+                border: none !important;
+                display: block !important;
+                -webkit-overflow-scrolling: touch !important;
+                overflow: auto !important;
+            }
+            #pp-button {
+                -webkit-overflow-scrolling: touch !important;
+                overflow: visible !important;
+                position: relative !important;
+                z-index: 9999 !important;
+            }
+        `;
+        document.head.appendChild(style);
     }
+
+    let retryCount = 0;
+    const maxRetries = 50; // 5 seconds max
 
     // Multiple initialization strategies for better compatibility with in-app browsers
     function initializePayPhone() {
         // Check if PayPhone is loaded
         if (typeof PPaymentButtonBox === 'undefined') {
-            console.log('PayPhone not loaded yet, retrying...');
-            setTimeout(initializePayPhone, 100);
+            retryCount++;
+            if (retryCount < maxRetries) {
+                console.log('PayPhone not loaded yet, retrying... (' + retryCount + '/' + maxRetries + ')');
+                setTimeout(initializePayPhone, 100);
+            } else {
+                console.error('PayPhone failed to load after ' + maxRetries + ' attempts');
+                document.getElementById('payment-loading').innerHTML = `
+                    <div class="text-red-600 text-sm">
+                        Error al cargar el método de pago. Por favor recarga la página.
+                    </div>
+                `;
+            }
             return;
         }
 
@@ -212,6 +224,14 @@
                 btnHorizontal: true
             }).render('pp-button');
 
+            // Hide loading indicator after a short delay
+            setTimeout(function() {
+                const loadingEl = document.getElementById('payment-loading');
+                if (loadingEl) {
+                    loadingEl.style.display = 'none';
+                }
+            }, 500);
+
             console.log('PayPhone initialized successfully with:', {
                 amount: totalCents,
                 amountWithoutTax: subtotalCents,
@@ -219,10 +239,16 @@
                 total: totalCents,
                 validation: subtotalCents + shippingCents === totalCents,
                 responseUrl: '{{ route('checkout.payphone.confirm') }}',
-                clientTransactionId: '{{ $clientTransactionId }}'
+                clientTransactionId: '{{ $clientTransactionId }}',
+                isInstagram: isInstagramBrowser()
             });
         } catch (error) {
             console.error('Error initializing PayPhone:', error);
+            document.getElementById('payment-loading').innerHTML = `
+                <div class="text-red-600 text-sm">
+                    Error al inicializar el pago: ` + error.message + `
+                </div>
+            `;
         }
     }
 
@@ -234,11 +260,34 @@
         initializePayPhone();
     }
 
-    // Fallback for in-app browsers that might not fire DOMContentLoaded
+    // Fallback for in-app browsers that might not fire DOMContentLoaded properly
     window.addEventListener('load', function() {
-        if (typeof PPaymentButtonBox !== 'undefined' && !document.querySelector('#pp-button iframe')) {
-            initializePayPhone();
-        }
+        setTimeout(function() {
+            if (typeof PPaymentButtonBox !== 'undefined' && !document.querySelector('#pp-button iframe')) {
+                console.log('Load event fallback - reinitializing PayPhone');
+                initializePayPhone();
+            }
+        }, 500);
     });
+
+    // Additional fallback - check periodically if iframe is rendered
+    let iframeCheckCount = 0;
+    const checkInterval = setInterval(function() {
+        iframeCheckCount++;
+        const iframe = document.querySelector('#pp-button iframe');
+
+        if (iframe) {
+            console.log('PayPhone iframe detected successfully');
+            clearInterval(checkInterval);
+
+            // Ensure iframe is properly sized for Instagram
+            if (isInstagramBrowser()) {
+                iframe.style.minHeight = '400px';
+                iframe.style.width = '100%';
+            }
+        } else if (iframeCheckCount > 30) { // Stop checking after 3 seconds
+            clearInterval(checkInterval);
+        }
+    }, 100);
 </script>
 @endpush

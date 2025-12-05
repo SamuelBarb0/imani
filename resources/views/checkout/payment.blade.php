@@ -185,19 +185,22 @@
             const shippingCents = {{ $shippingCents }};
             const totalCents = {{ $totalCents }};
 
+            // PayPhone requires all amounts to be integers (cents)
+            // The sum must equal: amount = amountWithTax + amountWithoutTax + tax + service + tip
             const payphoneConfig = {
                 token: '{{ config("payphone.token") }}',
                 storeId: '{{ config("payphone.store_id") }}',
                 clientTransactionId: '{{ $clientTransactionId }}',
                 amount: totalCents,
-                amountWithoutTax: subtotalCents,
-                amountWithTax: 0,
+                amountWithoutTax: 0,
+                amountWithTax: subtotalCents,
                 tax: 0,
                 service: shippingCents,
                 tip: 0,
                 currency: "USD",
                 reference: "Pedido Imani Magnets",
-                responseUrl: '{{ route('checkout.payphone.confirm') }}',
+                responseUrl: '{{ route("checkout.payphone.confirm") }}',
+                cancellationUrl: '{{ route("checkout.index") }}',
                 btnHorizontal: true
             };
 
@@ -214,14 +217,31 @@
                 throw new Error('Invalid amount: ' + totalCents);
             }
 
+            // Validate that amounts add up correctly
+            const calculatedTotal = payphoneConfig.amountWithTax + payphoneConfig.amountWithoutTax +
+                                   payphoneConfig.tax + payphoneConfig.service + payphoneConfig.tip;
+
+            if (calculatedTotal !== totalCents) {
+                console.error('Amount mismatch:', {
+                    expected: totalCents,
+                    calculated: calculatedTotal,
+                    difference: totalCents - calculatedTotal
+                });
+            }
+
             console.log('PayPhone config:', {
                 token: payphoneConfig.token.substring(0, 10) + '...',
                 storeId: payphoneConfig.storeId,
                 clientTransactionId: payphoneConfig.clientTransactionId,
                 amount: totalCents,
-                amountWithoutTax: subtotalCents,
+                amountWithTax: subtotalCents,
+                amountWithoutTax: 0,
                 service: shippingCents,
-                responseUrl: payphoneConfig.responseUrl
+                tax: 0,
+                tip: 0,
+                calculatedTotal: calculatedTotal,
+                responseUrl: payphoneConfig.responseUrl,
+                cancellationUrl: payphoneConfig.cancellationUrl
             });
 
             new PPaymentButtonBox(payphoneConfig).render('pp-button');

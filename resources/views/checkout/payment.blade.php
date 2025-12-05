@@ -138,7 +138,6 @@
 @endphp
 
 @push('scripts')
-<script src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js"></script>
 <script>
     // Detect Instagram in-app browser
     function isInstagramBrowser() {
@@ -149,14 +148,6 @@
     // Fix for Instagram webview - prevent body scroll interfering with iframe
     if (isInstagramBrowser()) {
         console.log('Instagram browser detected - applying fixes');
-
-        // Prevent touch events from interfering with iframe
-        document.addEventListener('touchstart', function(e) {
-            // Allow touch events on the payment button and iframe
-            if (e.target.closest('#pp-button') || e.target.tagName === 'IFRAME') {
-                return;
-            }
-        }, { passive: true });
 
         // Add CSS to improve iframe rendering in Instagram
         const style = document.createElement('style');
@@ -179,36 +170,22 @@
         document.head.appendChild(style);
     }
 
-    let retryCount = 0;
-    const maxRetries = 50; // 5 seconds max
-
-    // Multiple initialization strategies for better compatibility with in-app browsers
+    // Initialize PayPhone Payment Box
     function initializePayPhone() {
+        console.log('Initializing PayPhone...');
+
         // Check if PayPhone is loaded
         if (typeof PPaymentButtonBox === 'undefined') {
-            retryCount++;
-            if (retryCount < maxRetries) {
-                console.log('PayPhone not loaded yet, retrying... (' + retryCount + '/' + maxRetries + ')');
-                setTimeout(initializePayPhone, 100);
-            } else {
-                console.error('PayPhone failed to load after ' + maxRetries + ' attempts');
-                document.getElementById('payment-loading').innerHTML = `
-                    <div class="text-red-600 text-sm">
-                        Error al cargar el método de pago. Por favor recarga la página.
-                    </div>
-                `;
-            }
+            console.warn('PPaymentButtonBox not defined yet');
             return;
         }
 
         try {
-            // Initialize PayPhone Payment Box
-            // Amount = AmountWithTax + AmountWithoutTax + Tax + Service + Tip
             const subtotalCents = {{ $subtotalCents }};
             const shippingCents = {{ $shippingCents }};
             const totalCents = {{ $totalCents }};
 
-            const ppb = new PPaymentButtonBox({
+            new PPaymentButtonBox({
                 token: '{{ config("payphone.token") }}',
                 storeId: '{{ config("payphone.store_id") }}',
                 clientTransactionId: '{{ $clientTransactionId }}',
@@ -224,70 +201,59 @@
                 btnHorizontal: true
             }).render('pp-button');
 
-            // Hide loading indicator after a short delay
+            console.log('PayPhone initialized successfully');
+
+            // Hide loading indicator when iframe appears
+            const checkIframe = setInterval(function() {
+                if (document.querySelector('#pp-button iframe')) {
+                    clearInterval(checkIframe);
+                    const loadingEl = document.getElementById('payment-loading');
+                    if (loadingEl) {
+                        loadingEl.style.display = 'none';
+                    }
+                }
+            }, 100);
+
+            // Fallback to hide loading after 2 seconds
             setTimeout(function() {
                 const loadingEl = document.getElementById('payment-loading');
                 if (loadingEl) {
                     loadingEl.style.display = 'none';
                 }
-            }, 500);
+            }, 2000);
 
-            console.log('PayPhone initialized successfully with:', {
-                amount: totalCents,
-                amountWithoutTax: subtotalCents,
-                service: shippingCents,
-                total: totalCents,
-                validation: subtotalCents + shippingCents === totalCents,
-                responseUrl: '{{ route('checkout.payphone.confirm') }}',
-                clientTransactionId: '{{ $clientTransactionId }}',
-                isInstagram: isInstagramBrowser()
-            });
         } catch (error) {
             console.error('Error initializing PayPhone:', error);
             document.getElementById('payment-loading').innerHTML = `
                 <div class="text-red-600 text-sm">
-                    Error al inicializar el pago: ` + error.message + `
+                    Error al inicializar el pago. Por favor recarga la página.
                 </div>
             `;
         }
     }
 
-    // Try multiple initialization events for better compatibility
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializePayPhone);
-    } else {
-        // DOM is already loaded
-        initializePayPhone();
-    }
+    // Load PayPhone script dynamically
+    (function() {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js';
+        script.async = true;
 
-    // Fallback for in-app browsers that might not fire DOMContentLoaded properly
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            if (typeof PPaymentButtonBox !== 'undefined' && !document.querySelector('#pp-button iframe')) {
-                console.log('Load event fallback - reinitializing PayPhone');
-                initializePayPhone();
-            }
-        }, 500);
-    });
+        script.onload = function() {
+            console.log('PayPhone script loaded');
+            // Small delay to ensure PayPhone is fully ready
+            setTimeout(initializePayPhone, 100);
+        };
 
-    // Additional fallback - check periodically if iframe is rendered
-    let iframeCheckCount = 0;
-    const checkInterval = setInterval(function() {
-        iframeCheckCount++;
-        const iframe = document.querySelector('#pp-button iframe');
+        script.onerror = function() {
+            console.error('Failed to load PayPhone script');
+            document.getElementById('payment-loading').innerHTML = `
+                <div class="text-red-600 text-sm">
+                    Error al cargar PayPhone. Por favor recarga la página.
+                </div>
+            `;
+        };
 
-        if (iframe) {
-            console.log('PayPhone iframe detected successfully');
-            clearInterval(checkInterval);
-
-            // Ensure iframe is properly sized for Instagram
-            if (isInstagramBrowser()) {
-                iframe.style.minHeight = '400px';
-                iframe.style.width = '100%';
-            }
-        } else if (iframeCheckCount > 30) { // Stop checking after 3 seconds
-            clearInterval(checkInterval);
-        }
-    }, 100);
+        document.head.appendChild(script);
+    })();
 </script>
 @endpush

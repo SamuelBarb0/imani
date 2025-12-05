@@ -217,9 +217,6 @@ class CheckoutController extends Controller
                 return redirect()->route('checkout.payment');
             }
 
-            // For bank transfer, clear cart after creating order
-            $cart->items()->delete();
-
             // Process payment
             $paymentResult = $this->processPayment($order, $validated['payment_method'], $validated['customer_phone']);
 
@@ -233,6 +230,9 @@ class CheckoutController extends Controller
                 ]);
 
                 DB::commit();
+
+                // Clear cart after successful order creation (for bank transfer)
+                $cart->items()->delete();
 
                 if ($validated['payment_method'] === 'transfer') {
                     // Send order pending transfer email for bank transfer

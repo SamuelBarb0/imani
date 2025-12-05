@@ -185,7 +185,7 @@
             const shippingCents = {{ $shippingCents }};
             const totalCents = {{ $totalCents }};
 
-            new PPaymentButtonBox({
+            const payphoneConfig = {
                 token: '{{ config("payphone.token") }}',
                 storeId: '{{ config("payphone.store_id") }}',
                 clientTransactionId: '{{ $clientTransactionId }}',
@@ -199,7 +199,32 @@
                 reference: "Pedido Imani Magnets",
                 responseUrl: '{{ route('checkout.payphone.confirm') }}',
                 btnHorizontal: true
-            }).render('pp-button');
+            };
+
+            // Validate configuration
+            if (!payphoneConfig.token || payphoneConfig.token === '') {
+                throw new Error('PayPhone token is missing');
+            }
+
+            if (!payphoneConfig.storeId || payphoneConfig.storeId === '') {
+                throw new Error('PayPhone storeId is missing');
+            }
+
+            if (totalCents <= 0) {
+                throw new Error('Invalid amount: ' + totalCents);
+            }
+
+            console.log('PayPhone config:', {
+                token: payphoneConfig.token.substring(0, 10) + '...',
+                storeId: payphoneConfig.storeId,
+                clientTransactionId: payphoneConfig.clientTransactionId,
+                amount: totalCents,
+                amountWithoutTax: subtotalCents,
+                service: shippingCents,
+                responseUrl: payphoneConfig.responseUrl
+            });
+
+            new PPaymentButtonBox(payphoneConfig).render('pp-button');
 
             console.log('PayPhone initialized successfully');
 

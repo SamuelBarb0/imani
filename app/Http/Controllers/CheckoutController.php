@@ -327,9 +327,10 @@ class CheckoutController extends Controller
             $tax = $checkoutData['tax'];
             $total = $checkoutData['total'];
 
-            // Also keep the original values with IVA for PayPhone API
-            $subtotalWithIVA = $subtotalBase * 1.15;
-            $shippingWithIVA = $shippingBase * 1.15;
+            // Calculate the original values with IVA for PayPhone API
+            // subtotalBase already includes IVA (it's the base for tax calculation)
+            $subtotalWithIVA = round($subtotalBase, 2);
+            $shippingWithIVA = round($shippingBase, 2);
         } else {
             // Fallback: calculate if not in session
             $city = null;

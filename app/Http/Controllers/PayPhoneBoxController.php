@@ -26,9 +26,14 @@ class PayPhoneBoxController extends Controller
     public function confirm(Request $request)
     {
         // Log all query parameters to see what PayPhone is sending
-        Log::info('PayPhone Box callback received - ALL PARAMS', [
+        Log::info('====== PAYPHONE BOX CALLBACK START ======', [
+            'url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
             'all_query' => $request->query(),
             'all_input' => $request->all(),
+            'headers' => $request->headers->all(),
         ]);
 
         $transactionId = $request->query('id');
@@ -38,19 +43,25 @@ class PayPhoneBoxController extends Controller
                             ?? $request->query('client_transaction_id')
                             ?? $request->query('reference');
 
-        Log::info('PayPhone Box callback received', [
+        Log::info('PayPhone Box transaction IDs extracted', [
             'transactionId' => $transactionId,
             'clientTransactionId' => $clientTransactionId,
+            'session_id' => session()->getId(),
         ]);
 
         if (!$transactionId) {
+            Log::error('PayPhone callback missing transaction ID', [
+                'query_params' => $request->query(),
+            ]);
             return redirect()->route('home')
                 ->with('error', 'Invalid payment response - No transaction ID');
         }
 
         if (!$clientTransactionId) {
             // If we can't get clientTransactionId, we need to fetch it from PayPhone API
-            Log::warning('No clientTransactionId in callback, will try to get from PayPhone API');
+            Log::warning('No clientTransactionId in callback, will try to get from PayPhone API', [
+                'transactionId' => $transactionId,
+            ]);
         }
 
         // Call PayPhone Confirm API
@@ -70,22 +81,55 @@ class PayPhoneBoxController extends Controller
         }
 
         // Check if payment was approved
-        if ($this->isPaymentApproved($paymentData)) {
+        $isApproved = $this->isPaymentApproved($paymentData);
+
+        Log::info('PayPhone payment approval check', [
+            'isApproved' => $isApproved,
+            'transactionStatus' => $paymentData['transactionStatus'] ?? 'N/A',
+            'statusCode' => $paymentData['statusCode'] ?? 'N/A',
+            'paymentData' => $paymentData,
+        ]);
+
+        if ($isApproved) {
             // Create order from session data
+            Log::info('Creating order from approved payment', [
+                'clientTransactionId' => $clientTransactionId,
+            ]);
+
             $order = $this->createOrderFromPayment($clientTransactionId, $paymentData, $request);
 
             if ($order) {
+                Log::info('Order created successfully from PayPhone payment', [
+                    'order_number' => $order->order_number,
+                    'order_id' => $order->id,
+                    'total' => $order->total,
+                ]);
+
                 // Clear cart
                 $this->clearCart();
+
+                Log::info('====== PAYPHONE BOX CALLBACK SUCCESS ======', [
+                    'order_number' => $order->order_number,
+                ]);
 
                 return redirect()->route('checkout.success', $order->order_number)
                     ->with('success', '¡Pago completado exitosamente!');
             } else {
+                Log::error('Failed to create order after approved payment', [
+                    'transactionId' => $transactionId,
+                    'clientTransactionId' => $clientTransactionId,
+                ]);
                 return redirect()->route('checkout.index')
                     ->with('error', 'Error creating order. Please contact support with transaction ID: ' . $transactionId);
             }
         } else {
             // Payment was cancelled or rejected
+            Log::warning('PayPhone payment not approved', [
+                'transactionStatus' => $paymentData['transactionStatus'] ?? 'N/A',
+                'statusCode' => $paymentData['statusCode'] ?? 'N/A',
+                'transactionId' => $transactionId,
+            ]);
+
             return redirect()->route('checkout.index')
                 ->with('error', 'El pago fue cancelado o rechazado. Por favor intenta nuevamente.');
         }

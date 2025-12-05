@@ -187,13 +187,15 @@
 
             // PayPhone requires all amounts to be integers (cents)
             // The sum must equal: amount = amountWithTax + amountWithoutTax + tax + service + tip
+            // Important: If amountWithTax is used, tax must also be set (and vice versa)
+            // So we use amountWithoutTax for everything and leave amountWithTax/tax at 0
             const payphoneConfig = {
                 token: '{{ config("payphone.token") }}',
                 storeId: '{{ config("payphone.store_id") }}',
                 clientTransactionId: '{{ $clientTransactionId }}',
                 amount: totalCents,
-                amountWithoutTax: 0,
-                amountWithTax: subtotalCents,
+                amountWithoutTax: subtotalCents,
+                amountWithTax: 0,
                 tax: 0,
                 service: shippingCents,
                 tip: 0,

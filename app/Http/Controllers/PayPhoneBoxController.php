@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\User;
 use App\Mail\WelcomeEmail;
 use App\Mail\OrderConfirmedEmail;
+use App\Mail\NewOrderNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -307,6 +308,21 @@ class PayPhoneBoxController extends Controller
                 Log::error('Failed to send order confirmation email', [
                     'order' => $order->order_number,
                     'email' => $order->customer_email,
+                    'error' => $mailError->getMessage(),
+                ]);
+            }
+
+            // Send new order notification to admin
+            try {
+                Mail::to('pedidos@imanimagnets.com')
+                    ->cc('5o8abrkdt3@pomail.net')
+                    ->send(new NewOrderNotification($order));
+                Log::info('New order notification sent to admin', [
+                    'order' => $order->order_number
+                ]);
+            } catch (\Exception $mailError) {
+                Log::error('Failed to send new order notification', [
+                    'order' => $order->order_number,
                     'error' => $mailError->getMessage(),
                 ]);
             }

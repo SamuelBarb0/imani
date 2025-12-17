@@ -63,7 +63,7 @@ class PersonalizadosController extends Controller
 
             foreach ($request->batch as $index => $imageBase64) {
                 // Extract extension from data URL
-                $extension = 'webp'; // Default to webp
+                $extension = 'jpg'; // Default to jpg (changed from webp for better quality)
                 if (preg_match('/^data:image\/(\w+);base64,/', $imageBase64, $matches)) {
                     $extension = $matches[1];
                     $imageBase64 = substr($imageBase64, strpos($imageBase64, ',') + 1);

@@ -450,8 +450,8 @@
     /* Mobile touch controls - larger hit areas and visual feedback */
     @media (max-width: 768px) {
         .cropper-point {
-            width: 15px !important;
-            height: 15px !important;
+            width: 20px !important;
+            height: 20px !important;
             opacity: 0.8 !important;
         }
 
@@ -459,17 +459,17 @@
         .cropper-point.point-ne,
         .cropper-point.point-sw,
         .cropper-point.point-se {
-            width: 10px !important;
-            height: 10px !important;
+            width: 24px !important;
+            height: 24px !important;
         }
 
         /* Highlighted state for controls */
         .cropper-controls-highlighted .cropper-point {
             background-color: #c2b59b !important;
             opacity: 1 !important;
-            width: 15px !important;
-            height: 15px !important;
-            box-shadow: 0 0 0 2px rgba(194, 181, 155, 0.4) !important;
+            width: 28px !important;
+            height: 28px !important;
+            box-shadow: 0 0 0 3px rgba(194, 181, 155, 0.3) !important;
             transition: all 0.2s ease !important;
         }
     }
@@ -638,8 +638,7 @@
         });
 
         // Button click handler - only open if there are empty slots
-        selectPhotosBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent event from bubbling to dropzone
+        selectPhotosBtn.addEventListener('click', () => {
             const hasEmptySlot = uploadedImages.some(img => img === null);
             if (hasEmptySlot) {
                 fileInput.click();
@@ -1511,30 +1510,10 @@
     // ADJUSTMENT CONTROLS
     // ============================================
     document.addEventListener('DOMContentLoaded', function() {
-        // Helper function to prevent scroll on mobile when using sliders
-        function preventScrollOnSlider(slider) {
-            if (slider) {
-                // Prevent document scroll when touching the slider
-                slider.addEventListener('touchstart', function(e) {
-                    e.stopPropagation();
-                    document.body.style.overflow = 'hidden';
-                }, { passive: true });
-
-                slider.addEventListener('touchend', function(e) {
-                    document.body.style.overflow = '';
-                }, { passive: true });
-
-                slider.addEventListener('touchcancel', function(e) {
-                    document.body.style.overflow = '';
-                }, { passive: true });
-            }
-        }
-
         // Brightness
         const brightnessSlider = document.getElementById('brightness');
         const brightnessValue = document.getElementById('brightness-value');
         if (brightnessSlider) {
-            preventScrollOnSlider(brightnessSlider);
             brightnessSlider.addEventListener('input', function() {
                 currentFilters.brightness = this.value;
                 brightnessValue.textContent = this.value + '%';
@@ -1546,7 +1525,6 @@
         const contrastSlider = document.getElementById('contrast');
         const contrastValue = document.getElementById('contrast-value');
         if (contrastSlider) {
-            preventScrollOnSlider(contrastSlider);
             contrastSlider.addEventListener('input', function() {
                 currentFilters.contrast = this.value;
                 contrastValue.textContent = this.value + '%';
@@ -1558,7 +1536,6 @@
         const saturationSlider = document.getElementById('saturation');
         const saturationValue = document.getElementById('saturation-value');
         if (saturationSlider) {
-            preventScrollOnSlider(saturationSlider);
             saturationSlider.addEventListener('input', function() {
                 currentFilters.saturation = this.value;
                 saturationValue.textContent = this.value + '%';
@@ -1570,7 +1547,6 @@
         const exposureSlider = document.getElementById('exposure');
         const exposureValue = document.getElementById('exposure-value');
         if (exposureSlider) {
-            preventScrollOnSlider(exposureSlider);
             exposureSlider.addEventListener('input', function() {
                 currentFilters.exposure = this.value;
                 exposureValue.textContent = this.value + '%';
@@ -1582,7 +1558,6 @@
         const warmthSlider = document.getElementById('warmth');
         const warmthValue = document.getElementById('warmth-value');
         if (warmthSlider) {
-            preventScrollOnSlider(warmthSlider);
             warmthSlider.addEventListener('input', function() {
                 currentFilters.warmth = this.value;
                 warmthValue.textContent = this.value;
@@ -1594,7 +1569,6 @@
         const blurSlider = document.getElementById('blur');
         const blurValue = document.getElementById('blur-value');
         if (blurSlider) {
-            preventScrollOnSlider(blurSlider);
             blurSlider.addEventListener('input', function() {
                 currentFilters.blur = this.value;
                 blurValue.textContent = this.value + 'px';
@@ -1606,7 +1580,6 @@
         const sepiaSlider = document.getElementById('sepia');
         const sepiaValue = document.getElementById('sepia-value');
         if (sepiaSlider) {
-            preventScrollOnSlider(sepiaSlider);
             sepiaSlider.addEventListener('input', function() {
                 currentFilters.sepia = this.value;
                 sepiaValue.textContent = this.value + '%';
@@ -1618,7 +1591,6 @@
         const grayscaleSlider = document.getElementById('grayscale');
         const grayscaleValue = document.getElementById('grayscale-value');
         if (grayscaleSlider) {
-            preventScrollOnSlider(grayscaleSlider);
             grayscaleSlider.addEventListener('input', function() {
                 currentFilters.grayscale = this.value;
                 grayscaleValue.textContent = this.value + '%';
@@ -1905,14 +1877,14 @@
     }
 
     /**
-     * Process image to 600x600 square (center crop, like object-fit: cover)
+     * Process image to 644x644 square (center crop, like object-fit: cover)
      */
     async function processImageToSquare(imageDataUrl) {
         return new Promise((resolve) => {
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                const size = 600;
+                const size = 644;
                 canvas.width = size;
                 canvas.height = size;
                 const ctx = canvas.getContext('2d');
@@ -1929,17 +1901,17 @@
                 // Draw image scaled and centered
                 ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
 
-                // Convert to PNG (lossless quality)
-                resolve(canvas.toDataURL('image/png'));
+                // Convert to JPEG with quality 92% (high quality as requested by client)
+                resolve(canvas.toDataURL('image/jpeg', 0.92));
             };
             img.src = imageDataUrl;
         });
     }
 
     // ============================================
-    // WEBP CONVERSION HELPER WITH RESIZE
+    // JPEG CONVERSION HELPER WITH RESIZE
     // ============================================
-    async function convertToWebP(base64Image, maxSize = 644, quality = 0.65) {
+    async function convertToJPEG(base64Image, maxSize = 644, quality = 0.92) {
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = function() {
@@ -1968,9 +1940,9 @@
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Convert to WebP with quality 65% (excellent visual quality, much smaller)
-                const webpDataUrl = canvas.toDataURL('image/webp', quality);
-                resolve(webpDataUrl);
+                // Convert to JPEG with quality 92% (high quality as requested by client)
+                const jpegDataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(jpegDataUrl);
             };
             img.onerror = reject;
             img.src = base64Image;
@@ -2076,17 +2048,17 @@
                 return null;
             }));
 
-            // Convert all images to WebP for smaller payload (maxSize 644px, quality 65%)
+            // Convert all images to JPEG for high quality (maxSize 644px, quality 92%)
             const images = await Promise.all(
-                processedImages.map(img => img ? convertToWebP(img, 644, 0.65) : Promise.resolve(null))
+                processedImages.map(img => img ? convertToJPEG(img, 644, 0.92) : Promise.resolve(null))
             );
 
             // Log size comparison (for debugging)
             const originalSize = JSON.stringify(processedImages).length;
-            const webpSize = JSON.stringify(images).length;
+            const jpegSize = JSON.stringify(images).length;
             console.log(`📊 Tamaño original: ${(originalSize / 1024 / 1024).toFixed(2)}MB`);
-            console.log(`📊 Tamaño WebP (644px, 65%): ${(webpSize / 1024 / 1024).toFixed(2)}MB`);
-            console.log(`✅ Reducción: ${((1 - webpSize/originalSize) * 100).toFixed(1)}%`);
+            console.log(`📊 Tamaño JPEG (644px, 92%): ${(jpegSize / 1024 / 1024).toFixed(2)}MB`);
+            console.log(`✅ Reducción: ${((1 - jpegSize/originalSize) * 100).toFixed(1)}%`);
 
             // Upload images in batches of 3
             const imagePaths = await uploadImagesBatch(images, 3);

@@ -1430,8 +1430,8 @@
 
         // Get cropped canvas
         const canvas = cropper.getCroppedCanvas({
-            width: 600,
-            height: 600,
+            width: 644,
+            height: 644,
             imageSmoothingEnabled: true,
             imageSmoothingQuality: 'high'
         });

@@ -728,8 +728,12 @@
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    console.log('Image loaded to specific slot', slotIndex);
                     uploadedImages[slotIndex] = e.target.result;
                     renderGrid();
+                };
+                reader.onerror = function(e) {
+                    console.error('Error reading file for slot', slotIndex, e);
                 };
                 reader.readAsDataURL(file);
                 return;
@@ -753,8 +757,7 @@
                     const emptyIndex = uploadedImages.findIndex(img => img === null);
                     if (emptyIndex !== -1 && emptyIndex < 9) {
                         uploadedImages[emptyIndex] = e.target.result;
-                        // Render grid immediately after each image is loaded
-                        renderGrid();
+                        console.log('Image loaded to slot', emptyIndex);
                     }
 
                     loaded++;
@@ -763,6 +766,20 @@
                     progressText.textContent = progress + '%';
 
                     if (loaded === total) {
+                        console.log('All images loaded, rendering grid');
+                        renderGrid();
+                        setTimeout(() => {
+                            progressContainer.classList.add('hidden');
+                            showImageGrid();
+                        }, 500);
+                    }
+                };
+
+                reader.onerror = function(e) {
+                    console.error('Error reading file:', file.name, e);
+                    loaded++;
+                    if (loaded === total) {
+                        renderGrid();
                         setTimeout(() => {
                             progressContainer.classList.add('hidden');
                             showImageGrid();
@@ -796,29 +813,18 @@
 
                 const img = document.createElement('img');
                 img.className = 'w-full h-full object-cover rounded-lg';
+                img.src = imgSrc;
 
-                // Pre-load image to ensure it displays immediately
+                // Simple fade-in on load
                 img.style.opacity = '0';
-
-                // Use both onload and decode() for better compatibility
-                const showImage = () => {
+                img.onload = () => {
                     img.style.opacity = '1';
                     img.style.transition = 'opacity 0.2s ease-in-out';
                 };
-
-                img.onload = showImage;
                 img.onerror = () => {
                     console.error('Error loading image at index', index);
-                    img.style.opacity = '1'; // Show anyway
+                    img.style.opacity = '1';
                 };
-
-                // Set src BEFORE appending to DOM for better loading
-                img.src = imgSrc;
-
-                // Use decode() if available for smoother rendering
-                if (img.decode) {
-                    img.decode().then(showImage).catch(() => showImage());
-                }
 
                 // Add green checkmark if image is edited
                 if (isEdited) {
